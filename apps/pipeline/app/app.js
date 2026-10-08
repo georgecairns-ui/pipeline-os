@@ -719,7 +719,10 @@
   // When Task List OS is attached, its contacts show in People and can be linked to deals (read only here)
   function loadTaskListPeople() {
     if (!store.isHelper()) return;
-    fetch("/api/data/task-list/tasks.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (t) {
+    fetch("../installed.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : { tools: [] }; }).then(function (inst) {
+      const attached = (inst.tools || []).some(function (t) { return t && t.id === "task-list"; });
+      return attached ? fetch("/api/data/task-list/tasks.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }) : null;
+    }).then(function (t) {
       if (t && Array.isArray(t.people)) { M.setLinkedPeople(t.people); if (inApp()) render(); }
     }).catch(function () { /* not attached: nothing to show */ });
   }

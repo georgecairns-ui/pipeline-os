@@ -3,10 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Opening Task List OS</title>
+  <title>Opening Pipeline OS</title>
   <!--
-    Double-click this to open your task list.
-    If the task list helper is running on this computer (Claude starts it), this goes straight to
+    Double-click this to open your pipeline.
+    If the helper is running on this computer (Claude starts it), this goes straight to
     http://localhost:4747. If it isn't, it opens the app, which explains how to start it.
   -->
   <style>
@@ -15,12 +15,12 @@
   </style>
 </head>
 <body>
-  <p>Opening your task list. If nothing happens, <a href="http://localhost:4747/">open it here</a>.</p>
+  <p>Opening your pipeline. If nothing happens, <a href="http://localhost:4747/">open it here</a>.</p>
   <script>
     // Ask the helper if it's running; it answers by loading a tiny script
     var timer = setTimeout(notRunning, 1500);
     function running() { clearTimeout(timer); window.location.replace("http://localhost:4747/"); }
-    function notRunning() { window.location.replace("apps/task-list/index.html"); }
+    function notRunning() { window.location.replace("apps/pipeline/index.html"); }
     var probe = document.createElement("script");
     probe.src = "http://localhost:4747/api/alive.js?t=" + Date.now();
     probe.onload = function () { if (window.tlosAlive) running(); else notRunning(); };

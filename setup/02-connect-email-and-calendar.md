@@ -1,12 +1,12 @@
 # Step 2: connect email and calendar
 
-Goal: you can read their email and calendar. This is what fills the Inbox (emails that need an answer, each with your draft), Review (new tasks from email) and the calendar in This week.
+Goal: you can read their email and calendar. This is how you spot new enquiries, replies from people they're selling to, the proposals they send and their sales meetings, so the pipeline keeps itself up to date.
 
 ## 2.1 One sentence on why
 
-> This is the big one. I'll read your inbox each time I check in, pick out what needs a reply, draft it for you, and turn requests into tasks. I only read and draft. I never send, delete or tidy anything.
+> This is the big one. Each time I check in I'll read your inbox and calendar, spot new enquiries, replies and sales meetings, update the deals and draft your replies and chases. I only read and draft. I never send, delete or tidy anything.
 
-If they'd rather not connect email, note it in `context/tools.md` and move on. The task list still works from what they tell you and their brain dump.
+If they'd rather not connect email, note it in `context/tools.md` and move on. The pipeline still works from the deals and call notes they add in the app.
 
 ## 2.2 Connect
 
@@ -36,5 +36,5 @@ Add a row for each to `context/tools.md` ("Connected apps"): app, how connected,
 
 - Read only to understand work. Don't read more than you need.
 - Never send, reply, forward, delete, archive, label, mark as read, unsubscribe or accept an invite, even though the connection technically allows some of these.
-- Drafts live in the task file (`replies`), and the person opens them with the app's Draft button. Save a draft into their mailbox only if they ask you to for that specific email.
-- Don't copy whole private emails into the task file. A one-line summary, the reason it needs a reply, and your draft are enough.
+- Drafts live on the deal in the pipeline file, and the person opens them with the app's Draft button. Save a draft into their mailbox only if they ask you to for that specific email.
+- Don't copy whole private emails into the pipeline file. A one-line summary on the deal's timeline and your draft are enough.

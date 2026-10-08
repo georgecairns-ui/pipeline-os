@@ -1,8 +1,10 @@
-# Step 5: get to know the business
+# Step 6: get to know the business
 
 Goal: short, accurate notes in `context/` so your suggestions and drafts are specific to this business. Work most of it out yourself; ask as little as possible.
 
-## 5.1 Work it out first
+`context/sales.md` already holds what they sell, who to and the problems they solve (the "your customers" step). Don't ask any of that again: use it.
+
+## 6.1 Work it out first
 
 With the connections from steps 2 to 4, quietly gather:
 - From their **sent email** (last 2 to 3 weeks): who they deal with most, their clients and suppliers, how they write.
@@ -13,7 +15,7 @@ With the connections from steps 2 to 4, quietly gather:
 
 Don't present guesses as facts. Use them to skip questions.
 
-## 5.2 Learn how they write
+## 6.2 Learn how they write
 
 Ask once:
 
@@ -21,7 +23,7 @@ Ask once:
 
 If yes, follow `.claude/skills/write-like-me` in learn mode.
 
-## 5.3 Fill in the notes
+## 6.3 Fill in the notes
 
 | File | What goes in |
 |---|---|
@@ -35,7 +37,7 @@ Change each file's status line to `Status: filled in on <date>`.
 
 Also create the folders you'll need under `files/` (for example a folder per key client in `files/02-clients/`). If their documents live in Google Drive or OneDrive, fill in the "Where things really live" table in `files/README.md` instead of moving anything.
 
-## 5.4 Check it with them
+## 6.4 Check it with them
 
 Show a 5 line summary and ask what's wrong:
 
@@ -43,8 +45,8 @@ Show a 5 line summary and ask what's wrong:
 
 Fix what they correct.
 
-## 5.5 Make the app look like their business
+## 6.5 Make the app look like their business
 
 Follow `.claude/skills/match-my-brand`: ask for their brand guidelines or website (or 3 quick questions if they have neither), then put their colour, font and logo on the app. If you found their website in 5.1, say so and offer to use it, so they only have to say yes. Show them the result in light and dark before moving on. If they'd rather keep the standard look, that's fine: skip it.
 
-Tick step 5.
+Tick step 6.

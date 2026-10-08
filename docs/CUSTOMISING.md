@@ -1,11 +1,12 @@
 # Make it yours
 
-Task List OS comes with a clean, calm look in light or dark (the moon or sun button at the top switches), but it's your workspace. During setup Claude offers to use your own colours, font and logo; you can ask again any time ("make it match my brand"). The easiest way to change anything is to ask Claude, for example:
+Pipeline OS comes with a clean, calm look in light or dark (the moon or sun button at the top switches), but it's your workspace. During setup Claude offers to use your own colours, font and logo; you can ask again any time ("make it match my brand"). The easiest way to change anything is to ask Claude, for example:
 
-- "Make the task list use our brand colours: navy and orange."
+- "Make the pipeline use our brand colours: navy and orange."
 - "Change the font to something rounder."
-- "Rename 'Quick wins' to 'Small jobs'."
-- "Count 10 minutes saved per task instead of 6."
+- "Rename 'Talking' to 'Site visit booked'."
+- "Add a stage called 'Quote sent' before Negotiating."
+- "Chase people after 5 days, not 7."
 - "Add a folder for stock to my files."
 
 ## What Claude changes, and where
@@ -15,8 +16,10 @@ Task List OS comes with a clean, calm look in light or dark (the moon or sun but
 | Colours, fonts, corner roundness, spacing | `apps/shared/theme.css` (every look-and-feel setting is in this one file, with a light set and a dark set). The `match-my-brand` skill does it for you from your website or brand guidelines |
 | What Home shows | The **Customise** button on Home: show or hide boxes, drag them into order, make them wide. **Reset** puts it back |
 | The Get AI Powers slab-serif headings | `apps/shared/theme.css`: follow the note at the bottom of the file |
-| Your name, business name, time saved per task and per plan | The Settings button (the cog) in the app, or `settings` in your task file |
-| The words on the category labels | `CATEGORIES` near the top of `apps/task-list/app/model.js` |
+| Your name, business name, currency, when to chase, whether Claude may move deals by itself | Preferences (the cog) in the app, or `settings` in `apps/pipeline/data/pipeline.json` |
+| Your stages: rename, add, remove, reorder | Preferences, under "Your pipeline" (saved as `settings.stages`). Won and Lost always stay last |
+| The wording of the deal check questions | Preferences, under "The deal check" (saved as `settings.checkLabels`). The standard wording is `CHECK` near the top of `apps/pipeline/app/model.js` |
+| What Claude knows about how you sell | `context/sales.md`: your services and prices, who you sell to, the problems you solve, who isn't a fit |
 | The logo in the sidebar | Ask Claude ("put our logo on it"). It saves your logo in `apps/shared/images/` and points the sidebar at it |
 | Your folders | `files/` |
 | How Claude writes for you | `context/voice.md` |

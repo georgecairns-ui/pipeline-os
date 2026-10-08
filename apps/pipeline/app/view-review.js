@@ -63,6 +63,7 @@
       '<p class="proposal__title proposal__title--static">' + esc(s.title) + "</p>" +
       (s.reason ? '<p class="proposal__reason">' + esc(s.reason) + "</p>" : "") +
       (s.email && s.email.body ? '<details class="peek"><summary>' + icon("mail") + "Read the draft</summary><p class=\"peek__to muted\">To " + esc(s.email.to || "") + " · " + esc(s.email.subject || "") + '</p><p class="peek__body">' + esc(s.email.body) + "</p></details>" : "") +
+      (s.notes ? '<details class="peek"><summary>' + icon("list") + (s.kind === "prep" ? "Read the prep" : "More") + '</summary><p class="peek__body">' + esc(s.notes) + "</p></details>" : "") +
       dealLine(d, x) + "</div>" +
       '<div class="proposal__actions">' + actions + "</div></li>";
   }

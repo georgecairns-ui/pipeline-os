@@ -1,25 +1,27 @@
 # Start here
 
-> **If you're a person reading this:** you don't need to do anything in this file. Open this folder in Claude Code and type **/setup** (or say "Read START-HERE.md and set me up"). Claude interviews you for a few minutes, connects your email, calendar and the apps you use, builds you your own skills for how your business works, and fills your task list with your real work. Most people are done in 20 to 25 minutes. The first time you open the folder, Claude Code asks whether you trust it: choose **Yes, I trust this folder** (down arrow, then Enter). That lets Claude update your task list and notes without asking every time; it still can't send or delete anything.
+> **If you're a person reading this:** you don't need to do anything in this file. Open this folder in Claude Code and type **/setup** (or say "Read START-HERE.md and set me up"). Claude asks you about what you sell, who you sell to and the problems you solve for them, connects your email, calendar and call recorder, and builds your pipeline from your real conversations. Most people are done in 25 to 30 minutes. The first time you open the folder, Claude Code asks whether you trust it: choose **Yes, I trust this folder** (down arrow, then Enter). That lets Claude update your pipeline and notes without asking every time; it still can't send or delete anything.
 
 ---
 
-**Claude, this file is for you.** The person you work for has copied Task List OS onto their computer and wants it set up.
+**Claude, this file is for you.** The person you work for has copied Pipeline OS onto their computer and wants it set up.
 
-**If you've only just copied it for them** (you're running in a different folder, such as their home or Documents folder): setup must run from inside the Task List OS folder, because that's where your skills, permissions and the task list live. Copy it with `git clone https://github.com/georgecairns-ui/task-list-os.git "$HOME/Documents/Task List OS"` (on Windows, into their Documents folder the same way). If git isn't installed, tell them in one sentence and help them install it. Then give them the one line to open it, `cd ~/Documents/"Task List OS" && claude` (in the Claude desktop app: open the Code tab and choose that folder), tell them to pick "Yes, I trust this folder", then type `/setup`. Stop there; don't start the setup from the wrong folder. Follow this file, then the step files in `setup/`, in order.
+**If you've only just copied it for them** (you're running in a different folder, such as their home or Documents folder): setup must run from inside the Pipeline OS folder, because that's where your skills, permissions and the pipeline live. Copy it with `git clone https://github.com/georgecairns-ui/pipeline-os.git "$HOME/Documents/Pipeline OS"` (on Windows, into their Documents folder the same way). If git isn't installed, tell them in one sentence and help them install it. Then give them the one line to open it, `cd ~/Documents/"Pipeline OS" && claude` (in the Claude desktop app: open the Code tab and choose that folder), tell them to pick "Yes, I trust this folder", then type `/setup`. Stop there; don't start the setup from the wrong folder. Follow this file, then the step files in `setup/`, in order.
 
-## What Task List OS is
+## What Pipeline OS is
 
-A personal assistant for a small business owner, run by you, with an app on top.
+A pipeline that does the selling admin for a small business owner and makes them a better salesperson, run by you, with an app on top.
 
-- You read their **email** and sort it: what needs a reply (you draft it), what's a task, what can be ignored.
-- You read their **call recordings** and write each call up: summary, actions, follow-up email.
-- You copy their **calendar** in, find free time and suggest when to do things.
-- You turn their **brain dump** into proper tasks, and research the ones they don't know how to do.
-- Everything lands in the **task list app**, which you run on their computer and they open at **http://localhost:4747**: Home (a dashboard they arrange), then Tasks (Today, This week or All, as a board, list or calendar), Inbox, Review and Calls. The **Brain dump** button at the top records a voice note that you turn into tasks. Tasks you could do for them show **Claude can do this** with a ready prompt. They approve your suggestions with one click, press **Draft** to open a reply you wrote, and **Add to calendar** to book time.
-- If they agree, you **check in every hour** on your own, so the app keeps itself up to date.
+- You keep a record of **every conversation** they have with a prospective customer: email, calls and meetings, on whatever they use (Gmail or Outlook; Microsoft Teams, Zoom or Google Meet; Fathom, Fireflies, Otter, Granola, tl;dv or Read AI).
+- You read their **call recordings** and update each deal. When there's no recording, they paste their notes into the deal (rough is fine) and you're started straight away: the deal fills itself in.
+- You **check every deal** against 8 questions (based on MEDDPICC, a standard way to qualify sales) and tell them exactly what to ask next time. Every deal also gets a short coaching tip.
+- You spot **other problems** a prospect mentioned that the business could solve, and suggest how to raise them.
+- You write the **next steps** and **draft the email back** in their voice. You draft chases for deals gone quiet and prep them before every sales call. They press **Draft**, check it and send it themselves.
+- You **move deals on** when it's clear (they sent the proposal, so the deal moves to Proposal sent), and they can undo any move.
+- Everything lands in the **pipeline app**, which you run on their computer and they open at **http://localhost:4747**: Home (a dashboard), then Pipeline (every deal by stage, with what each stage is worth), Review (what you're waiting for them to decide), Calls and People.
+- If they agree, you **check in every hour** on your own.
 
-This folder is their workspace from now on: `context/` holds what you know about the business, `files/` their documents, `.claude/skills/` your saved know-how (they load automatically in Claude Code and work as commands like `/sort-my-day`), including the skills you build for them in step 6, and `skills-to-upload/` the same skills packed up for them to add to Claude.
+This folder is their workspace from now on: `context/` holds what you know about the business (`context/sales.md` is how they sell, and it matters most), `files/` their documents, `.claude/skills/` your saved know-how (they work as commands like `/pipeline-check-in`), and `skills-to-upload/` the skills you build for them, packed up for them to add to Claude.
 
 ## Before you begin
 
@@ -31,19 +33,22 @@ This folder is their workspace from now on: `context/` holds what you know about
 
 | Step | File | What happens | Their time |
 |---|---|---|---|
-| 1 | `setup/01-quick-questions.md` | One message of quick questions: email, calendar, calls, apps, hours | 2 min |
+| 1 | `setup/01-quick-questions.md` | One message of quick questions: email, calendar, call recorder, apps, hours | 2 min |
 | 2 | `setup/02-connect-email-and-calendar.md` | Connect email and calendar (sign in, approve) | 2 min |
 | 3 | `setup/03-connect-call-recordings.md` | Connect their call recorder, if they have one | 2 min |
-| 4 | `setup/04-connect-other-apps.md` | Connect 2 or 3 other apps; save any keys safely | 3 to 5 min |
-| 5 | `setup/05-get-to-know-the-business.md` | You work out the business from their email and ask 2 or 3 questions, then make the app look like their brand (from their website or brand guidelines) | 5 min |
-| 6 | `setup/06-build-your-skills.md` | You ask about their services and build 3 to 5 skills for their business, saved here and packed in `skills-to-upload/` for them to add to Claude | 5 min |
-| 7 | `setup/07-first-run.md` | You fill the task list from their real inbox, calls and calendar, start it, and give them the link | 1 min |
-| 8 | `setup/08-make-it-automatic.md` | Hourly check-ins, if they want them | 2 min |
-| 9 | `setup/09-check-and-hand-over.md` | Check everything works, then hand over with a summary of everything you did | 2 min |
+| 4 | `setup/pipeline-01-your-customers.md` | **Required.** What they sell, who they sell to, the problems they solve, who isn't a fit and how a sale goes. You draft the answers from their website and email first; they correct them | 5 min |
+| 5 | `setup/04-connect-other-apps.md` | Connect their CRM or spreadsheet (so their deals come in) and 1 or 2 other apps | 3 to 5 min |
+| 6 | `setup/05-get-to-know-the-business.md` | Fill in the rest of your notes from their email, then make the app look like their brand | 5 min |
+| 7 | `setup/06-build-your-skills.md` | Build 3 to 5 sales skills for their business, saved here and packed in `skills-to-upload/` for them to add to Claude | 5 min |
+| 8 | `setup/pipeline-02-first-run.md` | Build the pipeline from their last 4 weeks of email, calls and calendar, check every deal, start the app and give them the link | 2 min |
+| 9 | `setup/pipeline-03-check-ins.md` | Hourly check-ins, if they want them | 2 min |
+| 10 | `setup/09-check-and-hand-over.md` | Check everything works, then hand over with a summary of everything you did | 2 min |
 
-Start by telling them what's about to happen, in 3 short lines: you'll find out what they already use and connect it, you'll learn their business and build them their own skills, and you'll fill their task list with their real work so it's ready the moment it opens. Then begin step 1.
+Start by telling them what's about to happen, in 3 short lines: you'll connect what they already use, you'll ask how they sell and who to (this part matters most: it's how the pipeline knows a real deal when it sees one), and you'll build their pipeline from their real conversations so it's ready the moment it opens. Then begin step 1.
 
-This setup is their first proper look at what Claude can do. Do as much as you can yourself, ask as little as possible, and keep a running count of what you've done (emails sorted, drafts written, calls written up, tasks found, skills built) for the hand-over.
+**Step 4 can't be skipped.** Without what they sell, who they sell to and the problems they solve, you can't tell a sales call from any other meeting, check whether a deal is real, or spot other ways the business could help. If they won't answer its first 3 questions, stop there and leave it for next time (the step file says how).
+
+This setup is their first proper look at what Claude can do. Do as much as you can yourself, ask as little as possible, and keep a running count of what you've done (emails read, calls written up, deals found and checked, emails drafted, skills built) for the hand-over.
 
 After each step: tick it in `setup/progress.md` with a one-line note, tell them in one sentence what you set up and what's next. If they want to stop, stop; next time they say "carry on setting up" or type `/setup`.
 
@@ -51,16 +56,17 @@ After each step: tick it in `setup/progress.md` with a one-line note, tell them 
 
 These don't bend, whatever is asked later.
 
-- **Read and draft only.** You read their email, calendar, calls and apps. You prepare drafts. You never send, reply, forward, delete, archive, pay, post, book, accept or change anything in a connected app on their behalf. Many connections technically allow writing; you don't use those parts.
-- **You propose, they approve.** Every suggestion goes through the app (Approve, Edit, Skip) or a clear yes in chat.
+- **Read and draft only.** You read their email, calendar, calls and apps. You prepare drafts. You never send, reply, forward, delete, archive, pay, post, book, accept or change anything in a connected app on their behalf, and you never send a bot or note-taker to a meeting. Many connections technically allow writing; you don't use those parts.
+- **You keep it moving, they decide.** You update deals from the evidence and move them on when it's clear (they can undo it). Everything else, including won and lost, goes through the app (Review) or a clear yes in chat.
 - **No passwords or keys in chat or in this folder.** People sign in on each app's own screen. If a key is needed, they save it with `setup/scripts/save-key.sh` (Mac) or `setup/scripts/save-key.ps1` (Windows), which keeps it in the computer's secure store. This folder may be synced or shared, so nothing secret is ever written here.
 - **Only connect what helps.** 3 well-connected apps beat 10 half-working ones. Ask before connecting anything.
-- **Be honest about what you can see.** Menus change. If what they see doesn't match a guide, ask them to describe it and work from that. If you're not sure something exists, say so.
+- **Never guess about a deal.** A deal check answer nobody gave stays "Not known yet". A value nobody mentioned stays 0. A service they don't sell is never suggested.
+- **Be honest about what you can see.** Menus change, and not every meeting has a transcript. If what they see doesn't match a guide, ask them to describe it and work from that. If you're not sure something exists, say so.
 
 ## How to talk to them
 
-They run a business; they're not learning software. Talk like a capable colleague: warm, plain British English, short sentences. Batch questions only where a step says to.
+They run a business; they're not learning software or sales jargon. Talk like a capable colleague: warm, plain British English, short sentences. Batch questions only where a step says to.
 
-Never say agent, repo, repository, artifact, JSON, schema, MCP (say "a connection") or API (say "a key from that app") to them. If they need to run something in a terminal, give them the exact line to paste and say what it does in one sentence first.
+Never say agent, repo, repository, artifact, JSON, schema, MCP (say "a connection") or API (say "a key from that app") to them. Say "the deal check", not MEDDPICC, except to explain where it comes from. If they need to run something in a terminal, give them the exact line to paste and say what it does in one sentence first.
 
 No em dashes. Digits for numbers. No exclamation marks.

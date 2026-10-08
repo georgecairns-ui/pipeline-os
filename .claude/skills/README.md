@@ -1,26 +1,20 @@
 # Skills
 
-Saved know-how for the jobs small businesses ask Claude for most. You don't need to remember any of this: ask in your own words and Claude picks the right one.
+Saved know-how for running your pipeline. You don't need to remember any of this: ask in your own words and Claude picks the right one.
 
-Each skill is a folder with a `SKILL.md` inside. Claude reads them from here whenever this folder is open. In setup step 6, Claude also writes you skills of your own, about your services, prices and way of working. They're saved here, and packed up in the `skills-to-upload` folder so you can add them to Claude and use them in every conversation.
+Each skill is a folder with a `SKILL.md` inside. Claude reads them from here whenever this folder is open. During setup, Claude also writes you skills of your own, about your services, prices and way of selling. They're saved here, and packed up in the `skills-to-upload` folder so you can add them to Claude and use them in every conversation.
 
-## The daily rhythm
+## Your pipeline
 
-In Claude Code, every skill is also a command: type `/` and its name, for example `/check-in`.
+In Claude Code, every skill is also a command: type `/` and its name, for example `/pipeline-check-in`.
 
 | Skill | Say something like | What happens |
 |---|---|---|
-| `check-in` | "Check in", "anything new?" (runs every hour if you turned that on) | Calendar copied in, new email sorted with replies drafted, new calls written up |
-| `triage-inbox` | "What needs a reply?" | Every email sorted; the ones needing an answer appear in the Inbox with a draft |
-| `process-calls` | "Write up my calls" | Each call summarised on the Calls page, with actions and a follow-up email |
-| `sort-my-day` | "Sort my day" | Claude checks your list, inbox and calendar and proposes today's plan in the app |
-| `plan-my-week` | "Plan my week" | A suggested day for each task that needs one, around your meetings |
-| `spot-claude-tasks` | "What can you do off my list?" (also on every check-in) | The tasks Claude could do for you get a "Claude can do this" tag and a ready prompt: press Open in Claude |
-| `sort-my-brain-dump` | "Sort my brain dump" | Everything you typed into Brain dump becomes proper tasks, with a suggested time and a how-to guide where needed |
-| `research-task` | "How do I pay my tax bill?" | A short how-to guide with official links, added to the task |
-| `schedule-it` | "When should I do this?" | A suggested time from your free calendar slots; approve it and add it to your calendar in one click |
-| `wrap-up-my-day` | "Wrap up my day" | A short summary of what got done and what rolls over |
-| `weekly-review` | "Let's do the weekly review" | What got done, what slipped, and next week's priorities |
+| `pipeline-check-in` | "Update my pipeline" (runs every hour if you turned that on) | New sales calls written up, new enquiries and replies spotted, sales meetings found in your calendar, deals updated, chases drafted |
+| `update-a-deal` | Paste your call notes, or press **Update the deal** in the app | The deal fills itself in: the write-up, the deal check, next steps, a coaching tip and the email back, drafted |
+| `qualify-a-deal` | "How qualified is this deal?" | The deal check: 8 questions (based on MEDDPICC), what's known, what isn't, and what to ask next time |
+| `prep-for-a-sales-call` | "Prep me for my call with Mark" | Who you're meeting, what's happened, what you promised and the questions to ask |
+| `who-to-chase` | "Who should I chase?" | A chase drafted for every deal gone quiet, with a real reason to get back in touch |
 
 ## Writing
 
@@ -28,26 +22,24 @@ In Claude Code, every skill is also a command: type `/` and its name, for exampl
 |---|---|---|
 | `human-email` | "Make this sound less robotic" | Any draft is checked so it reads like a person wrote it. Used by every writing skill |
 | `write-like-me` | "Learn how I write" | Claude learns your style (with permission) and writes in it |
-| `draft-a-reply` | "Help me reply to Tom" | A reply in your voice, saved as a draft for you to send |
-| `polite-chaser` | "Chase the Marlow invoice" | A chaser at the right level of firmness, with all the specifics |
-| `meeting-follow-up` | "Write up this call" | Summary, follow-up email and your actions as suggested tasks |
-| `delegate-it` | "Can Priya take this on?" | A clear brief and a handover message |
+| `polite-chaser` | "Chase the Marlow deal" | A chaser at the right level of firmness, with all the specifics |
 
 ## Keeping things organised
 
 | Skill | Say something like | What happens |
 |---|---|---|
-| `file-it` | "Where should this go?" | Claude suggests a folder and a name, and files it once you agree |
-| `connect-a-tool` | "Connect my accounts software" | Claude walks you through connecting an app safely |
+| `file-it` | "Save this proposal" | Claude suggests a folder and a name, and files it once you agree |
+| `connect-a-tool` | "Connect my Pipedrive" | Claude walks you through connecting an app safely |
 | `match-my-brand` | "Make it match my brand" | Your colours, font and logo on the app, from your website or brand guidelines |
 | `setup` | `/setup` | Runs the setup, or carries on where it left off |
-| `open-task-list` | "Open my task list" | Starts your task list if needed and gives you the link, http://localhost:4747 |
-| `keep-context-fresh` | (automatic) | When you mention a new client or a change, Claude offers to update its notes |
+| `open-task-list` | "Open my pipeline" | Starts the app if needed and gives you the link, http://localhost:4747 |
+| `keep-context-fresh` | (automatic) | When you mention a new service, price or kind of customer, Claude offers to update its notes |
 
 ## The rules every skill follows
 
-- Claude proposes, you approve. Nothing is sent, paid, deleted or posted on your behalf.
+- Claude keeps your pipeline moving; you decide. Nothing is sent, paid, deleted or posted on your behalf.
 - Drafts only in your email. You press send.
+- Claude never guesses about a deal: anything nobody said stays "Not known yet".
 - Everything stays in this folder or in the apps you've connected.
 
 ## Adding your own

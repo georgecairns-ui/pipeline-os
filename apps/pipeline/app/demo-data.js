@@ -138,7 +138,8 @@
     const suggestions = [
       { id: "s-chase-marlow", kind: "chase", dealId: "d-marlow", title: "Chase Hannah about the brochure", reason: "No reply for 9 days after she asked for a lower price. The draft offers a smaller first step instead of a discount.",
         email: deals[2].email, status: "waiting", createdAt: at(0, 7, 50) },
-      { id: "s-prep-ellis", kind: "prep", dealId: "d-ellis", title: "Prep for your call with Mark Ellis tomorrow at 10am", reason: "You know little about how they'll decide. Go in with the 3 questions on the deal.", status: "waiting", createdAt: at(0, 7, 50) },
+      { id: "s-prep-ellis", kind: "prep", dealId: "d-ellis", title: "Prep for your call with Mark Ellis tomorrow at 10am", reason: "You know little about how they'll decide. Go in with the 3 questions on the deal.", status: "waiting", createdAt: at(0, 7, 50),
+        notes: "Who: Mark Ellis runs Ellis Joinery with his brother. Referred by Tom at Greenway Caf\u00e9.\nSo far: Mark says the logo looks home-made next to their work. He booked through your link.\nYou promised: nothing yet. His brand questionnaire is due back before the call.\nFind out: 1. Will your brother join, or how will you decide between you? 2. Where does the logo let you down most? 3. What would make this worth it?\nWorth raising: the website \"hasn't been touched since 2015\".\nWatch for: his brother hasn't been in touch." },
       { id: "s-sales-lena", kind: "question", personId: "p-lena", title: "Is your “Quick chat” with Lena Hart this week a sales call?", reason: "Lena isn't a client or in your team, and there's no earlier email. Say yes and Claude starts a deal for Hart Interiors. Say no if it isn't about work, and Claude won't ask about Lena again.",
         status: "waiting", createdAt: at(0, 7, 50) }
     ];

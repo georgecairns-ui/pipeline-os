@@ -2,8 +2,8 @@
   "permissions": {
     "allow": [
       "Read(./**)",
-      "Edit(./apps/task-list/data/**)",
-      "Write(./apps/task-list/data/**)",
+      "Edit(./apps/pipeline/data/**)",
+      "Write(./apps/pipeline/data/**)",
       "Edit(./context/**)",
       "Write(./context/**)",
       "Edit(./files/**)",

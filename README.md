@@ -1,50 +1,51 @@
-# Task List OS
+# Pipeline OS
 
-**A personal assistant for your business, run by Claude.** A free kit from [Get AI Powers](https://getaipowers.com).
+**The pipeline that does the selling admin for you, and makes you better at selling.** A free kit from [Get AI Powers](https://getaipowers.com), run by Claude.
 
-Claude reads your email and drafts the replies. It writes up your calls and pulls out the actions. It turns the jumble in your head into tasks, finds time for them in your calendar, and looks up how to do the ones you're not sure about. Everything lands in one calm app for you to approve with a click.
+Every conversation you have with a prospective customer, by email, on a call or in a meeting, ends up on one board. Claude writes up your sales calls, tells you what to do next, drafts the email back and chases the deals that have gone quiet. It checks every deal against 8 questions good salespeople always ask, so you know which deals are real and exactly what to ask next time.
 
-Nothing goes out without you. Claude reads and drafts; you decide and you send.
+Nothing goes out without you. Claude reads, drafts and keeps your pipeline moving; you decide and you send.
 
-Task List OS is part of a toolkit of 9 free tools from Get AI Powers. The others (a pipeline, proposals, content, money and more) show in the app's menu, and Get AI Powers sets them up with you on a free call.
+Pipeline OS is part of a toolkit of 9 free tools from Get AI Powers. The others (a task list, proposals, content, money and more) show in the app's menu, and Get AI Powers sets them up with you on a free call.
 
 ## What happens when you type /setup
 
-You copy the kit, open it in Claude Code and type **/setup**. In about 20 minutes, Claude:
+You copy the kit, open it in Claude Code and type **/setup**. In about 25 minutes, Claude:
 
-- **Finds out what you already use.** It checks which apps your Claude account is already connected to, asks a few quick questions, and connects your email, calendar, call recorder and the other apps you name, one by one.
-- **Interviews you about your business.** Your services, your prices, how a new client goes from first message to finished work, and the things you explain again and again.
-- **Builds you your own skills.** 3 to 5 sets of saved instructions written for your business, such as your quotes, replies to new enquiries and welcoming a new client. They work straight away, and Claude saves them in the **skills-to-upload** folder so you can add them to Claude and use them everywhere, including on your phone.
-- **Fills your task list with your real work.** Your last week of email sorted with replies drafted, your recent calls written up, your calendar copied in, and today's plan ready, before you've opened the app.
+- **Finds out what you already use.** Your email (Gmail or Outlook), your calendar, your call recorder (Microsoft Teams, Zoom, Google Meet, Fathom, Fireflies, Otter, Granola, tl;dv or Read AI) and where your deals live today (Pipedrive, HubSpot, a spreadsheet or your inbox), and connects them one by one.
+- **Asks how you sell.** What you sell and for roughly how much, who your ideal customers are, the problems you solve for them, who isn't a good fit, and how a sale usually goes. It drafts the answers from your website and email first, so you mostly just correct them. This is what lets it tell a real deal from a time-waster.
+- **Builds you your own sales skills.** Your deal check questions, your follow-up after a sales call, your replies to new enquiries: saved in the **skills-to-upload** folder so you can add them to Claude and use them everywhere, including on your phone.
+- **Builds your pipeline from your real conversations.** 4 weeks of email, calls and meetings, turned into deals, each one checked, with next steps and an email ready, before you've opened the app.
 
 ## What it does
 
-- **Sorts your inbox.** Every new email goes in a pile: needs a reply, a task, just so you know, or no action. The ones that need an answer appear in your **Inbox** with a draft in your voice. Press **Draft** and the email opens in Gmail or Outlook, written and addressed. Check it, press send.
-- **Writes up your calls.** If you record calls (Fathom, Fireflies, Otter, Granola, tl;dv, Read AI, Zoom, Teams or Google Meet), each one appears on **Calls** with a summary, what was decided, your actions to approve and a follow-up email ready to go.
-- **Brain dump.** Press **Brain dump** at the top of any page and talk: everything on your mind, as messy as you like. Your words appear as you speak. Press Done and Claude turns it into tasks, suggested times, how-to guides and draft emails, ready for you to approve, usually within a minute or two.
-- **Turns it into a plan.** Say "pay my tax to HMRC" into **Brain dump**. Claude makes it a task, looks up how to do it on GOV.UK, and suggests a free slot in your calendar. Approve it, press **Add to calendar**, done.
-- **One page for every task.** **Home** is your dashboard: choose the boxes you want and arrange them. **Tasks** shows Today (with Claude's plan on top), This week or All, as a **Board** (To do, In progress, Waiting on, Done: drag cards across), a **List**, or a **Calendar** of your real meetings with your tasks in the gaps. **Add meeting** puts a meeting in and opens it in your calendar, ready to save.
-- **Does some of it for you.** Claude marks the tasks it could do with your connections, such as a chaser, a reply, a figure from your accounts or a first draft. Press **Open in Claude** and it opens with the prompt ready; read it and press send.
-- **Yours to shape.** A clean, calm app in light or dark, in your own colours. **Preferences** lets you rename and recolour categories, rename the board's columns and choose how Tasks opens.
-- **Keeps itself up to date.** If you want, Claude checks in every hour while you work, so the app is always current.
+- **Fills in a deal from your call.** If you record calls, Claude reads each sales call and updates the deal. If you don't, press **Call notes**, paste a few rough lines or the transcript (or drop in a text file), and the deal fills itself in within a minute or 2: what happened, the deal check, your next steps and the email back to them.
+- **Drafts the email back.** In your voice, recapping what was agreed, with one question that moves the deal on. Press **Draft** and it opens in Gmail or Outlook, written and addressed. Check it, press send.
+- **Makes you a better salesperson.** Every deal is checked against 8 questions (based on MEDDPICC, a standard way to qualify sales): what's the problem costing them, who signs it off, what will they judge it on, how and when will they decide, and more. Each is marked Known, Partly known or Not known yet, with what was actually said. You get the questions to ask next time and a short coaching tip on every deal.
+- **Finds more work.** When a prospect mentions another problem you could solve, Claude notes it under **Also could help with**, with how to raise it.
+- **Spots your sales meetings.** Claude reads your calendar, works out which meetings are sales calls, links them to the deal and preps you the day before: who you're meeting, what you promised and what to find out.
+- **Keeps deals moving.** When it's clear (you sent the proposal, they came back on price), Claude moves the deal to the next stage, and you can undo it. Deals that go quiet get a chase drafted, with a real reason to get in touch.
+- **One board for everything.** **Pipeline** shows every deal by stage, with what each stage is worth, won this month and your win rate, all worked out from your deals. **Review** holds what Claude is waiting for you to decide. **Calls** and **People** show every sales call and every contact with their deals. **Home** is your dashboard.
+- **Yours to shape.** Your own stages, your own wording for the deal check, your own colours, in light or dark.
+- **Keeps itself up to date.** If you want, Claude checks in every hour while you work.
 
 ## What you need
 
 - **Claude Code**, signed in with a paid Claude plan (Pro or Max). Your email, calendar and app connections come from your Claude account, and Claude Code only uses them when it's signed in with a subscription. The Claude desktop app works too.
-- Nothing else to install in most cases. Your task list runs on your own computer using Node (Claude installs it for you if it's missing, with your permission).
-- About 20 to 25 minutes, once.
+- Nothing else to install in most cases. The app runs on your own computer using Node (Claude installs it for you if it's missing, with your permission).
+- About 25 to 30 minutes, once.
 
 ## Get started
 
 1. **Open Claude Code** in the Claude desktop app (the Code tab) or in the Terminal (on Windows, PowerShell). Any folder will do for this first step.
 2. **Ask Claude to fetch the kit.** Paste this:
-   > Copy https://github.com/georgecairns-ui/task-list-os into a folder called "Task List OS" in my Documents, then tell me how to open it and set it up.
+   > Copy https://github.com/georgecairns-ui/pipeline-os into a folder called "Pipeline OS" in my Documents, then tell me how to open it and set it up.
 
    Claude copies everything onto your computer and gives you one line to open the new folder. In the desktop app, you choose the folder instead. (If your computer asks to install "command line developer tools" or Git, say yes; it's free and takes a few minutes.)
-3. **Open the Task List OS folder in Claude Code and choose "Yes, I trust this folder".** The first time, Claude Code asks whether you trust the folder and warns that it pre-approves some permissions. Those permissions only let Claude update your task list, your business notes and your files folder, search the web and start the task list, without stopping to ask each time. It still can't send, delete or change anything in your email or other apps. Press the down arrow, then Enter.
+3. **Open the Pipeline OS folder in Claude Code and choose "Yes, I trust this folder".** The first time, Claude Code asks whether you trust the folder and warns that it pre-approves some permissions. Those permissions only let Claude update your pipeline, your business notes and your files folder, search the web and start the app, without stopping to ask each time. It still can't send, delete or change anything in your email or other apps. Press the down arrow, then Enter.
 4. **Type `/setup`.**
 
-Claude asks a few quick questions (which email you use, whether you record calls, which apps you use), connects them one by one (mostly sign in and approve), learns how your business works, and fills your task list with your real work. It asks about your services and builds you your own skills, saved in the **skills-to-upload** folder with a note on how to add them to Claude. It also asks for your website or brand guidelines, so the app comes out in your own colours, font and logo. Then it opens your task list and gives you its link, **http://localhost:4747**. Bookmark it. That's it.
+Then it opens your pipeline and gives you its link, **http://localhost:4747**. Bookmark it.
 
 If an app needs a key rather than a sign-in, Claude gives you one line to paste into the Terminal. The key is stored in your computer's secure keychain, never in a chat and never in this folder.
 
@@ -52,24 +53,23 @@ If an app needs a key rather than a sign-in, Claude gives you one line to paste 
 
 | Say (or type the command) | What happens |
 |---|---|
-| "Sort my day" (`/sort-my-day`) | Your plan for today, from your list, inbox, calls and calendar |
-| "Check in" (`/check-in`) | Anything new in your inbox, calls and calendar. Runs on its own every hour if you turn that on |
-| "Sort my brain dump" (`/sort-my-brain-dump`) | Your notes become tasks, with times and how-to guides |
-| "Plan my week" (`/plan-my-week`) | A day for each task that needs one, around your meetings |
-| "Help me reply to Tom" | A draft in your voice |
-| "Wrap up my day" (`/wrap-up-my-day`) | What got done and what rolls over |
+| After a sales call: paste your notes into the deal | The deal check, next steps, a tip and the email back, filled in for you |
+| "Update my pipeline" (`/pipeline-check-in`) | New calls, enquiries, replies and sales meetings, all on the deals. Runs on its own every hour if you turn that on |
+| "Prep me for my call with Mark" | What you need to know and what to ask, in 2 minutes |
+| "Who should I chase?" | A chase drafted for every deal gone quiet |
+| "How qualified is this deal?" | The deal check, and the question that matters most |
 
 ## Your information
 
-Your tasks and notes live in this folder on your computer. Claude reads your email, calendar and apps through the connections you approve, and only ever reads and drafts. It never sends, deletes, pays or posts for you. There's no Task List OS account or server; Get AI Powers can't see any of it. Read [docs/PRIVACY-AND-SAFETY.md](docs/PRIVACY-AND-SAFETY.md) for the detail.
+Your deals and notes live in this folder on your computer. Claude reads your email, calendar, calls and apps through the connections you approve, and only ever reads and drafts. It never sends, deletes, pays or posts for you, and never sends a bot to your meetings. There's no Pipeline OS account or server; Get AI Powers can't see any of it. Read [docs/PRIVACY-AND-SAFETY.md](docs/PRIVACY-AND-SAFETY.md) for the detail.
 
 ## Make it yours
 
-Change the colours, labels and folders by asking Claude. See [docs/CUSTOMISING.md](docs/CUSTOMISING.md).
+Change the stages, the deal check wording, the colours and the folders by asking Claude, or in Preferences. See [docs/CUSTOMISING.md](docs/CUSTOMISING.md).
 
 ## Want it set up properly for you?
 
-Task List OS works on its own. If you'd like help building your folders, business context and Claude skills around how your business really works, Get AI Powers can help. Find us at [getaipowers.com](https://getaipowers.com).
+Pipeline OS works on its own. If you'd like help building your folders, business context and Claude skills around how you really sell, Get AI Powers can help. Find us at [getaipowers.com](https://getaipowers.com).
 
 ## What's inside
 
@@ -78,19 +78,19 @@ START-HERE.md          Claude reads this first and runs setup (/setup)
 toolkit.json           what this tool is, for attaching it to the others in the toolkit
 ATTACHING.md           how the toolkit's tools attach to each other
 CLAUDE.md              Claude's standing instructions in this folder
-Open Task List.html    double-click to open your task list (or use the link Claude gives you)
-setup/                 the 9 setup steps, a guide per app in connections/, and the key scripts
-context/               Claude's notes about your business
+Open Pipeline.html     double-click to open your pipeline (or use the link Claude gives you)
+setup/                 the 10 setup steps, a guide per app in connections/, and the key scripts
+context/               Claude's notes about your business; sales.md is how you sell
 .claude/skills/        saved know-how; each one also works as a command in Claude Code
 skills-to-upload/      the skills Claude builds for your business, packed up to add to Claude
 files/                 your business documents, in numbered folders
-apps/                  the task list app and its look (theme.css)
+apps/                  the pipeline app and its look (theme.css)
 docs/                  customising, privacy and safety
-maintainers/           for people developing Task List OS itself
+maintainers/           for people developing Pipeline OS itself
 ```
 
 ## Licence
 
 Free to use and change for your own business. Not for resale. See [LICENSE](LICENSE) for the plain-English terms.
 
-Fonts: Zilla Slab and Source Serif 4, under the SIL Open Font License (see `apps/shared/fonts/OFL.txt`).
+Fonts: Figtree (the app's font), plus Zilla Slab and Source Serif 4 for anyone who wants them, all under the SIL Open Font License (see `apps/shared/fonts/OFL.txt`).

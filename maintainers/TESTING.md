@@ -1,92 +1,55 @@
-# Testing Task List OS
+# Testing Pipeline OS
 
-How to test the whole thing as a customer would, without touching the repo.
+How to test the whole thing as a customer would, without touching the repo. Also follow section 5 of `SHARED-V3-CHANGES.md` and the testing section of `SHARED-V4-CHANGES.md` for the shared parts.
 
 ## 1. Make a fresh copy
 
-Never test inside the repo: setup writes your real details into it. Build the release zip and unzip it somewhere else:
+Never test inside the repo: setup writes real details into it. Build the release zip and unzip it somewhere else:
 
 ```bash
 bash maintainers/make-release.sh
 ```
 
-Then unzip `dist/task-list-os.zip` into a test location, for example `Documents/Task List OS test`. Each test run starts from a fresh unzip.
+Then unzip `dist/pipeline-os.zip` into a test location, for example `Documents/Pipeline OS test`. Each test run starts from a fresh unzip.
 
 ## 2. Run setup as a customer
 
-1. Open Claude (desktop app with folder access, or Claude Code opened in the test folder).
-2. Say: **"Read START-HERE.md and set me up."**
-3. Answer as a real small business owner would. A test Gmail account is ideal for step 2, so Claude reads a test inbox rather than your real one. Send it a few realistic emails first: a client asking for something, an invoice reminder, a newsletter (which Claude should ignore).
+1. Open Claude Code in the test folder and type `/setup`.
+2. Answer as a real small business owner would. A test Gmail account is ideal, so Claude reads a test inbox: send it an enquiry, a reply from a prospect asking about price, a proposal from the "owner", and a newsletter (which Claude should ignore). Put a few meetings in its calendar: a "Discovery call" with a stranger, a catch-up with a supplier, a dentist appointment, and a "Quick chat" with someone unknown.
+3. In step 4 (your customers), try skipping questions 1 to 3. Setup must explain why they're needed, ask once more, then stop and leave the step unticked. The app must show "Tell Claude what you sell".
 4. Try stopping halfway and starting a new conversation with "carry on setting up". It should pick up from `setup/progress.md`.
 
 ## 3. What to check
 
 **Setup**
-- [ ] Claude explains what's about to happen before starting, and asks one batch of questions per step, not a long interview.
-- [ ] It never asks for a password or key in chat.
-- [ ] Email connects (or Claude explains the alternatives honestly if it can't).
-- [ ] The `context/` files are filled in, short and accurate, and Claude showed a summary for correction.
-- [ ] The gaps note at the end is gentle and appears once.
-- [ ] No jargon reaches the customer: agent, repo, JSON, MCP, API.
+- [ ] Claude drafts the sales answers from the website and email before asking, and marks guesses as guesses.
+- [ ] `context/sales.md` is filled in, short and in the owner's words; `settings.salesSetUp` is true and the stages are theirs.
+- [ ] It never asks for a password or key in chat, and no jargon reaches the customer (agent, repo, JSON, MCP, API, MEDDPICC field names).
+- [ ] The first run sorts the test calendar correctly: the discovery call is a sales meeting on a deal, the supplier and dentist are ignored, the "Quick chat" becomes a question in Review.
+- [ ] Every open deal has a deal check with evidence for each Known answer, next steps, a coaching tip and, where due, an email.
+- [ ] No deal check answer, value or service was invented.
 
 **The app**
-- [ ] Open Task List.html opens the app in Chrome. Connect, pick the main folder, Allow.
-- [ ] "Good morning, [name]" with Claude's suggestions, including some with a **New** tag and "From your inbox".
-- [ ] Approve: the card ticks and slides away, the task lands on today's list. Undo works.
-- [ ] Skip a **New** suggestion: it disappears for good. Run "sort my day" again; Claude must not suggest it again.
-- [ ] Tick a task done. The time saved panel (last 7 days) goes up.
-- [ ] Ask Claude "add call the bank to my list" with the app open: it appears within a few seconds with "Claude updated your list".
-- [ ] Reload the page: everything is still there.
-- [ ] Demo switch on and off: demo shows Fern & Finch, and switching off returns your real list untouched.
-- [ ] Review: approve, edit and skip all work; Approve all clears the page.
-- [ ] Calendar: your real meetings show (after "sort my day"). Drag a task from To schedule onto a time slot; drag it to a new time. Day, Week and Month all work.
-- [ ] Brain dump: type 3 lines, press Cmd or Ctrl and Enter. Say "sort my brain dump" to Claude; the lines become New suggestions in Review.
-- [ ] People: add a person, open their record, add a task for them, see it in their record.
-- [ ] Search (press /) finds tasks and people. N opens New task.
-- [ ] Phone width (Chrome's device toolbar): the menu button opens the sidebar, pages stack, no sideways scrolling.
+- [ ] Pipeline: deals by stage, each column's value adds up, the numbers along the top match the deals. Drag a deal to another stage: it moves, Undo works.
+- [ ] Open a deal. Paste 3 lines into Add call notes and press Update the deal: "Claude is reading your notes" shows, and within a minute or 2 the deal updates by itself. With `TLOS_AUTO_CLAUDE=off`, the notes wait and the Open in Claude button appears.
+- [ ] Choose a .txt file in the notes box, and drop one on it: both read. A .pdf is refused with a plain message.
+- [ ] Draft opens the email in Gmail or Outlook, written and addressed. "I've sent it" adds a line to the timeline.
+- [ ] Review: Keep and Undo on a deal Claude moved; Add to pipeline and Not a deal on a suggested deal (Undo works); Draft, Done and Skip on a chase; Yes and No on a question.
+- [ ] Mark won, Mark lost (with a reason), Reopen.
+- [ ] Preferences: rename, add and remove a stage (deals in a removed stage go to the first one), reword a deal check question, switch "Let Claude move deals" off. Save and reload: all kept.
+- [ ] Ask Claude "add a deal for a new website for Test Ltd, about £3,000" with the app open: it appears within a few seconds with "Claude updated your pipeline".
+- [ ] Demo switch on and off: demo shows Fern & Finch, switching off returns the real pipeline untouched.
+- [ ] Light and dark on every page; phone width (the board scrolls sideways, the sidebar opens from the menu button).
 
-**The assistant**
-- [ ] Setup step 1 asks everything in one message, including "Do you record your calls? With what?"
-- [ ] Gmail or Microsoft 365 connects by signing in; Claude says what it can see.
-- [ ] A call recorder (Fathom, Fireflies and so on) connects; Claude names your latest call.
-- [ ] For an app that needs a key, `bash setup/scripts/save-key.sh NAME` stores it in Keychain; after restarting Claude it can use it, and the key never appeared in chat.
-- [ ] First run: the Inbox fills with real emails that need an answer, each with a sensible draft. Draft opens it in Gmail or Outlook, addressed and written.
-- [ ] Calls shows recent calls with summaries, actions in Review and a follow-up draft.
-- [ ] Brain dump "pay HMRC tax bill", then "sort my brain dump": a task with a GOV.UK guide and a suggested time; Approve, then Add to calendar opens a filled-in event.
-- [ ] Voice note (top bar, or V): talk for a minute about 4 or 5 different things, press Done. "Claude is sorting your voice note" appears, then "Claude has sorted your voice note"; Review has the new tasks, one with a Draft email, one with a suggested time. Works in Chrome; Firefox shows the explanation.
-- [ ] A scheduled task in the Claude app running `/check-in` hourly updates the app on its own (watch the "Claude checked at" line change).
-- [ ] Claude never sends an email, sends a note-taker to a call, or changes a calendar event without a specific yes.
+**Home**
+- [ ] On its own, Pipeline OS's Home boxes are switched on by default. Attached to Task List OS, they start switched off and show in Customise's hidden list.
 
-**Skills**
-- [ ] "Help me reply to [an email in the test inbox]": a draft in your voice, offered as a draft, never sent.
-- [ ] "Chase [a client] about invoice 1042 for £340": specific, right firmness.
-- [ ] "Write up this call" with pasted notes: summary, follow-up draft, actions as New suggestions in the app.
-- [ ] "Wrap up my day": short and kind, changes nothing.
+## 4. Attached to Task List OS
 
-**The redesign** (shared version 3)
-- [ ] http://localhost:4747 opens Home: a greeting and 7 boxes in rows that line up. Approve on Today's plan works there.
-- [ ] Customise on Home: hide, show, move, make wide, Done. Reload: still the same. Reset puts the default back.
-- [ ] Sidebar: Home at the top, Task List OS as a dropdown with its pages (All tasks has Waiting on and Done under it). Fold it: the total waiting shows on its name. Reload: still folded.
-- [ ] The moon or sun button switches light and dark on every page, and is remembered.
-- [ ] Tasks: Today, This week and All each work as Board, List and Calendar. Drag a card between To do, In progress, Waiting on and Done; it stays there after a reload. Every card is the same height and stays inside its column, with the title on up to 2 lines.
-- [ ] Today shows Claude's plan on top. Old links (#today, #week, #calendar, #all, #waiting, #done) open the matching Tasks view.
-- [ ] New task: type a new name in "Who's it for"; it's added to the contacts and the task shows it.
-- [ ] Preferences (the cog): rename a column, rename and recolour a category, add one, remove one (its tasks move to "Can wait"), set how Tasks opens. Save, reload: all kept, on the board and in the task panel.
-- [ ] Claude can do this: in Demo mode 4 tasks show the tag; the filter shows only them; a task's panel has Open in Claude (opens the Claude desktop app with the prompt typed in, in this folder) and Copy the prompt. After a real check-in, tasks Claude could do get the tag.
-- [ ] The Brain dump button at the top records a voice note; the sidebar shows only Tasks, Inbox, Review and Calls.
-- [ ] Add meeting: it shows dashed in This week's calendar at once and opens in Google Calendar or Outlook with the title, time, place and guests filled in. Its panel can open it again or remove it.
-- [ ] Setup step 5 offers to match the brand from a website or brand guidelines, and the colour, font and logo change in light and dark.
-
-**Toolkit menu and attaching** (shared version 2)
-- [ ] The sidebar shows "Your tools" with Task List OS, and "More tools" with the other 8, each with a padlock, in the catalogue's order.
-- [ ] Clicking a locked tool opens the panel. "Book a free call" opens the booking page in a new tab, and its address ends with `utm_source=task-list-os&utm_medium=toolkit-app&utm_campaign=<that tool>`. Escape, "Not now" and a click outside all close it.
-- [ ] With `showMoreTools` set to `false` in `apps/shared/catalogue.json`, the locked tools disappear.
-- [ ] The full list of helper checks, including a throwaway test tool, is in `maintainers/SHARED-V2-CHANGES.md` section 5. Never ship the test tool.
-
-## 4. Reset
-
-Delete the test folder (it's a copy) and unzip again. If you tested inside the repo by mistake, restore the shipped files with:
-
-```bash
-git checkout -- apps/task-list/data context setup/progress.md CLAUDE.md files
-```
+On a scratch copy of Task List OS, follow `ATTACHING.md` to attach this tool, then check:
+- [ ] Both tools show as dropdowns in the sidebar; Home offers both tools' boxes; nothing in Task List OS broke.
+- [ ] Setup didn't ask what the business does again (only what `context/sales.md` still needed).
+- [ ] People shows the task list's contacts with their deals, read only.
+- [ ] A recorded sales call is written up once: on the task list's Calls page and, with the sales side, on the deal.
+- [ ] Call prep and chases appear as suggested tasks in the task list with `source.tool` set to `pipeline`, and nothing moves without a click.
+- [ ] One check-in runs both tools' steps.

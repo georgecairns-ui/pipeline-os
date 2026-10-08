@@ -1,12 +1,13 @@
 # Context
 
-Claude's notes about the business. Claude fills these in during setup (step 4) and keeps them up to date as it learns more, always asking first.
+Claude's notes about the business. Claude fills these in during setup and keeps them up to date as it learns more, always asking first.
 
 They're plain text. You can open and edit any of them yourself. If something's wrong, just tell Claude and it'll fix it.
 
 | File | What's in it |
 |---|---|
 | `business.md` | What the business does, for whom, and what it sells |
+| `sales.md` | How you sell: your services and prices, who you sell to, the problems you solve, who isn't a good fit. Pipeline OS reads it for every deal |
 | `people.md` | Your team, helpers, key clients and suppliers |
 | `priorities.md` | What matters most right now |
 | `routines.md` | When you work and the jobs that repeat |
