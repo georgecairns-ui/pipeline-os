@@ -1,10 +1,10 @@
 {
   "tools": [
     {
-      "id": "task-list",
-      "name": "Task List OS",
-      "app": "apps/task-list/",
-      "dataFiles": ["apps/task-list/data/tasks.json"]
+      "id": "pipeline",
+      "name": "Pipeline OS",
+      "app": "apps/pipeline/",
+      "dataFiles": ["apps/pipeline/data/pipeline.json"]
     }
   ]
 }

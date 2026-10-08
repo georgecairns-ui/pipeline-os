@@ -1,0 +1,9 @@
+{
+  "about": "Jobs the app can ask Claude to do straight away, through the helper (apps/server). The app sends only the job's name; these words are what Claude follows. See maintainers/SHARED-V4-CHANGES.md.",
+  "jobs": {
+    "update-deals": {
+      "label": "updating deals from new call notes",
+      "prompt": "Call notes have just been added to a deal in Pipeline OS. Follow .claude/skills/update-a-deal for every deal in apps/pipeline/data/pipeline.json that has notes waiting (notesInbox items with status waiting). Read context/sales.md first. Be quick and change nothing else."
+    }
+  }
+}
