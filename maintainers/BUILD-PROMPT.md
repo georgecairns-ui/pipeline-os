@@ -170,7 +170,7 @@ The rest of setup copies Task List OS's 9 steps (quick questions, connect email 
 - **Look**: `apps/shared/theme.css` and `apps/shared/images/` only, set by the `match-my-brand` step during setup.
 - **The menu**: your tool uses the shared sidebar and `catalogue.json` as they are. Every other toolkit tool shows locked with the Book a free call panel. Don't build your own menu or your own booking link.
 - **Words and settings**: labels, stages, the deal check's wording and anything business-specific in one obvious place, documented in `docs/CUSTOMISING.md` the way Task List OS does it.
-- **Demo data**: the same made-up people and businesses as Task List OS (Sam, Priya, Tom at Greenway Café, Marlow Dental and the rest: check its `demo-data.js`), so a demo of several attached tools feels like one believable business. Include deals at every stage, a few half-finished deal checks, a sales call with no transcript, a meeting Claude wasn't sure about, and an "also could help with" suggestion.
+- **No demo data in the kit** (shared version 6, 9 October 2026): the kit ships empty and shows a "Let's set up" card until `/setup` has run. The sample business for the shareable demo page (the same made-up people as Task List OS) lives outside the repo in `~/Claude/08_Artifacts/Pipeline-OS-Demo/`.
 
 ## Rules (same as Task List OS)
 
@@ -194,4 +194,4 @@ The rest of setup copies Task List OS's 9 steps (quick questions, connect email 
 7. Write MARKETING.md in `maintainers/`: one plain sentence on what it does, the before and after for the owner, and the 3 things to show in a 60-second video. Mark any time-saving claim "to check".
 8. Publish (step 6 of the repository section) and refresh the Drive copy.
 8b. Make the install guide for non-members with my `ccf-install-guide` skill, using its non-member variant: copy the Task List OS guide's `build.py` and its `_brand/` folder (the getaipowers.com fonts and logo mark) from `~/Claude/05_Marketing/Guides-and-Assets/October 2026/Task-List-OS-Install-Guide/` and change only the content. It must look like getaipowers.com, never the old starburst logo. Page 3 must carry the clickable GitHub link and the exact prompt to copy into Claude Code.
-9. Finish by telling me in plain English: where it is, the GitHub link, how to open it, how to try the demo, how attaching went, what isn't finished, and what you'd improve next.
+9. Finish by telling me in plain English: where it is, the GitHub link, how to open it, how attaching went, what isn't finished, and what you'd improve next.

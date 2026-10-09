@@ -38,7 +38,7 @@ Then unzip `dist/pipeline-os.zip` into a test location, for example `Documents/P
 - [ ] Mark won, Mark lost (with a reason), Reopen.
 - [ ] Preferences: rename, add and remove a stage (deals in a removed stage go to the first one), reword a deal check question, switch "Let Claude move deals" off. Save and reload: all kept.
 - [ ] Ask Claude "add a deal for a new website for Test Ltd, about £3,000" with the app open: it appears within a few seconds with "Claude updated your pipeline".
-- [ ] Demo switch on and off: demo shows Fern & Finch, switching off returns the real pipeline untouched.
+- [ ] Fresh install (empty pipeline file, no name): the Pipeline page and the first Home box show "Let's set up your pipeline" with /setup to copy; nothing mentions a demo.
 - [ ] Light and dark on every page; phone width (the board scrolls sideways, the sidebar opens from the menu button).
 
 **Home**

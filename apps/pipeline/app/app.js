@@ -2,7 +2,7 @@
   PIPELINE OS: the app
   --------------------
   Ties everything together:
-  1. Connects to data/pipeline.json through the shared store (or Demo mode).
+  1. Connects to data/pipeline.json through the shared store.
   2. Shows the welcome screen until the pipeline is running, then the app.
   3. Moves between pages (Pipeline, Review, Calls, People, Preferences) using the address bar,
      so Back and Forward work.
@@ -58,18 +58,17 @@
     fileName: "pipeline.json",
     dataPaths: ["data", "", "apps/pipeline/data"],
     api: "/api/data/pipeline/pipeline.json",
-    makeDemoData: window.makePipelineDemoData,
     validate: M.validate,
     onStatus: function (s, detail) {
       const previous = status;
       status = s;
       statusDetail = detail || {};
       renderChrome();
-      if (!(data && (s === "ready" || s === "demo" || s === "error")) || previous !== s) render();
+      if (!(data && (s === "ready" || s === "error")) || previous !== s) render();
     },
     onData: function (d, reason) {
       data = M.normalise(d);
-      if (reason === "load" || reason === "demo") { seen.clear(); state.drawer = null; }
+      if (reason === "load") { seen.clear(); state.drawer = null; }
       render();
       // While Claude reads call notes, the "deal updated" message says it instead
       if (reason === "external" && !claude.dealIds.length) ui.toast("Claude updated your pipeline", { icon: "sparkle" });
@@ -113,14 +112,15 @@
       '<div class="gate__art"><img src="' + C.ART[art] + '" alt="" width="440" height="440"></div></div>';
   }
   function renderGate(message) {
-    if (status === "checking" || ((status === "ready" || status === "demo") && !data)) {
+    if (status === "checking" || (status === "ready" && !data)) {
       return showGate('<div class="gate__loading" aria-busy="true" aria-label="Opening your pipeline"><div class="skeleton" style="width:220px;height:14px"></div><div class="skeleton" style="width:320px;height:28px"></div><div class="skeleton" style="width:260px;height:14px"></div></div>');
     }
     if (status === "needs-helper") {
       return showGate(gateCard("welcome", "", "Your pipeline opens from Claude.",
         "<p>Claude runs your pipeline on this computer and gives you a link to it. In Claude Code, in your Pipeline OS folder, just say:</p>" + C.say("Open my pipeline") +
         '<p class="gate__note">Not set up yet? Say <strong>/setup</strong> instead. Claude asks about your business and the people you sell to, connects your email, calendar and calls, and builds your pipeline first.</p>',
-        '<button type="button" class="btn btn--ghost" data-action="demo-on">See it with sample data</button>'));
+        "",
+        '<button type="button" class="link-btn" data-action="connect">Or connect the folder yourself in Chrome</button>'));
     }
     if (status === "unsupported") {
       return showGate(gateCard("shrug", "One small thing", "This works in Chrome or Microsoft Edge.", "<p>Open this same page in Google Chrome or Microsoft Edge and it will work. Both are free.</p>", ""));
@@ -138,8 +138,7 @@
       "<p>Claude writes up your sales calls, checks every deal, tells you what to do next and drafts the email back. Everything lands here for you to approve. It all lives in a file on your own computer.</p>" +
       '<ol class="gate__steps"><li><span>Click <strong>Connect your pipeline</strong>.</span></li><li><span>Choose your <strong>Pipeline OS</strong> folder, the one with START-HERE.md in it.</span></li><li><span>When Chrome asks to let this page edit files, click <strong>Allow</strong>.</span></li></ol>' +
       (message ? '<p class="gate__error" role="alert">' + icon("alert") + esc(message) + "</p>" : ""),
-      '<button type="button" class="btn btn--primary btn--lg" data-action="connect">' + icon("folder") + "Connect your pipeline</button>" +
-      '<button type="button" class="btn btn--ghost" data-action="demo-on">See it with sample data</button>',
+      '<button type="button" class="btn btn--primary btn--lg" data-action="connect">' + icon("folder") + "Connect your pipeline</button>",
       "No account, nothing to install. Your deals never leave your computer."));
   }
 
@@ -147,7 +146,7 @@
   // 3. The app
   // ============================================================
 
-  function inApp() { return !!data && (status === "ready" || status === "demo" || status === "error"); }
+  function inApp() { return !!data && (status === "ready" || status === "error"); }
 
   function render() {
     if (!inApp()) { renderChrome(); return renderGate(); }
@@ -164,8 +163,8 @@
     return ' enter" style="--i:' + Math.min(stagger++, 12);
   }
   function storeInfo() {
-    return { demo: store.isDemo(), canChange: !store.isDemo() && !store.isHelper(),
-      folder: store.isDemo() ? "Sample data (nothing is saved)" : store.isHelper() ? "Your Pipeline OS folder, on this computer" : store.folderName() };
+    return { canChange: !store.isHelper(),
+      folder: store.isHelper() ? "Your Pipeline OS folder, on this computer" : store.folderName() };
   }
   function ctx() { return { d: data, state: state, anim: anim, actions: viewActions, storeInfo: storeInfo, claude: claude }; }
 
@@ -183,10 +182,7 @@
     } else pill.hidden = true;
 
     const banner = $("#banner");
-    if (status === "demo") {
-      banner.innerHTML = '<div class="banner banner--demo">' + icon("info") + "<span><strong>Demo mode.</strong> Sample data for a made-up business. Nothing is saved.</span>" +
-        '<button type="button" class="btn btn--sm" data-action="demo-off">Turn off demo</button></div>';
-    } else if (status === "error" && data) {
+    if (status === "error" && data) {
       const f = friendlyError(statusDetail.error);
       banner.innerHTML = '<div class="banner banner--error">' + icon("alert") + "<span><strong>" + esc(f.title) + "</strong> " + esc(f.body) + "</span>" +
         '<button type="button" class="btn btn--sm" data-action="retry">Try again</button></div>';
@@ -409,10 +405,6 @@
   }
   function saveNotes(dealId, text, fileName) {
     if (!String(text || "").trim()) return Promise.resolve(false);
-    if (store.isDemo()) {
-      ui.toast("Demo mode: nothing is saved, so Claude can't read these. In your own pipeline, Claude updates the deal straight away", { icon: "info", duration: 8000 });
-      return Promise.resolve(false);
-    }
     return change(function (d) { mut.addNotes(d, dealId, text, fileName); }).then(function () {
       return askClaude("notes", dealId);
     }).then(function (started) {
@@ -592,8 +584,6 @@
       case "reconnect": store.reconnect().catch(function () { renderGate(); }); break;
       case "change-folder": data = null; store.forget(); break;
       case "retry": store.retry(); break;
-      case "demo-on": data = null; store.setDemo(true); break;
-      case "demo-off": data = null; store.setDemo(false); break;
 
       case "open-deal": if (dealId) openDrawer("deal", dealId); break;
       case "open-person": openDrawer("person", btn.getAttribute("data-person") || (btn.closest("[data-person]") || btn).getAttribute("data-person")); break;
@@ -642,7 +632,6 @@
       case "copy-email": { const x = M.dealById(data, dealId); if (x && x.email) ui.copyText(x.email.body || "").then(function (ok) { ui.toast(ok ? "Email copied" : "Couldn't copy"); }); break; }
       // Sending: Claude emails (after the person checks it) or I'll do it
       case "claude-send": {
-        if (store.isDemo()) { ui.toast("Demo mode: nothing is saved, so Claude can't send. In your own pipeline, Claude sends it within a minute or 2", { icon: "info", duration: 8000 }); break; }
         openSendConfirm(btn.getAttribute("data-send-where"), btn.getAttribute("data-send-id"));
         break;
       }
@@ -654,7 +643,6 @@
       }
       case "linkedin-open": linkedinOpen(btn.getAttribute("data-send-where"), btn.getAttribute("data-send-id")); break;
       case "research-deal": {
-        if (store.isDemo()) { ui.toast("Demo mode: nothing is saved, so Claude can't research. In your own pipeline, it takes a minute or 2", { icon: "info", duration: 8000 }); break; }
         change(function (d) { mut.requestResearch(d, dealId); }).then(function () { return askClaude("research", dealId); }).then(function (started) {
           ui.toast(started ? "Claude is researching them now" : "Asked. Claude researches them on its next check-in, or say \u201cresearch my next call\u201d", { icon: "sparkle", duration: 7000 });
         });
@@ -804,11 +792,6 @@
     }
   });
 
-  document.addEventListener("change", function (e) {
-    const el = e.target.closest("[data-change]");
-    if (!el) return;
-    if (el.getAttribute("data-change") === "demo") { data = null; store.setDemo(el.checked); }
-  });
   generic.addEventListener("click", function (e) { if (e.target === generic) generic.close(); });
   document.querySelectorAll("dialog.modal").forEach(function (dlg) { dlg.addEventListener("click", function (e) { if (e.target === dlg) dlg.close(); }); });
 

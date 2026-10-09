@@ -2,7 +2,7 @@
   "id": "pipeline",
   "name": "Pipeline OS",
   "version": "1.0.0",
-  "sharedVersion": "5",
+  "sharedVersion": "6",
   "attachingVersion": "1",
   "app": "apps/pipeline/",
   "dataFiles": [

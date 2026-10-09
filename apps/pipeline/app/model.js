@@ -195,6 +195,8 @@
     own.forEach(function (p) { ids[p.id] = true; });
     return own.concat(linkedPeople.filter(function (p) { return !ids[p.id]; }));
   }
+  // A fresh install that Claude hasn't set up yet: no name and no deals, people or calls
+  function notSetUp(d) { return !(d.settings && d.settings.yourName) && !d.deals.length && !d.people.length && !d.calls.length; }
   function personById(d, id) { return id ? allPeople(d).find(function (p) { return p.id === id; }) || null : null; }
 
   function isOpen(x) { return x.stage !== "won" && x.stage !== "lost" && !x.suggested; }
@@ -518,7 +520,7 @@
   window.PL.model = {
     DEFAULT_STAGES: DEFAULT_STAGES, STAGES: STAGES, STAGE: STAGE, CHECK: CHECK, STATUS: STATUS, ROLES: ROLES,
     openStages: openStages, stageLabel: stageLabel, checkLabel: checkLabel,
-    validate: validate, normalise: normalise, FIT: FIT, fitScore: fitScore, importance: importance, queuedEmails: queuedEmails,
+    validate: validate, normalise: normalise, notSetUp: notSetUp, FIT: FIT, fitScore: fitScore, importance: importance, queuedEmails: queuedEmails,
     todayISO: todayISO, daysSince: daysSince, splitLocal: splitLocal, timeLabel: timeLabel, whenLabel: whenLabel, money: money,
     dealById: dealById, callById: callById, suggestionById: suggestionById,
     setLinkedPeople: setLinkedPeople, allPeople: allPeople, personById: personById,

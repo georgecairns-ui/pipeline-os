@@ -3,7 +3,7 @@
   ---------------------------------------------------------------------------------
   You and your business, your stages (rename, add, remove), money and chasing, whether Claude
   may move deals by itself, the deal check's wording, where drafts open, light or dark, and
-  sample data. Saved to settings in the pipeline file, so Claude follows the same choices.
+  where the pipeline is saved. Saved to settings in the pipeline file, so Claude follows the same choices.
 */
 (function () {
   "use strict";
@@ -76,8 +76,7 @@
         '<div class="pref-row"><span>Light or dark</span><button type="button" class="btn btn--sm" data-theme-toggle>' + icon("moon") + "Switch</button></div>" +
         '<div class="pref-row"><span>Your own colours, font and logo</span>' + C.say("Make it match my brand") + "</div>") +
 
-      section("Sample data",
-        '<label class="switch"><input type="checkbox" data-change="demo"' + (where.demo ? " checked" : "") + '><span class="switch__track" aria-hidden="true"></span>Show sample data instead of mine (for screenshots and videos)</label>' +
+      section("Where your pipeline lives",
         '<div class="pref-row"><span class="muted">Your pipeline is saved in: ' + esc(where.folder) + "</span>" + (where.canChange ? '<button type="button" class="btn btn--sm" data-action="change-folder">Use a different folder</button>' : "") + "</div>") +
 
       '<div class="prefs__save"><button type="submit" class="btn btn--primary">Save preferences</button></div>' +

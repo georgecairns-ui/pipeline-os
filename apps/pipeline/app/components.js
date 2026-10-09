@@ -137,6 +137,17 @@
       (art ? '<div class="empty__art"><img src="' + ART[art] + '" alt="" width="96" height="96"></div>' : "") +
       "<h3>" + esc(title) + "</h3>" + (text ? "<p>" + esc(text) + "</p>" : "") + (extra || "") + "</div>";
   }
+  // Shown on a fresh install, before /setup: what to do next, step by step
+  function setupCard() {
+    return '<section class="panel setup-card"><div class="setup-card__art"><img src="' + ART.welcome + '" alt="" width="72" height="72"></div>' +
+      '<div class="setup-card__body"><h2>Let\u2019s set up your pipeline</h2>' +
+      '<p class="muted">It\u2019s empty for now. Claude fills it with your real deals in about 25 minutes, and you approve everything.</p>' +
+      '<ol class="setup-card__steps">' +
+      "<li>Open Claude Code in your <strong>Pipeline OS</strong> folder (in the Claude desktop app, the Code tab).</li>" +
+      "<li>Type " + say("/setup") + " and answer Claude\u2019s questions. It asks what you sell and who you sell to, then connects your email, calendar and calls.</li>" +
+      "<li>Your deals, the next step on each and the chases to send appear here. Nothing is sent until you say so.</li>" +
+      "</ol></div></section>";
+  }
   function say(text) {
     return '<span class="say">“' + esc(text) + '”<button type="button" class="say__copy" data-action="copy" data-text="' + esc(text) + '">Copy</button></span>';
   }
@@ -155,6 +166,6 @@
   window.PL.c = {
     ART: ART, avatar: avatar, initials: initials, colourFor: colourFor, personLabel: personLabel,
     claudeLink: claudeLink, setFolder: setFolder, checkMeter: checkMeter, emailActions: emailActions, linkedinActions: linkedinActions, fitChip: fitChip, statusChip: statusChip, dealCard: dealCard,
-    sectionHead: sectionHead, empty: empty, say: say, stageOptions: stageOptions, ago: ago
+    sectionHead: sectionHead, empty: empty, say: say, setupCard: setupCard, stageOptions: stageOptions, ago: ago
   };
 })();
