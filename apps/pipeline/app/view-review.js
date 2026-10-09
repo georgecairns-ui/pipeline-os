@@ -81,14 +81,25 @@
     const rank = function (s) { return s.kind in order ? order[s.kind] : 9; };
     sugg.sort(function (a, b) { return M.importance(d, b).score - M.importance(d, a).score || rank(a) - rank(b); });
     fresh.sort(function (a, b) { return M.importance(d, b).score - M.importance(d, a).score; });
-    const high = sugg.concat(fresh).filter(function (it) { return M.importance(d, it).level === "high"; }).length;
+    // The filter along the top: All, High, Medium, Low (remembered in this browser)
+    const count = { all: sugg.length + fresh.length, high: 0, medium: 0, low: 0 };
+    sugg.concat(fresh).forEach(function (it) { count[M.importance(d, it).level]++; });
+    const want = ctx.state.reviewGrade || "all";
+    const keep = function (it) { return want === "all" || M.importance(d, it).level === want; };
+    const shownSugg = sugg.filter(keep), shownFresh = fresh.filter(keep);
+    const seg = function (key, label) {
+      return '<button type="button" class="grade-filter grade-filter--' + key + '" data-action="review-grade" data-value="' + key + '" aria-pressed="' + (want === key) + '"' + (key !== "all" && !count[key] ? " disabled" : "") + ">" +
+        (key === "all" ? "" : '<span class="grade-filter__dot" aria-hidden="true"></span>') + esc(label) + ' <span class="segmented__n">' + count[key] + "</span></button>";
+    };
+    const filters = '<div class="segmented grade-filters" role="group" aria-label="Show by importance">' + seg("all", "All") + seg("high", "High") + seg("medium", "Medium") + seg("low", "Low") + "</div>";
     if (!fresh.length && !sugg.length) {
       return '<div class="page page--narrow">' + C.empty("celebrate", "All caught up.", "Nothing needs you. Claude keeps your deals moving; when there's an email to send or a deal it isn't sure about, it lands here.",
         '<div class="empty__actions">' + C.say("Update my pipeline") + C.say("Who should I chase?") + "</div>") + "</div>";
     }
-    let html = '<div class="page page--narrow"><div class="page-intro"><p>Claude moves your deals on and adds the ones that clearly fit by itself. This is what it needs from you, most important first' + (high ? ': <strong>' + high + " high</strong>" : "") + '. Press <strong>Claude emails</strong> to check an email and have Claude send it, or <strong>I\'ll do it</strong> to send it yourself.</p></div>';
-    if (sugg.length) html += '<section class="panel">' + C.sectionHead("To send and to do", { icon: "inbox", count: sugg.length }) + '<ul class="proposals" role="list">' + sugg.map(function (s) { return suggestionRow(ctx, s); }).join("") + "</ul></section>";
-    if (fresh.length) html += '<section class="panel">' + C.sectionHead("Deals Claude wasn\'t sure about", { icon: "trendingUp", count: fresh.length }) + '<ul class="proposals" role="list">' + fresh.map(function (x) { return newDealRow(ctx, x); }).join("") + "</ul></section>";
+    let html = '<div class="page page--narrow">' + filters + '<div class="page-intro"><p>Claude moves your deals on and adds the ones that clearly fit by itself. This is what it needs from you, most important first. Press <strong>Claude emails</strong> to check an email and have Claude send it, or <strong>I\'ll do it</strong> to send it yourself.</p></div>';
+    if (shownSugg.length) html += '<section class="panel">' + C.sectionHead("To send and to do", { icon: "inbox", count: shownSugg.length }) + '<ul class="proposals" role="list">' + shownSugg.map(function (s) { return suggestionRow(ctx, s); }).join("") + "</ul></section>";
+    if (shownFresh.length) html += '<section class="panel">' + C.sectionHead("Deals Claude wasn\'t sure about", { icon: "trendingUp", count: shownFresh.length }) + '<ul class="proposals" role="list">' + shownFresh.map(function (x) { return newDealRow(ctx, x); }).join("") + "</ul></section>";
+    if (!shownSugg.length && !shownFresh.length) html += C.empty("celebrate", "Nothing " + want + " left.", "Every " + want + " item is done. Pick another level above, or All.", "", true);
     return html + "</div>";
   }
 

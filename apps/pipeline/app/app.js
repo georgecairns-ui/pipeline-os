@@ -36,6 +36,7 @@
   const state = {
     view: "pipeline",
     pipeView: remembered("plos-pipe-view", ["board", "list"]) || "board",
+    reviewGrade: remembered("plos-review-grade", ["all", "high", "medium", "low"]) || "all",
     peopleGroup: remembered("plos-people-group", ["clients", "prospects", "untouched", "quiet", "lost"]) || "",
     drawer: null
   };
@@ -603,6 +604,7 @@
       case "add-notes": openAddNotes(dealId); break;
       case "add-person": openAddPerson(); break;
       case "pipe-view": state.pipeView = btn.getAttribute("data-value"); remember("plos-pipe-view", state.pipeView); seen.clear(); renderView(); break;
+      case "review-grade": state.reviewGrade = btn.getAttribute("data-value"); remember("plos-review-grade", state.reviewGrade); seen.clear(); renderView(); break;
       case "people-group": {
         const g = btn.getAttribute("data-group") || "";
         state.peopleGroup = state.peopleGroup === g ? "" : g;
@@ -687,6 +689,7 @@
       }
       case "approve-suggestion": case "skip-suggestion": {
         const how = action === "approve-suggestion" ? "approve" : "skip";
+        if (how === "approve" && window.PL.confetti) window.PL.confetti(btn);
         leave(function () { change(function (d) { mut.decide(d, sId, how); }).then(function () { ui.toast(how === "approve" ? "Done" : "Skipped", { actionLabel: "Undo", onAction: function () { change(function (d) { mut.undecide(d, sId); }); } }); }); });
         break;
       }

@@ -861,3 +861,12 @@ details.slist > summary::-webkit-details-marker { display: none; }
 .grade--medium { background: var(--color-warning-soft); color: var(--color-warning); }
 .grade--low { background: var(--color-sunk); color: var(--color-muted); }
 .grade-why { margin: 6px 0 0; font-size: var(--text-xs); color: var(--color-muted); }
+/* Review: filter by importance */
+.grade-filters { margin-bottom: var(--space-4); }
+.grade-filter { display: inline-flex; align-items: center; gap: 6px; }
+.grade-filter:disabled { opacity: 0.45; cursor: default; }
+.grade-filter__dot { width: 8px; height: 8px; border-radius: 50%; }
+.grade-filter--high .grade-filter__dot { background: var(--color-accent); }
+.grade-filter--medium .grade-filter__dot { background: var(--color-warning); }
+.grade-filter--low .grade-filter__dot { background: var(--color-faint); }
+.confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
