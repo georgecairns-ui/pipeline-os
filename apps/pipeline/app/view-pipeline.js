@@ -29,7 +29,7 @@
 
   function setupNote(ctx) {
     const d = ctx.d;
-    if (ctx.storeInfo().demo || d.settings.salesSetUp) return "";
+    if (M.notSetUp(d) || d.settings.salesSetUp) return "";
     return '<div class="banner banner--setup">' + icon("info") + "<span><strong>Tell Claude what you sell.</strong> Claude needs to know your services, who you sell to and the problems you solve before it can spot sales calls and check deals properly.</span>" + C.say("Set up my pipeline") + "</div>";
   }
 
@@ -74,6 +74,8 @@
     const d = ctx.d;
     const hasDeals = d.deals.some(function (x) { return !x.suggested; });
     let body;
+    // Fresh install, before /setup: the setup card above an empty board
+    if (M.notSetUp(d)) return '<div class="page page--wide pipe-page">' + C.setupCard() + toolbar(ctx) + board(ctx) + "</div>";
     if (!hasDeals) {
       body = C.empty("welcome", "No deals yet.", "Claude builds your pipeline from your email, calendar and calls. Or add a deal yourself, or paste the notes from a sales call and Claude fills the deal in.",
         '<div class="empty__actions">' + C.say("Update my pipeline") + '<button type="button" class="btn btn--primary" data-action="add-deal">' + icon("plus") + "New deal</button></div>");

@@ -1,9 +1,8 @@
 /*
   PIPELINE OS ON HOME: the boxes this tool adds to the Home dashboard
   -------------------------------------------------------------------
-  Loaded by apps/home/home.js after app/model.js and app/demo-data.js (see "home" in menu.json).
-  It reads the same pipeline file as the pipeline itself, through the same shared store, so Demo
-  mode shows the same sample business. On its own, Pipeline OS's boxes start switched on. With
+  Loaded by apps/home/home.js after app/model.js (see "home" in menu.json).
+  It reads the same pipeline file as the pipeline itself, through the same shared store. On its own, Pipeline OS's boxes start switched on. With
   Task List OS in the folder they start switched off (the person turns them on in Home's list),
   so attaching never changes someone's Home.
 */
@@ -26,7 +25,9 @@
 
   // ---------- The boxes ----------
   function value() {
+    if (M.notSetUp(data)) return '<div class="hbox__setup"><p><strong>Let\u2019s set up your pipeline.</strong> In the Claude desktop app, open the Code tab in your Pipeline OS folder and type <code>/setup</code>. Claude asks what you sell, connects your email, calendar and calls, then fills this page with your real deals.</p></div>';
     const n = M.numbers(data);
+    if (!n.open && !n.wonMonthCount) return empty("No open deals yet. Claude adds them from your email, calendar and calls on each check-in, or add one with New deal on the Pipeline page.");
     const stages = M.openStages().map(function (s) { return { s: s, n: M.dealsInStage(data, s.key).length, v: M.stageValue(data, s.key) }; }).filter(function (r) { return r.n; });
     return '<p class="hstat"><span class="hstat__num">' + esc(M.money(data, n.pipeline)) + '</span><span class="hstat__label">in your pipeline, ' + n.open + (n.open === 1 ? " deal" : " deals") + "</span></p>" +
       (stages.length ? '<ul class="hlist" role="list">' + stages.map(function (r) {
@@ -66,7 +67,7 @@
 
   function quiet() {
     const list = M.openDeals(data).filter(function (x) { return M.needsChase(data, x); }).sort(function (a, b) { return M.quietDays(b) - M.quietDays(a); });
-    if (!list.length) return empty("Every deal has been in touch recently.");
+    if (!list.length) return empty("Nothing has gone quiet. When a deal goes too long without contact, it shows here and Claude drafts a chase for you to approve.");
     return '<ul class="hlist" role="list">' + list.slice(0, 4).map(function (x) {
       const p = person(x.personIds[0]);
       return '<li class="hrow"><span class="hrow__main"><span class="hrow__title">' + esc(x.title) + "</span>" + (p ? '<span class="hrow__sub">' + esc(p.name) + "</span>" : "") + '</span><span class="hrow__meta">' + M.quietDays(x) + " days</span></li>";
@@ -91,7 +92,6 @@
         fileName: "pipeline.json",
         dataPaths: ["data", "", "apps/pipeline/data"],
         api: "/api/data/pipeline/pipeline.json",
-        makeDemoData: window.makePipelineDemoData,
         validate: M.validate,
         onStatus: function () {},
         onData: function (d) { data = M.normalise(d); def.ready = true; ctx.refresh(); }

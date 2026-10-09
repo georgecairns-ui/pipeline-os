@@ -34,6 +34,13 @@ data = json.loads((root / "apps/pipeline/data/pipeline.json").read_text())
 for key in ("deals", "people", "calls", "suggestions", "activity"):
     if data.get(key):
         problems.append("apps/pipeline/data/pipeline.json has " + key + " in it")
+# No demo mode and no sample business ships (the demo lives in ~/Claude/08_Artifacts/Pipeline-OS-Demo)
+if (root / "apps/pipeline/app/demo-data.js").exists():
+    problems.append("apps/pipeline/app/demo-data.js is back: the demo lives outside the kit")
+for f in list((root / "apps").rglob("*.js")) + list((root / "apps").rglob("*.html")) + list((root / "apps").rglob("menu.json")):
+    txt = f.read_text(errors="ignore")
+    if re.search(r"makeDemoData|makePipelineDemoData|setDemo|isDemo|demo-data\.js|demo-mode|data-action=\"demo|data-change=\"demo|Demo mode", txt):
+        problems.append(f"{f.relative_to(root)} still has demo mode in it")
 if (data.get("checkIn") or {}).get("lastRunAt"):
     problems.append("apps/pipeline/data/pipeline.json has a check-in in it")
 settings = data.get("settings", {})
