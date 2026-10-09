@@ -1,0 +1,20 @@
+# Setup progress
+
+Claude ticks each step when it's done and adds a short note, so setup can pick up where it left off in a later conversation.
+
+Setup status: not started
+
+- [ ] 1. Quick questions
+- [ ] 2. Connect email and calendar
+- [ ] 3. Connect call recordings
+- [ ] 4. Your customers and what you sell (required)
+- [ ] 5. Connect other apps
+- [ ] 6. Get to know the business (and make the app look like it)
+- [ ] 7. Build their own skills
+- [ ] 8. First run
+- [ ] 9. Make it automatic
+- [ ] 10. Check and hand over
+
+## Notes for next time
+
+(Claude: anything you need to remember between sessions goes here. For example, "Waiting for their IT person to approve the Microsoft 365 connection".)

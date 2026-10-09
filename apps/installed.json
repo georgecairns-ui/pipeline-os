@@ -1,0 +1,10 @@
+{
+  "tools": [
+    {
+      "id": "pipeline",
+      "name": "Pipeline OS",
+      "app": "apps/pipeline/",
+      "dataFiles": ["apps/pipeline/data/pipeline.json"]
+    }
+  ]
+}

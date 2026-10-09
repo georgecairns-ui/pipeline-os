@@ -1,0 +1,54 @@
+{
+  "id": "pipeline",
+  "name": "Pipeline OS",
+  "version": "1.0.0",
+  "sharedVersion": "5",
+  "attachingVersion": "1",
+  "app": "apps/pipeline/",
+  "dataFiles": [
+    "apps/pipeline/data/pipeline.json"
+  ],
+  "skills": [
+    "pipeline-check-in",
+    "update-a-deal",
+    "sort-pipeline-brain-dump",
+    "qualify-a-deal",
+    "research-a-prospect",
+    "prep-for-a-sales-call",
+    "who-to-chase",
+    "send-approved-emails"
+  ],
+  "setupSteps": [
+    "setup/pipeline-01-your-customers.md",
+    "setup/pipeline-02-first-run.md",
+    "setup/pipeline-03-check-ins.md"
+  ],
+  "contextFiles": [
+    "context/sales.md"
+  ],
+  "connections": [
+    "setup/connections/gmail-and-google-calendar.md",
+    "setup/connections/microsoft-365.md",
+    "setup/connections/google-drive.md",
+    "setup/connections/fathom.md",
+    "setup/connections/fireflies.md",
+    "setup/connections/granola.md",
+    "setup/connections/otter.md",
+    "setup/connections/read-ai.md",
+    "setup/connections/tldv.md",
+    "setup/connections/zoom.md",
+    "setup/connections/pipedrive.md",
+    "setup/connections/hubspot.md",
+    "setup/connections/calendly.md"
+  ],
+  "claudeSection": "apps/pipeline/ATTACH-CLAUDE.md",
+  "reads": [
+    "task-list"
+  ],
+  "sends": [
+    {
+      "to": "task-list",
+      "what": "suggested tasks for call prep, chases that are due and next steps due this week"
+    }
+  ]
+}
