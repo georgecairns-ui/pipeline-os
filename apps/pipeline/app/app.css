@@ -18,7 +18,7 @@
 .accent { color: var(--color-accent); }
 
 /* ============ Before connecting: the gate ============ */
-.gate { min-height: 100vh; display: grid; place-items: center; padding: var(--space-6); background: var(--color-sidebar); }
+.gate { min-height: 100vh; min-height: 100dvh; display: grid; place-items: center; padding: var(--space-6); background: var(--color-sidebar); }
 .gate__card {
   width: min(940px, 100%); display: grid; grid-template-columns: 1.15fr 0.85fr; overflow: hidden;
   background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 16px; box-shadow: var(--shadow-md);
@@ -46,18 +46,21 @@
 }
 
 /* ============ The shell: sidebar, main area, record panel ============ */
-.shell { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); height: 100vh; overflow: hidden; }
-.main { display: flex; flex-direction: column; min-width: 0; height: 100vh; }
+/* dvh: on phones the screen height changes as the browser bar slides away; vh is the fallback */
+.shell { display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); height: 100vh; height: 100dvh; overflow: hidden; }
+.main { display: flex; flex-direction: column; min-width: 0; height: 100vh; height: 100dvh; }
 .view { flex: 1; overflow: auto; outline: none; }
 body.has-drawer .main { margin-right: 0; }
 
 /* ---------- Top bar ---------- */
-.topbar { display: flex; align-items: center; gap: var(--space-3); height: var(--topbar-height); flex: none; padding: 0 var(--space-5); border-bottom: 1px solid var(--color-line); background: var(--color-bg); }
+.topbar { position: relative; display: flex; align-items: center; gap: var(--space-3); height: var(--topbar-height); flex: none; padding: 0 var(--space-5); border-bottom: 1px solid var(--color-line); background: var(--color-bg); }
 .topbar__menu { display: none; }
-.topbar__title { display: flex; align-items: baseline; gap: 10px; min-width: 0; flex: 1; }
-.topbar__title h1 { font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
-.topbar__sub { color: var(--color-muted); font-size: var(--text-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.topbar__search { position: relative; width: min(320px, 34vw); }
+/* The page name never gets cut: the line beside it and the search box give way first */
+.topbar__title { display: flex; align-items: baseline; gap: 10px; flex: 1; }
+.topbar__title h1 { flex: none; font-size: var(--text-xl); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.topbar__sub { flex: 1 1 0; width: 0; min-width: 0; color: var(--color-muted); font-size: var(--text-sm); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.topbar__search { position: relative; flex: 0 1 320px; min-width: 150px; }
+@media (max-width: 1200px) { .save-status__text { display: none; } }
 .topbar__search .input { padding-left: 32px; padding-right: 30px; height: 34px; background: var(--color-sidebar); border-color: var(--color-line); border-radius: var(--radius-md); }
 .topbar__search .input:focus { background: var(--color-surface); }
 .topbar__search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--color-muted); pointer-events: none; }
@@ -160,7 +163,7 @@ body.has-drawer .main { margin-right: 0; }
   display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: var(--space-3); align-items: center;
   padding: 10px 4px 10px 0; border-top: 1px solid var(--color-line);
   transition: background-color var(--dur-base) var(--ease-out), opacity var(--dur-base) var(--ease-out), transform var(--dur-slow) var(--ease-out), max-height var(--dur-slow) var(--ease-in-out), padding var(--dur-slow) var(--ease-in-out);
-  max-height: 260px;
+  max-height: 1000px; /* a cap for the slide-away animation, tall enough for a phone */
 }
 .proposals > .proposal:first-child { border-top: 0; }
 .proposal__body { display: grid; gap: 4px; min-width: 0; }
@@ -168,7 +171,7 @@ body.has-drawer .main { margin-right: 0; }
 .proposal__title { border: 0; background: transparent; padding: 0; text-align: left; cursor: pointer; font-weight: 600; font-size: var(--text-md); color: var(--color-ink); }
 .proposal__title:hover { color: var(--color-accent-text); }
 .proposal__reason { color: var(--color-ink-soft); font-size: var(--text-sm); }
-.proposal__actions { display: flex; gap: 6px; align-items: center; }
+.proposal__actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .source-line { display: flex; gap: 6px; align-items: flex-start; font-size: var(--text-xs); color: var(--color-muted); }
 .source-line svg { width: 14px; height: 14px; flex: none; margin-top: 1px; color: var(--color-info); }
 .source-line strong { color: var(--color-ink-soft); font-weight: 600; }
@@ -350,7 +353,7 @@ body.has-drawer .main { margin-right: 0; }
 .cal-allday__cell.is-over { background: var(--color-accent-soft); }
 .cal-chip { display: block; width: 100%; padding: 2px 6px; border: 0; border-radius: 4px; text-align: left; font-size: var(--text-xs); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cal-chip--event { background: var(--event-bg); color: var(--event-text); }
-.cal-scroll { overflow: auto; min-height: 0; max-height: calc(100vh - 200px); }
+.cal-scroll { overflow: auto; min-height: 0; max-height: calc(100vh - 200px); max-height: calc(100dvh - 200px); }
 .cal-body { position: relative; }
 .cal-gutter { position: relative; }
 .cal-gutter__h { position: absolute; right: 8px; transform: translateY(-50%); font-size: 10px; color: var(--color-muted); }
@@ -446,20 +449,34 @@ body.has-drawer .main { margin-right: 0; }
 .shortcuts { gap: 10px; }
 .shortcuts div { display: flex; align-items: center; gap: 6px; }
 
+/* ============ Big monitors: pages use more of the width ============ */
+@media (min-width: 1800px) {
+  .page { max-width: 1360px; }
+  .page--narrow { max-width: 900px; }
+  .page--split { max-width: 1420px; grid-template-columns: minmax(0, 1fr) 340px; }
+  .page--wide { max-width: none; }
+}
+
 /* ============ Phones and small screens ============ */
 @media (max-width: 860px) {
   .shell { grid-template-columns: 1fr; }
   .topbar { padding: 0 var(--space-3); gap: var(--space-2); }
   .topbar__menu { display: inline-grid; }
   .topbar__sub { display: none; }
-  .topbar__search { width: auto; flex: 0 1 220px; }
+  .topbar__search { flex: 0 1 220px; min-width: 120px; }
   .topbar__search-kbd { display: none; }
   .page { padding: var(--space-4) var(--space-3) var(--space-8); gap: var(--space-4); }
   .board { grid-template-columns: 200px repeat(7, 220px); }
 }
 @media (max-width: 560px) {
   .save-status__text, .topbar__new-label { display: none; }
-  .topbar__search { flex: 1; }
+  /* Search folds down to its icon, and opens across the top bar when tapped */
+  .topbar__search { flex: 0 0 36px; min-width: 0; }
+  .topbar__search .input { padding-right: 0; }
+  .topbar__search .input::placeholder { color: transparent; }
+  .topbar__search:focus-within { position: absolute; z-index: 5; left: var(--space-3); right: var(--space-3); top: 50%; transform: translateY(-50%); }
+  .topbar__search:focus-within .input { padding-right: 30px; }
+  .topbar__search:focus-within .input::placeholder { color: var(--color-faint); }
   .greeting { font-size: var(--text-xl); }
   .drawer { width: 100vw; }
   .prop { grid-template-columns: 84px minmax(0, 1fr); }
@@ -656,8 +673,24 @@ details.slist > summary::-webkit-details-marker { display: none; }
 .banner--setup { margin-bottom: var(--space-4); border-radius: var(--radius-lg); flex-wrap: wrap; }
 .banner--setup .say { margin-left: auto; }
 
-/* The board: one column per stage */
-.pboard { display: grid; gap: 12px; overflow-x: auto; padding-bottom: var(--space-2); align-items: start; }
+/* The board: one column per stage, all on one row when there's room. Open stages share the width;
+   Won and Lost are a little narrower. --open is the number of open stages (set by view-pipeline.js) */
+.pipe-page { container-type: inline-size; }
+.pboard { display: grid; grid-template-columns: repeat(var(--open, 5), minmax(0, 1fr)) repeat(2, minmax(0, 0.7fr)); gap: 12px; padding-bottom: var(--space-2); align-items: start; }
+/* Narrower screens: no sideways scrolling. Laptops keep the open stages side by side with Won and
+   Lost underneath; then 2 columns, then 1 on a phone */
+@container (max-width: 1400px) {
+  .pboard { grid-template-columns: repeat(var(--open, 5), minmax(0, 1fr)); }
+  .pcol--closed { min-height: 160px; }
+}
+@container (max-width: 1000px) {
+  .pboard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pcol { min-height: 160px; }
+}
+@container (max-width: 560px) {
+  .pboard { grid-template-columns: minmax(0, 1fr); }
+  .pcol { min-height: 0; }
+}
 .pcol { display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 360px; padding: 10px; border-radius: var(--radius-lg); background: var(--color-sidebar); border: 1px solid var(--color-line); transition: border-color var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out); }
 .pcol.is-over { border-color: var(--color-accent); background: var(--color-accent-soft); }
 .pcol--closed { background: var(--color-bg); border-style: dashed; }
@@ -769,7 +802,6 @@ details.slist > summary::-webkit-details-marker { display: none; }
 
 @media (max-width: 760px) {
   .pstats { grid-template-columns: 1fr; }
-  .pboard { grid-template-columns: none !important; grid-auto-flow: column; grid-auto-columns: minmax(78vw, 1fr); }
   .ptable .table__row { grid-template-columns: 1fr auto; }
   .ptable .table__row > span:nth-child(n+3):not(:nth-child(3)) { display: none; }
   .pref-checks { grid-template-columns: 1fr; }
@@ -868,6 +900,11 @@ details.slist > summary::-webkit-details-marker { display: none; }
 .grade-filter--high .grade-filter__dot { background: var(--color-accent); }
 .grade-filter--medium .grade-filter__dot { background: var(--color-warning); }
 .grade-filter--low .grade-filter__dot { background: var(--color-faint); }
+/* Small phones: the 4 filters share the width instead of pushing the page sideways */
+@media (max-width: 420px) {
+  .grade-filters { display: flex; width: 100%; }
+  .grade-filters .grade-filter { flex: 1 1 0; min-width: 0; justify-content: center; gap: 4px; padding-left: 4px; padding-right: 4px; }
+}
 .confetti { position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1000; }
 
 /* Fresh install, before /setup: what to do next */
