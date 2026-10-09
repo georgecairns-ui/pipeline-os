@@ -35,14 +35,19 @@
     const d = ctx.d;
     const p = M.personById(d, r.deal.personIds[0]);
     const prep = (r.meeting.prep || []).length;
+    const rs = r.deal.research;
+    const who = rs && rs.person ? [rs.person.role, rs.company && rs.company.name].filter(Boolean).join(" at ") : "";
+    const plan = rs && (rs.callPlan || []).length ? '<details class="peek"><summary>' + icon("list") + "How to run the call</summary><ol class=\"callplan\">" +
+      rs.callPlan.map(function (st) { return "<li><strong>" + esc(st.step) + "</strong>" + (st.minutes ? ' <span class="muted">' + esc(st.minutes) + " min</span>" : "") + (st.detail ? "<span>" + esc(st.detail) + "</span>" : "") + "</li>"; }).join("") + "</ol></details>" : "";
     return '<li class="call call--upcoming' + ctx.anim("up-" + r.deal.id) + '" data-deal="' + esc(r.deal.id) + '">' +
       '<button type="button" class="call__main" data-action="open-deal">' +
       '<span class="call__top"><span class="call__title">' + esc(r.meeting.title || r.deal.title) + '</span><span class="call__when call__when--soon">' + esc(M.meetingLabel(r.meeting.start)) + "</span></span>" +
-      '<span class="call__people">' + (p ? C.avatar(p) + '<span class="muted">' + esc(C.personLabel(p)) + "</span>" : "") + "</span>" +
-      (prep ? '<span class="call__summary">Ask: ' + esc(r.meeting.prep[0]) + "</span>" : "") +
-      "</button>" +
+      '<span class="call__people">' + (p ? C.avatar(p) + '<span class="muted">' + esc(p.name + (who ? ", " + who : p.organisation ? ", " + p.organisation : "")) + "</span>" : "") + "</span>" +
+      (rs && rs.person && rs.person.summary ? '<span class="call__summary">' + esc(rs.person.summary) + "</span>" : prep ? '<span class="call__summary">Ask: ' + esc(r.meeting.prep[0]) + "</span>" : "") +
+      "</button>" + (plan ? '<div class="call__plan">' + plan + "</div>" : "") +
       '<div class="call__foot"><span class="chip">' + icon("trendingUp") + esc(r.deal.title) + "</span>" +
-      '<span class="chip">' + esc(M.stageLabel(r.deal.stage)) + "</span>" +
+      '<span class="chip">' + esc(M.stageLabel(r.deal.stage)) + "</span>" + C.fitChip(r.deal) +
+      (rs ? "" : '<button type="button" class="btn btn--sm" data-action="research-deal">' + icon("search") + "Research them</button>") +
       (prep ? '<span class="chip chip--accent">' + icon("target") + prep + (prep === 1 ? " question" : " questions") + " to ask</span>" : "") + "</div></li>";
   }
 

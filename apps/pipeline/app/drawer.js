@@ -28,9 +28,9 @@
       return '<div class="drawer__banner"><span>' + icon("sparkle") + "Claude spotted this deal. It isn't on your board until you add it." + (x.suggestReason ? " " + esc(x.suggestReason) : "") + "</span>" +
         '<span class="drawer__banner-actions"><button type="button" class="btn btn--approve btn--sm" data-action="approve-deal">' + icon("check") + 'Add to pipeline</button><button type="button" class="btn btn--sm" data-action="skip-deal">Not a deal</button></span></div>';
     }
-    if (x.moved && !x.moved.seen) {
-      return '<div class="drawer__banner"><span>' + icon("sparkle") + "Claude moved this from " + esc(M.stageLabel(x.moved.from)) + " to " + esc(M.stageLabel(x.moved.to)) + "." + (x.moved.reason ? " " + esc(x.moved.reason) : "") + "</span>" +
-        '<span class="drawer__banner-actions"><button type="button" class="btn btn--approve btn--sm" data-action="keep-move">' + icon("check") + 'Keep</button><button type="button" class="btn btn--sm" data-action="undo-move">' + icon("undo") + "Undo</button></span></div>";
+    if (x.moved && M.daysSince(x.moved.at) <= 7) {
+      return '<p class="moved-line">' + icon("sparkle") + "<span>Claude moved this from " + esc(M.stageLabel(x.moved.from)) + " to " + esc(M.stageLabel(x.moved.to)) + "." + (x.moved.reason ? " " + esc(x.moved.reason) : "") +
+        ' <button type="button" class="link-btn" data-action="undo-move">Move it back</button></span></p>';
     }
     return "";
   }
@@ -74,10 +74,46 @@
       '<div class="draft__fields"><label class="draft__field"><span>To</span><input class="input input--bare" data-efield="to" value="' + esc(e.to || "") + '"></label>' +
       '<label class="draft__field"><span>Subject</span><input class="input input--bare" data-efield="subject" value="' + esc(e.subject || "") + '"></label></div>' +
       '<textarea class="textarea draft__body" data-efield="body" rows="8" aria-label="Email to send">' + esc(e.body) + "</textarea>" +
-      '<div class="draft__actions"><button type="button" class="btn btn--primary" data-action="deal-draft">' + icon("pencil") + "Draft in " + esc(L.emailLabel(ctx.d.settings.emailProvider)) + "</button>" +
-      '<button type="button" class="btn" data-action="copy-email">' + icon("list") + "Copy</button>" +
-      (e.sentAt ? "" : '<button type="button" class="btn btn--ghost" data-action="email-sent">' + icon("check") + "I've sent it</button>") + "</div>" +
-      '<p class="muted drawer__small">Opens a new email with this in it. Check it and press send yourself.</p></section>';
+      '<div class="draft__actions">' + C.emailActions(ctx.d, "deal", x.id, e) + (e.sentAt || e.sendStatus === "sent" ? "" : '<button type="button" class="btn btn--ghost" data-action="copy-email">' + icon("list") + "Copy</button>") + "</div>" +
+      (e.sentAt || e.sendStatus ? "" : '<p class="muted drawer__small">Claude emails: you check it, press Send, and Claude sends it for you. I\'ll do it: it opens in ' + esc(L.emailLabel(ctx.d.settings.emailProvider)) + " for you to send.</p>") + "</section>";
+  }
+
+  // LinkedIn: Claude writes the message; the person pastes and sends it
+  function linkedinBox(ctx, x) {
+    const m = x.linkedin;
+    if (!m || !m.body) return "";
+    return '<section class="drawer__section draft"><h3 class="label">LinkedIn message</h3>' + (m.why ? '<p class="muted drawer__small">' + esc(m.why) + "</p>" : "") +
+      '<p class="peek__body">' + esc(m.body) + '</p><div class="draft__actions">' + C.linkedinActions("deal", x.id, m) + "</div>" +
+      (m.sentAt ? "" : '<p class="muted drawer__small">Copies the message and opens their profile: press Message, paste and send. LinkedIn doesn\'t allow messages to be sent for you.</p>') + "</section>";
+  }
+
+  // Who they're meeting: Claude's research, how well they fit the ideal client, and how to run the call
+  function research(ctx, x) {
+    const r = x.research;
+    const busy = ctx.claude && ctx.claude.research.indexOf(x.id) > -1;
+    const btn = busy ? '<p class="notes__status is-busy">' + icon("loader", "spin") + "Claude is researching them. It takes a minute or 2.</p>" :
+      '<button type="button" class="btn btn--sm" data-action="research-deal">' + icon("search") + (r ? "Research them again" : "Research them") + "</button>";
+    if (!r) {
+      return '<section class="drawer__section"><h3 class="label">Who you\'re meeting</h3><p class="muted">Claude looks the person and their business up (their website, Google, their public LinkedIn), scores how well they fit your ideal client, and suggests how to run the call. It does this by itself before every booked call.</p>' + btn + "</section>";
+    }
+    const f = M.fitScore(x);
+    const pr = r.person || {}, co = r.company || {};
+    const crit = (r.fit || []).map(function (c) {
+      const res = M.FIT[c.result] || M.FIT.unknown;
+      return '<li class="fitrow fitrow--' + esc(c.result) + '"><span class="fitrow__q">' + esc(c.criterion) + '</span><span class="kstatus kstatus--' + (c.result === "yes" ? "known" : c.result === "partly" ? "partly" : "gap") + '">' + esc(res.label) + "</span>" +
+        (c.why ? '<span class="fitrow__why">' + esc(c.why) + "</span>" : "") + "</li>";
+    }).join("");
+    const plan = (r.callPlan || []).map(function (st) {
+      return "<li><strong>" + esc(st.step) + "</strong>" + (st.minutes ? ' <span class="muted">' + esc(st.minutes) + " min</span>" : "") + (st.detail ? "<span>" + esc(st.detail) + "</span>" : "") + "</li>";
+    }).join("");
+    return '<section class="drawer__section research"><div class="dcheck__head"><h3 class="label">Who you\'re meeting</h3>' + (f ? '<span class="fit-score fit-score--' + (f.dealBreaker || f.score < 50 ? "low" : f.score < 75 ? "mid" : "high") + '">' + f.score + "% fit</span>" : "") + "</div>" +
+      '<div class="research__who"><p><strong>' + esc(pr.name || "") + "</strong>" + (pr.role ? ", " + esc(pr.role) : "") + (co.name ? " at " + esc(co.name) : "") + "</p>" +
+      (pr.summary ? "<p>" + esc(pr.summary) + "</p>" : "") +
+      (co.summary ? '<p class="muted">' + esc(co.summary) + "</p>" : "") + "</div>" +
+      (crit ? '<div class="dcheck__list"><h4>' + icon("target") + "How well they fit your ideal client" + (f ? ' <span class="muted">(based on ' + f.assessed + " of " + f.of + ")</span>" : "") + '</h4><ul class="fitrows" role="list">' + crit + "</ul></div>" : "") +
+      (plan ? '<div class="dcheck__ask"><h4>' + icon("list") + "How to run the call</h4><ol class=\"callplan\">" + plan + "</ol></div>" : "") +
+      ((r.sources || []).length ? '<p class="muted drawer__small">From: ' + r.sources.map(function (src) { return '<a href="' + esc(safeUrl(src.url)) + '" target="_blank" rel="noopener">' + esc(src.label || src.url) + "</a>"; }).join(", ") + ". Researched " + esc(C.ago(r.researchedAt)) + ". Check anything important yourself.</p>" : "") +
+      btn + "</section>";
   }
 
   function dealCheck(ctx, x) {
@@ -138,7 +174,7 @@
       prop("Came from", '<input class="input input--bare" data-field="source" maxlength="80" value="' + esc(x.source || "") + '" placeholder="Referral, website, email" aria-label="Where it came from">') +
       (x.stage === "lost" ? prop("Why lost", '<input class="input input--bare" data-field="lostReason" maxlength="160" value="' + esc(x.lostReason || "") + '" aria-label="Why it was lost">') : "") +
       "</div>" +
-      (closed ? "" : notesBox(ctx, x)) + nextSteps(ctx, x) + emailBox(ctx, x) + dealCheck(ctx, x) + alsoHelp(ctx, x) + timeline(ctx, x) +
+      (closed ? "" : notesBox(ctx, x)) + nextSteps(ctx, x) + emailBox(ctx, x) + linkedinBox(ctx, x) + (closed ? "" : research(ctx, x)) + dealCheck(ctx, x) + alsoHelp(ctx, x) + timeline(ctx, x) +
       "</div>" +
       '<div class="drawer__foot" data-deal="' + esc(x.id) + '"><button type="button" class="btn btn--ghost btn--danger btn--sm" data-action="delete-deal">' + icon("trash") + 'Delete</button><span class="drawer__spacer"></span>' +
       (closed ? '<button type="button" class="btn" data-action="reopen-deal">' + icon("undo") + "Reopen</button>" :
@@ -160,7 +196,7 @@
       (ro ? '<p class="muted drawer__small">From your task list. Change their details there.</p>' : "") +
       '<div class="props">' +
       prop("Type", '<select class="select select--bare" data-pfield="role" aria-label="Type"' + (ro ? " disabled" : "") + ">" + roles + "</select>") +
-      prop("Email", input("email", "email", "Add email")) + prop("Phone", input("phone", "tel", "Add phone")) + "</div>" +
+      prop("Email", input("email", "email", "Add email")) + prop("Phone", input("phone", "tel", "Add phone")) + prop("LinkedIn", input("linkedin", "url", "Add their LinkedIn link")) + "</div>" +
       (ro ? (p.notes ? '<section class="drawer__section"><h3 class="label">Notes</h3><p>' + esc(p.notes) + "</p></section>" : "") :
         '<section class="drawer__section"><h3 class="label"><label for="personNotes">Notes</label></h3><textarea class="textarea" id="personNotes" data-pfield="notes" rows="3" maxlength="2000" placeholder="How you know them, what they care about">' + esc(p.notes || "") + "</textarea></section>") +
       '<section class="drawer__section"><h3 class="label">Deals <span class="badge">' + deals.length + "</span></h3>" +

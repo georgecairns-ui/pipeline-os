@@ -1,10 +1,12 @@
 /*
-  REVIEW: everything Claude is waiting for the person to decide
-  -------------------------------------------------------------
-  - Deals Claude moved by itself (Keep or Undo)
-  - New deals Claude spotted in email, the calendar or calls (Approve or Skip)
-  - Chases with the email drafted, call prep, and questions ("is this a sales call?")
-  Nothing is sent from here. A chase opens as a draft for the person to check and send.
+  REVIEW: what Claude needs from the person
+  -----------------------------------------
+  Claude makes the everyday calls itself (moving deals, adding deals that clearly fit the ideal
+  client). Review holds what's left:
+  - New deals Claude wasn't sure about (Add to pipeline, Edit, Not a deal)
+  - Emails and chases: Claude emails (the person checks it and presses Send) or I'll do it
+  - LinkedIn messages: Claude writes them, the person pastes and sends
+  - Call prep, things to do, and the odd question
 */
 (function () {
   "use strict";
@@ -14,16 +16,6 @@
 
   function dealLine(d, x) {
     return x ? '<button type="button" class="source-line source-line--btn" data-action="open-deal" data-deal="' + esc(x.id) + '">' + icon("trendingUp") + "<span><strong>" + esc(x.title) + "</strong> " + esc(M.stageLabel(x.stage)) + ", " + esc(M.money(d, x.value)) + "</span></button>" : "";
-  }
-
-  function movedRow(ctx, x) {
-    const m = x.moved;
-    return '<li class="proposal' + ctx.anim("mv-" + x.id) + '" data-deal="' + esc(x.id) + '">' +
-      '<div class="proposal__body"><div class="proposal__top"><span class="chip chip--accent">' + icon("sparkle") + esc(M.stageLabel(m.from)) + " → " + esc(M.stageLabel(m.to)) + "</span></div>" +
-      '<button type="button" class="proposal__title" data-action="open-deal">' + esc(x.title) + "</button>" +
-      (m.reason ? '<p class="proposal__reason">' + esc(m.reason) + "</p>" : "") + "</div>" +
-      '<div class="proposal__actions"><button type="button" class="btn btn--approve btn--sm" data-action="keep-move">' + icon("check") + "<span>Keep</span></button>" +
-      '<button type="button" class="btn btn--ghost btn--sm" data-action="undo-move">' + icon("undo") + "Undo</button></div></li>";
   }
 
   function newDealRow(ctx, x) {
@@ -43,18 +35,19 @@
     const d = ctx.d;
     const x = M.dealById(d, s.dealId);
     const L = window.PL.links;
-    const kinds = { chase: ["mail", "Chase"], email: ["mail", "Email"], prep: ["phone", "Call prep"], question: ["info", "Question"], task: ["checkSquare", "To do"] };
+    const kinds = { chase: ["mail", "Chase"], email: ["mail", "Email"], linkedin: ["external", "LinkedIn"], prep: ["phone", "Call prep"], question: ["info", "Question"], task: ["checkSquare", "To do"] };
     const k = kinds[s.kind] || ["sparkle", "Suggestion"];
     let actions;
     if (s.kind === "question") {
       actions = '<button type="button" class="btn btn--approve btn--sm" data-action="approve-suggestion">' + icon("check") + "<span>Yes</span></button>" +
         '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">No</button>';
     } else if (s.email && s.email.body) {
-      actions = '<button type="button" class="btn btn--primary btn--sm" data-action="suggestion-draft">' + icon("pencil") + "Draft in " + esc(L.emailLabel(d.settings.emailProvider)) + "</button>" +
-        '<button type="button" class="btn btn--approve btn--sm" data-action="approve-suggestion">' + icon("check") + "<span>Done</span></button>" +
-        '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">Skip</button>';
+      actions = C.emailActions(d, "suggestion", s.id, s.email, { small: true }) +
+        (s.email.sendStatus === "queued" ? "" : '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">Skip</button>');
+    } else if (s.linkedin && s.linkedin.body) {
+      actions = C.linkedinActions("suggestion", s.id, s.linkedin, { small: true }) + '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">Skip</button>';
     } else {
-      actions = '<button type="button" class="btn btn--approve btn--sm" data-action="approve-suggestion">' + icon("check") + "<span>" + (s.kind === "prep" ? "Done" : "Approve") + "</span></button>" +
+      actions = '<button type="button" class="btn btn--approve btn--sm" data-action="approve-suggestion">' + icon("check") + "<span>Done</span></button>" +
         (x ? '<button type="button" class="btn btn--sm" data-action="open-deal" data-deal="' + esc(x.id) + '">Open deal</button>' : "") +
         '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">Skip</button>';
     }
@@ -62,7 +55,8 @@
       '<div class="proposal__body"><div class="proposal__top"><span class="chip chip--info">' + icon(k[0]) + esc(k[1]) + "</span></div>" +
       '<p class="proposal__title proposal__title--static">' + esc(s.title) + "</p>" +
       (s.reason ? '<p class="proposal__reason">' + esc(s.reason) + "</p>" : "") +
-      (s.email && s.email.body ? '<details class="peek"><summary>' + icon("mail") + "Read the draft</summary><p class=\"peek__to muted\">To " + esc(s.email.to || "") + " · " + esc(s.email.subject || "") + '</p><p class="peek__body">' + esc(s.email.body) + "</p></details>" : "") +
+      (s.linkedin && s.linkedin.body ? '<details class="peek"><summary>' + icon("external") + "Read the message</summary><p class=\"peek__body\">" + esc(s.linkedin.body) + "</p></details>" : "") +
+      (s.email && s.email.body ? '<details class="peek"><summary>' + icon("mail") + "Read the email</summary><p class=\"peek__to muted\">To " + esc(s.email.to || "") + " · " + esc(s.email.subject || "") + '</p><p class="peek__body">' + esc(s.email.body) + "</p></details>" : "") +
       (s.notes ? '<details class="peek"><summary>' + icon("list") + (s.kind === "prep" ? "Read the prep" : "More") + '</summary><p class="peek__body">' + esc(s.notes) + "</p></details>" : "") +
       dealLine(d, x) + "</div>" +
       '<div class="proposal__actions">' + actions + "</div></li>";
@@ -70,20 +64,18 @@
 
   function render(ctx) {
     const d = ctx.d;
-    const moved = d.deals.filter(function (x) { return x.moved && !x.moved.seen; });
     const fresh = d.deals.filter(M.isSuggested);
     const sugg = M.waitingSuggestions(d);
-    const order = { chase: 0, prep: 1, email: 2, question: 3, task: 4 };
+    const order = { chase: 0, email: 1, linkedin: 2, prep: 3, task: 4, question: 5 };
     const rank = function (s) { return s.kind in order ? order[s.kind] : 9; };
     sugg.sort(function (a, b) { return rank(a) - rank(b); });
-    if (!moved.length && !fresh.length && !sugg.length) {
-      return '<div class="page page--narrow">' + C.empty("celebrate", "All caught up.", "Nothing is waiting for you. When Claude spots a new deal, moves one, or has a chase ready, it lands here first.",
+    if (!fresh.length && !sugg.length) {
+      return '<div class="page page--narrow">' + C.empty("celebrate", "All caught up.", "Nothing needs you. Claude keeps your deals moving; when there's an email to send or a deal it isn't sure about, it lands here.",
         '<div class="empty__actions">' + C.say("Update my pipeline") + C.say("Who should I chase?") + "</div>") + "</div>";
     }
-    let html = '<div class="page page--narrow"><div class="page-intro"><p>Claude keeps your pipeline up to date and drafts every chase. You decide what happens: nothing is ever sent for you.</p></div>';
-    if (moved.length) html += '<section class="panel">' + C.sectionHead("Deals Claude moved", { icon: "sparkle", count: moved.length }) + '<ul class="proposals" role="list">' + moved.map(function (x) { return movedRow(ctx, x); }).join("") + "</ul></section>";
-    if (fresh.length) html += '<section class="panel">' + C.sectionHead("New deals Claude spotted", { icon: "trendingUp", count: fresh.length }) + '<ul class="proposals" role="list">' + fresh.map(function (x) { return newDealRow(ctx, x); }).join("") + "</ul></section>";
-    if (sugg.length) html += '<section class="panel">' + C.sectionHead("Chases, call prep and questions", { icon: "inbox", count: sugg.length }) + '<ul class="proposals" role="list">' + sugg.map(function (s) { return suggestionRow(ctx, s); }).join("") + "</ul></section>";
+    let html = '<div class="page page--narrow"><div class="page-intro"><p>Claude moves your deals on and adds the ones that clearly fit by itself. This is what it needs from you. Press <strong>Claude emails</strong> to check an email and have Claude send it, or <strong>I\'ll do it</strong> to send it yourself.</p></div>';
+    if (sugg.length) html += '<section class="panel">' + C.sectionHead("To send and to do", { icon: "inbox", count: sugg.length }) + '<ul class="proposals" role="list">' + sugg.map(function (s) { return suggestionRow(ctx, s); }).join("") + "</ul></section>";
+    if (fresh.length) html += '<section class="panel">' + C.sectionHead("Deals Claude wasn\'t sure about", { icon: "trendingUp", count: fresh.length }) + '<ul class="proposals" role="list">' + fresh.map(function (x) { return newDealRow(ctx, x); }).join("") + "</ul></section>";
     return html + "</div>";
   }
 

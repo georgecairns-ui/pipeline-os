@@ -10,7 +10,7 @@ If this folder sits inside Google Drive, OneDrive or Dropbox, it's backed up the
 
 ## What can Claude do with my email?
 
-Read it, to spot things that need doing, and prepare draft replies for you to check. That's it. Claude never sends, replies, forwards, deletes, archives or tidies your email. You press send, every time.
+Read it, to spot enquiries and replies, and write emails for you to check. Claude only sends an email when you've pressed **Claude emails**, checked it and pressed **Send**, and only if you agreed to that during setup (you can turn it off in Preferences). It sends exactly what you saw, from your own email. It never replies, forwards, deletes, archives or tidies anything by itself.
 
 The same goes for your calendar, accounts and other apps: Claude reads and drafts. It doesn't pay, book, post, accept or change anything for you. If you ever ask it to do one specific thing (for example "add this meeting to my calendar"), it confirms the exact thing first.
 
@@ -22,7 +22,11 @@ Call notes you paste into a deal are kept on that deal in your pipeline file, so
 
 ## What happens when I press Draft or Add to calendar?
 
-Draft opens a new email in Gmail, Outlook or your email app, already written and addressed. Nothing is sent until you press send there. Emailing a group from People works the same way, with everyone in Bcc so nobody sees anyone else's address. Add to calendar opens a new event, already filled in, for you to save. The pipeline app itself never sends anything and holds no passwords.
+Draft opens a new email in Gmail, Outlook or your email app, already written and addressed. Nothing is sent until you press send there. Emailing a group from People works the same way, with everyone in Bcc so nobody sees anyone else's address. Add to calendar opens a new event, already filled in, for you to save. The pipeline app itself never sends anything and holds no passwords: it asks Claude, on your computer, to send the emails you approve.
+
+## Does Claude look people up?
+
+Before a sales call, Claude looks up the person and their business on the web: their own website, a web search, Companies House, and what's public on LinkedIn. It never signs in to LinkedIn or uses your account to look, and it sticks to work facts (their role, their business), never anything personal. It notes its sources so you can check. LinkedIn messages are written for you to paste and send yourself; LinkedIn doesn't allow them to be sent automatically.
 
 ## Does Claude keep copies of my emails?
 

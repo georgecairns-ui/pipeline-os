@@ -4,7 +4,7 @@
 
 Every conversation you have with a prospective customer, by email, on a call or in a meeting, ends up on one board. Claude writes up your sales calls, tells you what to do next, drafts the email back and chases the deals that have gone quiet. It checks every deal against 8 questions good salespeople always ask, so you know which deals are real and exactly what to ask next time.
 
-Nothing goes out without you. Claude reads, drafts and keeps your pipeline moving; you decide and you send.
+Nothing goes out without your click. Claude reads, researches, drafts and keeps your pipeline moving. When an email is ready you choose: **Claude emails** (you check it, press Send, and Claude sends it) or **I'll do it**.
 
 Pipeline OS is part of a toolkit of 9 free tools from Get AI Powers. The others (a task list, proposals, content, money and more) show in the app's menu, and Get AI Powers sets them up with you on a free call.
 
@@ -20,7 +20,8 @@ You copy the kit, open it in Claude Code and type **/setup**. In about 25 minute
 ## What it does
 
 - **Fills in a deal from your call.** If you record calls, Claude reads each sales call and updates the deal. If you don't, press **Call notes**, paste a few rough lines or the transcript (or drop in a text file), and the deal fills itself in within a minute or 2: what happened, the deal check, your next steps and the email back to them.
-- **Drafts the email back.** In your voice, recapping what was agreed, with one question that moves the deal on. Press **Draft** and it opens in Gmail or Outlook, written and addressed. Check it, press send.
+- **Writes the email back, and sends it if you want.** In your voice, recapping what was agreed, with one question that moves the deal on. Press **Claude emails**, check it and press Send, and Claude sends it from your own email. Or press **I'll do it** and it opens in Gmail or Outlook for you. LinkedIn messages too: Claude writes them, you paste and send.
+- **Researches everyone before the call.** Who they are, their role, what their business does, how well they fit your ideal client (a score worked out from your own setup answers), and how to run the call.
 - **Makes you a better salesperson.** Every deal is checked against 8 questions (based on MEDDPICC, a standard way to qualify sales): what's the problem costing them, who signs it off, what will they judge it on, how and when will they decide, and more. Each is marked Known, Partly known or Not known yet, with what was actually said. You get the questions to ask next time and a short coaching tip on every deal.
 - **Finds more work.** When a prospect mentions another problem you could solve, Claude notes it under **Also could help with**, with how to raise it.
 - **Spots your sales meetings.** Claude reads your calendar, works out which meetings are sales calls and puts each on its deal, so the card shows the day and time the call is booked for. It preps you the day before (who you're meeting, what you promised, what to find out), and once the call has happened the deal moves to **Call completed** by itself.
@@ -61,7 +62,7 @@ If an app needs a key rather than a sign-in, Claude gives you one line to paste 
 
 ## Your information
 
-Your deals and notes live in this folder on your computer. Claude reads your email, calendar, calls and apps through the connections you approve, and only ever reads and drafts. It never sends, deletes, pays or posts for you, and never sends a bot to your meetings. There's no Pipeline OS account or server; Get AI Powers can't see any of it. Read [docs/PRIVACY-AND-SAFETY.md](docs/PRIVACY-AND-SAFETY.md) for the detail.
+Your deals and notes live in this folder on your computer. Claude reads your email, calendar, calls and apps through the connections you approve. The only thing it ever sends is an email you've checked and pressed Send on, and only if you agreed to that in setup. It never deletes, pays or posts for you, never sends LinkedIn messages, and never sends a bot to your meetings. There's no Pipeline OS account or server; Get AI Powers can't see any of it. Read [docs/PRIVACY-AND-SAFETY.md](docs/PRIVACY-AND-SAFETY.md) for the detail.
 
 ## Make it yours
 

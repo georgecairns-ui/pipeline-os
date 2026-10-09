@@ -50,6 +50,13 @@ if "(Claude fills this in during setup)" not in (root / "skills-to-upload/README
     problems.append("skills-to-upload/README.md lists someone's own skills")
 if "Setup status: not started" not in (root / "setup/progress.md").read_text():
     problems.append("setup/progress.md is not blank")
+# The shipped permissions never include a tool that sends, deletes or posts (setup adds the one
+# send tool the person agrees to, in their own settings.local.json)
+perms = json.loads((root / ".claude/settings.json").read_text()).get("permissions", {}).get("allow", [])
+if any(re.search(r"send|delete|trash|post|forward|reply", p, re.I) and p.startswith("mcp__") for p in perms):
+    problems.append(".claude/settings.json pre-approves a tool that sends, deletes or posts")
+if (data.get("settings") or {}).get("claudeSends"):
+    problems.append("apps/pipeline/data/pipeline.json has Claude emails switched on")
 if "Setup: not done yet" not in (root / "CLAUDE.md").read_text():
     problems.append("CLAUDE.md says setup is done")
 for p in problems:

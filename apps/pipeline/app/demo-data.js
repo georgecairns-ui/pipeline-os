@@ -40,6 +40,8 @@
     ];
 
     const blankCheck = function () { return {}; };
+    // Claude's research before a call: fit is checked against settings.fitCriteria; the app works out the score
+    const F = function (criterion, result, why, dealBreaker) { return { criterion: criterion, result: result, why: why || "", dealBreaker: !!dealBreaker }; };
 
     const deals = [
       {
@@ -71,6 +73,15 @@
         },
         alsoHelp: [{ problem: "Their branch window cards look different in every branch.", service: "Brand refresh and print", question: "You mentioned the window cards. Would it help if the new site and the cards matched?" }],
         nextMeeting: { start: local(2, "11:00"), title: "Proposal walk-through with Hollins Lettings", prep: ["Which director signs this off?", "What would make the other quote win?"] },
+        research: { researchedAt: at(-1, 17), person: { name: "Dev Patel", role: "Operations lead", summary: "Runs day-to-day operations across the 3 branches. Joined from a larger agency in Bath 2 years ago." },
+          company: { name: "Hollins Lettings", summary: "Independent lettings agency, 3 branches in Bristol and Bath, about 20 staff. Family-owned since 1998." },
+          fit: [F("Independent business in the South West", "yes", "Bristol and Bath", true), F("Hospitality, health or property", "yes", "Lettings"), F("2 to 50 staff", "yes", "About 20 on their website"),
+            F("The owner or a director makes the decision", "partly", "Dev isn't a director; the directors decide"), F("Budget of \u00a31,000 or more", "yes", "Accepted a \u00a34,800 proposal to review")],
+          callPlan: [{ step: "Recap their problem", minutes: 5, detail: "6 hours a week on calls about let properties. Check it's still the main thing." },
+            { step: "Walk through the proposal", minutes: 15, detail: "Lead with the listings the team updates themselves." },
+            { step: "Find out who decides", minutes: 5, detail: "Which director signs it off, and what they'll want to see." },
+            { step: "Agree the next step", minutes: 5, detail: "A date for the directors' decision, or a call with them." }],
+          sources: [{ label: "hollins.example", url: "https://hollins.example" }, { label: "LinkedIn (public profile)", url: "https://www.linkedin.com/" }] },
         timeline: [
           { id: "e-h1", at: at(-16, 10), kind: "email", title: "Enquiry from Dev", summary: "Referred by Tom at Greenway Café. Wants a new website for 3 branches.", by: "claude" },
           { id: "e-h2", at: at(-7, 14), kind: "call", title: "Discovery call (Fathom)", summary: "Dev explained the listings problem and the 6 hours a week. Asked for examples and a proposal.", by: "claude", callId: "c-hollins" },
@@ -90,6 +101,16 @@
           questions: ["Will your brother join the call, or how will you decide between you?", "Where does the logo let you down most: the van, quotes, the website?", "What would make this worth it for you?"], checkedAt: at(-1, 11, 10) },
         alsoHelp: [{ problem: "Mark said their website “hasn't been touched since 2015”.", service: "Website design", question: "You mentioned the website. Is that something you'd want to look at once the logo's done?" }],
         nextMeeting: { start: local(1, "10:00"), title: "Call with Mark Ellis about the logo", prep: ["Will your brother join the call?", "Where does the logo let you down most?"] },
+        research: { researchedAt: at(0, 7, 50), person: { name: "Mark Ellis", role: "Co-owner", summary: "Runs Ellis Joinery with his brother Joe. Bespoke kitchens and staircases. Posts his work on Instagram most weeks." },
+          company: { name: "Ellis Joinery", summary: "Family joinery workshop in Keynsham, 6 staff. Good reviews, a dated website and a hand-drawn logo." },
+          fit: [F("Independent business in the South West", "yes", "Keynsham", true), F("Hospitality, health or property", "partly", "Trades, close to property"), F("2 to 50 staff", "yes", "6 staff"),
+            F("The owner or a director makes the decision", "yes", "Mark co-owns it"), F("Budget of \u00a31,000 or more", "unknown", "Not mentioned yet"), F("Needs branding or a website, not just a logo", "partly", "Asked for a logo; the website is out of date")],
+          callPlan: [{ step: "Get to know the business", minutes: 5, detail: "Ask about their best recent job. Joiners love talking about their work." },
+            { step: "Find the real problem", minutes: 10, detail: "Where does the logo let you down? Quotes, the van, the website?" },
+            { step: "Who decides and the budget", minutes: 5, detail: "Does Joe need to agree? What's he hoping to spend?" },
+            { step: "Raise the website, lightly", minutes: 5, detail: "\u201cYou mentioned the website. Is that next?\u201d" },
+            { step: "Next step", minutes: 5, detail: "Offer to send 3 logo routes with prices." }],
+          sources: [{ label: "ellisjoinery.example", url: "https://ellisjoinery.example" }, { label: "Google reviews", url: "https://www.google.com/" }] },
         timeline: [{ id: "e-e1", at: at(-5, 9), kind: "email", title: "Enquiry from Mark", summary: "Referred by Tom. Wants a logo refresh.", by: "claude" },
           { id: "e-e2", at: at(-1, 11), kind: "email", title: "Call booked for tomorrow", summary: "Mark picked 10am through your booking link.", by: "claude" }]
       },
@@ -123,7 +144,7 @@
       {
         id: "d-bramble", title: "Packaging for Bramble & Co", organisation: "Bramble & Co", personIds: ["p-amy"], value: 3000, stage: "new", suggested: true,
         source: "Email enquiry", created: at(0, 8, 5), lastContact: at(0, 8, 5),
-        suggestReason: "Amy emailed this morning asking for a quote for packaging for 4 new candle scents. She found you through the Greenway case study.",
+        suggestReason: "Amy wants packaging for 4 candle scents. Packaging isn't one of your services, but it's brand-led, \u00a33,000, and she's in Bath, so it could fit. Your call.",
         check: { risks: [], signals: [], questions: [] }, alsoHelp: [], nextSteps: [],
         timeline: [{ id: "e-b1", at: at(0, 8, 5), kind: "email", title: "Enquiry from Amy", summary: "Quote for packaging for 4 candle scents.", by: "claude" }]
       },
@@ -133,6 +154,16 @@
         nextSteps: [{ text: "Look at their current menus and Instagram before the call", due: day(2), done: false }],
         check: { risks: [], signals: [], questions: [] }, alsoHelp: [],
         nextMeeting: { start: local(3, "14:00"), title: "Intro call with Copper Kettle Tearooms", prep: ["What's prompting the change now?", "Who else is involved in choosing?"] },
+        email: { to: "ivy@copperkettle.example", subject: "Looking forward to Monday", body: "Hi Ivy,\n\nThanks for booking in. Looking forward to hearing about the second site on Monday.\n\nCheers,\nSam", sendStatus: "sent", sentBy: "claude", sentAt: at(-1, 18, 20) },
+        research: { researchedAt: at(-1, 18, 10), person: { name: "Ivy Morgan", role: "Owner", summary: "Opened the Copper Kettle in 2019. Featured in Bristol Life's best tearooms list last year." },
+          company: { name: "Copper Kettle Tearooms", summary: "Tearoom in Clifton, 8 staff, opening a second site in Redland in the new year." },
+          fit: [F("Independent business in the South West", "yes", "Clifton, Bristol", true), F("Hospitality, health or property", "yes", "Hospitality"), F("2 to 50 staff", "yes", "About 8"),
+            F("The owner or a director makes the decision", "yes", "Ivy owns it"), F("Budget of \u00a31,000 or more", "unknown", "Not mentioned"), F("Needs branding or a website, not just a logo", "yes", "A rebrand for 2 sites")],
+          callPlan: [{ step: "Their story", minutes: 5, detail: "Congratulate her on the second site. Ask what's changing." },
+            { step: "What the rebrand needs to do", minutes: 10, detail: "Menus, signage, website? What's not working now?" },
+            { step: "Timing and budget", minutes: 5, detail: "The Redland opening date sets the deadline." },
+            { step: "Next step", minutes: 5, detail: "Offer a proposal within the week." }],
+          sources: [{ label: "copperkettle.example", url: "https://copperkettle.example" }, { label: "Bristol Life", url: "https://www.google.com/" }] },
         timeline: [{ id: "e-c1", at: at(-1, 18), kind: "meeting", title: "Ivy booked an intro call", summary: "Through your Calendly link: \u201cthinking about a rebrand\u201d.", by: "claude" }]
       },
       {
@@ -197,11 +228,11 @@
         alsoHelp: [], timeline: [{ id: "e-w1", at: at(-12, 9), kind: "email", title: "You sent the quote", summary: "\u00a3900 for seasonal menus and a specials board.", by: "claude" }]
       },
       {
-        id: "d-bloom", title: "Website refresh for Bloom Yoga", organisation: "Bloom Yoga", personIds: ["p-zoe"], value: 0, stage: "new", suggested: true,
-        source: "Email enquiry", created: at(0, 7, 40), lastContact: at(0, 7, 40),
-        suggestReason: "Zoe replied to your newsletter asking whether you \u201cdo websites for small studios\u201d. No budget mentioned yet.",
+        id: "d-bloom", title: "Website refresh for Bloom Yoga", organisation: "Bloom Yoga", personIds: ["p-zoe"], value: 0, stage: "new", addedBy: "claude",
+        source: "Email enquiry", created: at(0, 7, 40), lastContact: at(0, 7, 40), summary: "Yoga studio in Totterdown asking about a new website.",
         check: { risks: [], signals: [], questions: [] }, alsoHelp: [], nextSteps: [],
-        timeline: [{ id: "e-z1", at: at(0, 7, 40), kind: "email", title: "Reply from Zoe", summary: "Asked if you do websites for small studios.", by: "claude" }]
+        timeline: [{ id: "e-z1", at: at(0, 7, 40), kind: "email", title: "Reply from Zoe", summary: "Asked if you do websites for small studios.", by: "claude" },
+          { id: "e-z2", at: at(0, 7, 41), kind: "created", title: "Claude added this deal", summary: "A small health business in Bristol wanting a website: a clear fit.", by: "claude" }]
       },
       {
         id: "d-greenway", title: "Menu boards and rebrand for Greenway Café", organisation: "Greenway Café", personIds: ["p-tom"], value: 3200, stage: "won",
@@ -238,21 +269,25 @@
     const suggestions = [
       { id: "s-chase-willow", kind: "chase", dealId: "d-willow", title: "Chase Leo about the menus", reason: "No reply to your quote for 12 days. Leo likes short emails, so this one is 3 lines.",
         email: { to: "leo@willowbistro.example", subject: "Re: Menus for Willow Bistro", body: "Hi Leo,\n\nIs the autumn menu still on? If so, I can have first designs with you within a week of a yes.\n\nCheers,\nSam" }, status: "waiting", createdAt: at(0, 7, 50) },
-      { id: "s-task-harbour", kind: "task", dealId: "d-harbour", title: "Send Omar the 3 booking page examples", reason: "You promised them on Tuesday's call. The email is ready on the deal.", status: "waiting", createdAt: at(0, 7, 50) },
+      { id: "s-task-harbour", kind: "email", dealId: "d-harbour", title: "Send Omar the 3 booking page examples", reason: "You promised them on Tuesday's call. Sending them today keeps you ahead of the other quote.",
+        email: { to: "omar@harbourviewdental.example", subject: "3 booking pages, as promised", body: "Hi Omar,\n\nThanks for your time on Tuesday. As promised, here are 3 booking pages we've built for other practices: [links]\n\nI'll have the proposal with you by Friday. Is it just you deciding, or will your practice manager want to see it too?\n\nKind regards,\nSam" }, status: "waiting", createdAt: at(0, 7, 50) },
       { id: "s-email-rosa", kind: "email", personId: "p-rosa", title: "Email Rosa Lind after the Chamber breakfast", reason: "You met Rosa 3 days ago and she mentioned a new website next year. A short hello keeps you in mind.",
         email: { to: "rosa@lindarchitects.example", subject: "Good to meet you at the Chamber breakfast", body: "Hi Rosa,\n\nGood to meet you on Tuesday. You mentioned the website might be next year's job: when you're ready to think about it, I'd be happy to have a chat, no pressure.\n\nIn the meantime, here's a site we built for another practice you might like: [link]\n\nBest,\nSam" }, status: "waiting", createdAt: at(0, 7, 50) },
       { id: "s-chase-marlow", kind: "chase", dealId: "d-marlow", title: "Chase Hannah about the brochure", reason: "No reply for 9 days after she asked for a lower price. The draft offers a smaller first step instead of a discount.",
         email: deals[2].email, status: "waiting", createdAt: at(0, 7, 50) },
       { id: "s-prep-ellis", kind: "prep", dealId: "d-ellis", title: "Prep for your call with Mark Ellis tomorrow at 10am", reason: "You know little about how they'll decide. Go in with the 3 questions on the deal.", status: "waiting", createdAt: at(0, 7, 50),
         notes: "Who: Mark Ellis runs Ellis Joinery with his brother. Referred by Tom at Greenway Caf\u00e9.\nSo far: Mark says the logo looks home-made next to their work. He booked through your link.\nYou promised: nothing yet. His brand questionnaire is due back before the call.\nFind out: 1. Will your brother join, or how will you decide between you? 2. Where does the logo let you down most? 3. What would make this worth it?\nWorth raising: the website \"hasn't been touched since 2015\".\nWatch for: his brother hasn't been in touch." },
-      { id: "s-sales-lena", kind: "question", personId: "p-lena", title: "Is your “Quick chat” with Lena Hart this week a sales call?", reason: "Lena isn't a client or in your team, and there's no earlier email. Say yes and Claude starts a deal for Hart Interiors. Say no if it isn't about work, and Claude won't ask about Lena again.",
+      { id: "s-linkedin-tim", kind: "linkedin", personId: "p-tim", title: "Message Tim Shaw on LinkedIn", reason: "You connected last week and there's no email for him. Shaw Builders fits your ideal client: a South West builder with 15 staff.",
+        linkedin: { profileUrl: "https://www.linkedin.com/", body: "Hi Tim, thanks for connecting. I noticed Shaw Builders has had a busy year. We help South West builders turn their best projects into a website that wins the next job. Happy to share a couple of examples if that's useful. Sam" },
         status: "waiting", createdAt: at(0, 7, 50) }
     ];
 
     return {
       about: ["Sample data for Demo mode. A made-up business."],
       formatVersion: 1,
-      settings: { yourName: "Sam", businessName: "Fern & Finch", currency: "GBP", chaseAfterDays: 7, autoMove: true, emailProvider: "gmail", calendarProvider: "google" },
+      settings: { yourName: "Sam", businessName: "Fern & Finch", currency: "GBP", chaseAfterDays: 7, autoMove: true, claudeSends: true, emailProvider: "gmail", calendarProvider: "google",
+        fitCriteria: [{ text: "Independent business in the South West", dealBreaker: true }, { text: "Hospitality, health or property", dealBreaker: false }, { text: "2 to 50 staff", dealBreaker: false },
+          { text: "The owner or a director makes the decision", dealBreaker: false }, { text: "Budget of \u00a31,000 or more", dealBreaker: false }, { text: "Needs branding or a website, not just a logo", dealBreaker: false }] },
       deals: deals, people: people, calls: calls, suggestions: suggestions,
       checkIn: { lastRunAt: at(0, 7, 50), nextRunAt: at(0, 8, 50), emailsRead: 34, callsRead: 2, dealsUpdated: 6 },
       activity: [

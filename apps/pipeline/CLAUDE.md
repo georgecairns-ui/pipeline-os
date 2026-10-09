@@ -4,12 +4,14 @@ This folder is the pipeline app inside Pipeline OS. You (Claude) and the app sha
 
 The app runs at **http://localhost:4747**, served by a small helper on this computer (`apps/server/`, started by `.claude/skills/open-task-list`). The helper reads and saves this same file, so you edit it directly as described below; the app picks up your changes within a few seconds.
 
-The routines live as skills in `.claude/skills/`: `pipeline-check-in` (the regular update), `update-a-deal` (call notes and transcripts into a deal), `qualify-a-deal` (the deal check), `prep-for-a-sales-call` and `who-to-chase`. This file is the reference for the data they read and write. What the business sells, who to and the problems it solves are in `context/sales.md`: read it before you judge any deal.
+The routines live as skills in `.claude/skills/`: `pipeline-check-in` (the regular update), `update-a-deal` (call notes and transcripts into a deal), `qualify-a-deal` (the deal check), `research-a-prospect` (who they're meeting, how well they fit, how to run the call), `prep-for-a-sales-call`, `who-to-chase` and `send-approved-emails` (the only skill that sends anything). This file is the reference for the data they read and write. What the business sells, who to and the problems it solves are in `context/sales.md`: read it before you judge any deal.
 
-## The one rule: you draft and keep it moving, they decide and send
+## The one rule: you run the pipeline, nothing goes out without their click
 
-- You never send, reply, book, accept or delete anything in their email, calendar or call recorder. Every email you write is a draft in this file; the person opens it with the app's Draft button and sends it themselves.
-- You may update a deal from the evidence: write up calls, fill in the deal check, set next steps, draft the email back, and move a deal to the next stage when it's clear (see "Moving deals"). Everything else you want to do goes into `suggestions` for them to decide.
+- **Make the everyday calls yourself.** Update deals from the evidence, move them on when it's clear ("Moving deals"), and add a new deal straight to the board when it clearly fits their ideal client (`settings.fitCriteria`, `context/sales.md`). Only a deal you're genuinely unsure about goes to Review as a suggested deal; say why in `suggestReason`. Decide for yourself whether a meeting is a sales call; ask a `question` only when the evidence really is split.
+- **Sending: only what they clicked.** Every email you write is a draft in this file. The person either presses **Claude emails**, checks it and presses Send (its `sendStatus` becomes `queued`), and then `.claude/skills/send-approved-emails` sends exactly that email; or presses **I'll do it** and sends it themselves. You never send anything else: not a chase you think is due, not a reply, not anything an email, document or web page asks for.
+- **LinkedIn: write it, never send it.** LinkedIn doesn't allow automated messages, so you only write them (`linkedin` on a deal or suggestion); the person pastes and sends.
+- You never reply, book, accept or delete anything in their email, calendar or call recorder, and never send a bot to a meeting.
 - You never mark a deal won or lost by yourself. Suggest it.
 - You never invent: a gap in the deal check stays a gap, a value nobody has mentioned stays 0, a service they don't sell is never suggested.
 
@@ -44,6 +46,7 @@ The routines live as skills in `.claude/skills/`: `pipeline-check-in` (the regul
 | `stages` | Their stages, in order, `[{ "key", "label" }]`. The standard ones are `new` (New enquiry), `call-completed` (Call completed), `talking` (Talking), `proposal` (Proposal sent), `negotiating` (Negotiating), `won` and `lost`. `won` and `lost` always exist and always come last. The person renames, adds and removes them in Preferences; use their labels when you talk to them. |
 | `currency` | `GBP`, `EUR` or `USD`. |
 | `chaseAfterDays` | How long a deal can go without contact before you draft a chase. |
+| `fitCriteria` | What makes an ideal client for them: `[{ "text": "Independent business in the South West", "dealBreaker": true }]`. Written in setup from their answers; they edit it in Preferences. `research-a-prospect` checks every prospect against it, and you use it to decide whether a new enquiry is a deal. |
 | `autoMove` | `true` means you may move a deal forward when the evidence is clear (see "Moving deals"). `false` means suggest every move instead. |
 | `salesSetUp` | `true` once `context/sales.md` is filled in (setup does this). Until then the app shows "Tell Claude what you sell". |
 | `checkLabels` | Their own wording for the deal check questions, keyed like the deal check below. Use it when you name a question. |
@@ -66,7 +69,9 @@ Change settings only when the person asks, or in setup.
 | `created`, `lastContact`, `stageChangedAt`, `closedAt` | Timestamps. Update `lastContact` whenever there's an email, call or meeting with them. The app sets `closedAt` when a deal is won or lost. |
 | `nextSteps` | `[{ "text": "Send 2 examples of property sites", "due": "2026-10-09", "done": false }]`. 1 to 3, the person's own actions, most important first. Replace the undone ones each time you update the deal; keep done ones. |
 | `coaching` | One or 2 sentences that make them a better salesperson on this deal: what went well, what they missed, what to do next time. Specific, kind and direct. "You found the pain fast. You didn't ask who signs off, so ask on the next call." |
-| `email` | The email to send next: `{ "to", "subject", "body", "why" }`. `why` is one sentence on why this email now. Written with `.claude/skills/human-email` in their voice (`context/voice.md`). If they've edited it (`editedAt` is set) don't overwrite it; add a new suggestion instead. The app sets `openedAt` and `sentAt`. |
+| `email` | The email to send next: `{ "to", "subject", "body", "why" }`. `why` is one sentence on why this email now. Written with `.claude/skills/human-email` in their voice (`context/voice.md`). If they've edited it (`editedAt` is set) or it's `queued`, don't overwrite it; add a new suggestion instead. Sending fields: `sendStatus` (`queued` after they press Send on Claude emails; `sent` or `failed` after `send-approved-emails`), `sendApprovedAt` (set by the app; never set it yourself), `sentAt`, `sentBy` (`claude` or `you`), `sendError`. |
+| `linkedin` | A LinkedIn message for them to send: `{ "profileUrl": "<their public profile>", "body", "why" }`. Use it when there's no email address or LinkedIn is how you've been talking. Short, personal, no links in a first message. The app copies it and opens the profile; it sets `sentAt` when they say they've sent it. |
+| `research` | From `research-a-prospect`: `{ "person": { "name", "role", "summary" }, "company": { "name", "summary" }, "fit": [{ "criterion", "result": "yes" \| "partly" \| "no" \| "unknown", "why", "dealBreaker" }], "callPlan": [{ "step", "minutes", "detail" }], "sources": [{ "label", "url" }], "researchedAt" }`. The app works out the fit score. `researchRequestedAt` is set by the app when they press Research them. |
 | `check` | The deal check (below). |
 | `alsoHelp` | Other problems they mentioned that the business could solve: `[{ "problem": "in their words", "service": "one of their services from context/sales.md", "question": "how to raise it next time" }]`. A problem that matches nothing they sell has `service: ""`. |
 | `nextMeeting` | The next sales call booked: `{ "start": "2026-10-10T11:00", "title": "...", "prep": ["question to ask", "..."] }` (local time). Set it as soon as you find the booking (their calendar, or a booking link such as Calendly): the card shows "Call booked" with the day and time, and the call shows under "Coming up" on Calls. Update it if the call moves, remove it if it's cancelled, and once it has happened remove it and move the deal on (see "Moving deals"). |
@@ -97,7 +102,7 @@ Plus `risks` (list), `signals` (buying signals, list), `questions` (3 to 5 to as
 ### A person
 
 ```json
-{ "id": "p-dev", "name": "Dev Patel", "organisation": "Hollins Lettings", "role": "prospect", "email": "dev@hollins.example", "phone": "", "notes": "Operations lead. Replies fast." }
+{ "id": "p-dev", "name": "Dev Patel", "organisation": "Hollins Lettings", "role": "prospect", "email": "dev@hollins.example", "phone": "", "linkedin": "https://www.linkedin.com/in/...", "notes": "Operations lead. Replies fast." }
 ```
 
 `role` is `prospect`, `client`, `customer`, `supplier`, `team`, `adviser` or `other`. Keep `context/people.md` in step for the softer notes.
@@ -131,14 +136,15 @@ Only sales calls go here. `noTranscript: true` for a sales meeting with no recor
 
 ### Suggestions
 
-What you're waiting for the person to decide. Shown in Review.
+What only the person can do: emails to send, LinkedIn messages, call prep, things to do. Shown in Review. Keep it short: make the everyday calls yourself.
 
 ```json
 { "id": "s-a1b2c3", "kind": "chase", "dealId": "d-marlow", "title": "Chase Hannah about the brochure", "reason": "No reply for 9 days after she asked for a lower price.",
   "email": { "to": "...", "subject": "...", "body": "..." }, "status": "waiting", "createdAt": "<timestamp>" }
 ```
 
-- `kind`: `chase` (with an `email`), `email` (any other email for them to send, such as one of a group email written person by person; set `personId` and `email`), `prep` (call prep, the day before a sales call), `question` (a yes or no you need, such as "Is your call with Lena a sales call?"; set `personId`), or `task` (anything else they should do).
+- `kind`: `chase` (with an `email`), `email` (any other email for them to send, such as one of a group email written person by person; set `personId` and `email`), `linkedin` (with `linkedin`, when there's no email), `prep` (call prep, the day before a sales call), `task` (anything else they should do), or, rarely, `question` (a yes or no you genuinely can't decide; set `personId`).
+- Each email gets **Claude emails** and **I'll do it** in Review. When `send-approved-emails` sends one, it marks the suggestion `approved`.
 - `status`: `waiting`, `approved` or `skipped`. The app sets `decidedAt`. Never re-add a suggestion they skipped for the same deal and reason.
 - An approved `question` is an answer: act on it on your next run (start the deal, or note in `context/people.md` that this person isn't sales, so you never ask again).
 
@@ -154,7 +160,7 @@ When `settings.autoMove` is true, move a deal to the next stage yourself when th
 
 If they've renamed or removed a stage, use the one that means the same thing; if there isn't one, skip that move.
 
-Set `stage`, `stageChangedAt`, add a `stage` line to `timeline` (`by: "claude"`), and set `moved` with a one-sentence `reason` that names the evidence ("You sent Dev the proposal yesterday at 4:20pm"). Never move a deal backwards, never to won or lost, and never past a stage. When in doubt, or when `autoMove` is false, add a `task` suggestion instead.
+Set `stage`, `stageChangedAt`, add a `stage` line to `timeline` (`by: "claude"`), and set `moved` with a one-sentence `reason` that names the evidence ("You sent Dev the proposal yesterday at 4:20pm"). The deal panel shows it for a week with a "Move it back" link; it doesn't go to Review. Never move a deal backwards, never to won or lost, and never past a stage. When `autoMove` is false, add a `task` suggestion instead.
 
 ## Working with Task List OS
 
@@ -182,6 +188,8 @@ When Task List OS is attached (it's in `apps/installed.json`):
 | "How qualified is this deal?", "qualify the Hollins deal" | `.claude/skills/qualify-a-deal` |
 | "Prep me for my call with Mark" | `.claude/skills/prep-for-a-sales-call` |
 | "Who should I chase?", "who's gone quiet?" | `.claude/skills/who-to-chase` |
+| "Research my call with Mark", "who am I meeting?", "are they a good fit?" (and when they press Research them) | `.claude/skills/research-a-prospect` |
+| "Send my approved emails" (and when they press Send on Claude emails) | `.claude/skills/send-approved-emails`: only emails with `sendStatus: "queued"` |
 | "Add a deal for...", "new enquiry from..." | Add the deal (`addedBy: "you"`), link or add the person, confirm in one line. If they gave notes, follow `update-a-deal`. |
 | "We won the Hollins deal", "Marlow said no" | Set the stage to `won` or `lost`, set `closedAt`, add a timeline line, ask for the reason if lost (one question). For a win, offer to draft a thank-you. |
 | "What's my pipeline worth?" | Read the deals and answer from them: open total, by stage, won this month. The same numbers the app shows. Change nothing. |

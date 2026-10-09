@@ -76,6 +76,7 @@
     const flags = [];
     if (x.moved && !x.moved.seen) flags.push('<span class="chip chip--accent" title="' + esc(x.moved.reason || "") + '">' + icon("sparkle") + "Claude moved this</span>");
     if (M.notesWaiting(x).length) flags.push('<span class="chip chip--info">' + icon("loader") + "Notes waiting</span>");
+    if (M.isOpen(x) && M.fitScore(x)) flags.push(fitChip(x));
     if (x.noTranscript) flags.push('<span class="chip chip--warning">' + icon("mic") + "Tell Claude how it went</span>");
     if (M.needsChase(d, x) && !meeting) flags.push('<span class="chip chip--danger">' + icon("hourglass") + M.quietDays(x) + " days quiet</span>");
     const who = people.length ? '<span class="dcard__who" title="' + esc(people.map(personLabel).join(", ") + "") + '">' + people.slice(0, 3).map(function (p) { return avatar(p); }).join("") +
@@ -86,6 +87,44 @@
       (meeting ? '<div class="dcard__call" title="' + esc(meeting.title || "Sales call") + '">' + icon("phone") + "<span>Call booked: <strong>" + esc(M.meetingLabel(meeting.start)) + "</strong></span></div>" : "") +
       (flags.length ? '<div class="dcard__flags">' + flags.join("") + "</div>" : "") +
       '<div class="dcard__foot">' + who + checkMeter(x, { quiet: true }) + "</div></article>";
+  }
+
+  // ---------- Sending: Claude emails, or I'll do it ----------
+  // where is "deal" or "suggestion"; id is that record's id. The buttons find them through
+  // data-send-where and data-send-id, so they work the same on the deal panel and in Review.
+  function emailActions(d, where, id, email, opts) {
+    const o = opts || {};
+    if (!email || !email.body) return "";
+    const L = window.PL.links;
+    const attrs = ' data-send-where="' + esc(where) + '" data-send-id="' + esc(id) + '"';
+    const small = o.small ? " btn--sm" : "";
+    if (email.sendStatus === "sent" || email.sentAt) {
+      return '<span class="send-state send-state--sent">' + icon("check") + (email.sentBy === "claude" ? "Claude sent this " : "Sent ") + esc(ago(email.sentAt) || "") + "</span>";
+    }
+    if (email.sendStatus === "queued") {
+      return '<span class="send-state send-state--queued">' + icon("loader", "spin") + "Claude is sending this</span>" +
+        '<button type="button" class="btn btn--ghost' + small + '" data-action="cancel-send"' + attrs + ">Stop</button>";
+    }
+    // Sending switched off (setup step 2.5, or Preferences): just I'll do it
+    if (d.settings.claudeSends === false) {
+      return '<button type="button" class="btn btn--primary' + small + '" data-action="self-send"' + attrs + ">" + icon("pencil") + "I'll do it</button>";
+    }
+    return (email.sendStatus === "failed" ? '<span class="send-state send-state--failed">' + icon("alert") + "Couldn't send" + (email.sendError ? ": " + esc(email.sendError) : "") + "</span>" : "") +
+      '<button type="button" class="btn btn--primary' + small + '" data-action="claude-send"' + attrs + ">" + icon("sparkle") + "Claude emails</button>" +
+      '<button type="button" class="btn' + small + '" data-action="self-send"' + attrs + ' title="Opens it in ' + esc(L.emailLabel(d.settings.emailProvider)) + ' for you to send">' + icon("pencil") + "I'll do it</button>";
+  }
+  // LinkedIn: Claude writes it; the person pastes and sends it (LinkedIn doesn't allow automated messages)
+  function linkedinActions(where, id, msg, opts) {
+    if (!msg || !msg.body) return "";
+    if (msg.sentAt) return '<span class="send-state send-state--sent">' + icon("check") + "Sent on LinkedIn " + esc(ago(msg.sentAt)) + "</span>";
+    return '<button type="button" class="btn btn--primary' + (opts && opts.small ? " btn--sm" : "") + '" data-action="linkedin-open" data-send-where="' + esc(where) + '" data-send-id="' + esc(id) + '">' + icon("external") + "I'll do it on LinkedIn</button>";
+  }
+  // The ideal client score, worked out from Claude's research (model.js, fitScore)
+  function fitChip(x) {
+    const f = M.fitScore(x);
+    if (!f) return "";
+    const tone = f.dealBreaker || f.score < 50 ? "danger" : f.score < 75 ? "warning" : "success";
+    return '<span class="chip chip--' + tone + '" title="How well they match your ideal client, based on ' + f.assessed + " of " + f.of + ' things Claude could check">' + icon("target") + f.score + "% fit</span>";
   }
 
   // ---------- Page furniture ----------
@@ -104,15 +143,18 @@
   function stageOptions(selected, openOnly) {
     return (openOnly ? M.openStages() : M.STAGES).map(function (s) { return '<option value="' + esc(s.key) + '"' + (s.key === selected ? " selected" : "") + ">" + esc(s.label) + "</option>"; }).join("");
   }
+  // "today", "yesterday", "3 days ago", by calendar day
   function ago(at) {
-    const n = M.daysSince(at);
-    if (n == null) return "";
+    if (!at) return "";
+    const then = new Date(String(at).length === 10 ? at + "T12:00" : at);
+    if (isNaN(then)) return "";
+    const n = Math.max(0, Math.round((ui.parseDate(ui.isoDate(new Date())) - ui.parseDate(ui.isoDate(then))) / 86400000));
     return n === 0 ? "today" : n === 1 ? "yesterday" : n + " days ago";
   }
 
   window.PL.c = {
     ART: ART, avatar: avatar, initials: initials, colourFor: colourFor, personLabel: personLabel,
-    claudeLink: claudeLink, setFolder: setFolder, checkMeter: checkMeter, statusChip: statusChip, dealCard: dealCard,
+    claudeLink: claudeLink, setFolder: setFolder, checkMeter: checkMeter, emailActions: emailActions, linkedinActions: linkedinActions, fitChip: fitChip, statusChip: statusChip, dealCard: dealCard,
     sectionHead: sectionHead, empty: empty, say: say, stageOptions: stageOptions, ago: ago
   };
 })();

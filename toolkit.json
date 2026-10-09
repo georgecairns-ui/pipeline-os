@@ -12,8 +12,10 @@
     "pipeline-check-in",
     "update-a-deal",
     "qualify-a-deal",
+    "research-a-prospect",
     "prep-for-a-sales-call",
-    "who-to-chase"
+    "who-to-chase",
+    "send-approved-emails"
   ],
   "setupSteps": [
     "setup/pipeline-01-your-customers.md",
@@ -39,8 +41,13 @@
     "setup/connections/calendly.md"
   ],
   "claudeSection": "apps/pipeline/ATTACH-CLAUDE.md",
-  "reads": ["task-list"],
+  "reads": [
+    "task-list"
+  ],
   "sends": [
-    { "to": "task-list", "what": "suggested tasks for call prep, chases that are due and next steps due this week" }
+    {
+      "to": "task-list",
+      "what": "suggested tasks for call prep, chases that are due and next steps due this week"
+    }
   ]
 }

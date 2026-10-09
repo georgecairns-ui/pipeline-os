@@ -850,3 +850,30 @@ details.slist > summary::-webkit-details-marker { display: none; }
 .call__decisions { display: grid; gap: 3px; margin-top: 6px; }
 .call__decision { display: flex; gap: 6px; align-items: flex-start; font-size: var(--text-xs); color: var(--color-ink-soft); }
 .call__decision svg { width: 12px; height: 12px; flex-shrink: 0; margin-top: 2px; color: var(--color-success); }
+/* Sending: Claude emails or I'll do it */
+.send-state { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-sm); font-weight: 600; }
+.send-state svg { width: 15px; height: 15px; }
+.send-state--sent { color: var(--color-success); }
+.send-state--queued { color: var(--color-accent-text); }
+.send-state--failed { color: var(--color-danger); flex-basis: 100%; }
+.send-confirm { display: grid; gap: 10px; }
+.send-confirm__note { display: flex; gap: 8px; font-size: var(--text-sm); color: var(--color-ink-soft); background: var(--color-sunk); padding: 10px 12px; border-radius: var(--radius-md); }
+.send-confirm__note svg { width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px; }
+/* Deal panel: Claude's move, research, fit and call plan */
+.moved-line { display: flex; gap: 8px; align-items: flex-start; margin: 0 0 10px; padding: 8px 12px; border-radius: var(--radius-md); background: var(--color-accent-soft); color: var(--color-accent-text); font-size: var(--text-sm); }
+.moved-line svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 2px; }
+.moved-line .link-btn { margin-left: 4px; }
+.research__who p { margin: 0 0 6px; font-size: var(--text-sm); }
+.fit-score { font-weight: 700; font-size: var(--text-sm); padding: 3px 10px; border-radius: var(--radius-pill); }
+.fit-score--high { background: var(--color-success-soft); color: var(--color-success); }
+.fit-score--mid { background: var(--color-warning-soft); color: var(--color-warning); }
+.fit-score--low { background: var(--color-danger-soft); color: var(--color-danger); }
+.fitrows { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.fitrow { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--color-line); font-size: var(--text-sm); }
+.fitrow:last-child { border-bottom: 0; }
+.fitrow__why { grid-column: 1 / -1; font-size: var(--text-xs); color: var(--color-muted); }
+.callplan { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: var(--text-sm); }
+.callplan span:last-child { display: block; color: var(--color-ink-soft); }
+.research .btn { margin-top: 6px; }
+.call__plan { padding: 0 16px 4px; }
+.pref-crit__deal { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-xs); color: var(--color-muted); white-space: nowrap; }

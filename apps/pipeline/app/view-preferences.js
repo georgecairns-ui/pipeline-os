@@ -27,6 +27,13 @@
         '<button type="button" class="icon-btn" data-action="pref-remove-stage" aria-label="Remove ' + esc(s.label) + '">' + icon("trash") + "</button>") + "</li>";
   }
 
+  function critRow(c) {
+    return '<li class="pref-cat pref-crit" data-crit>' +
+      '<input class="input pref-cat__label" value="' + esc(c.text || "") + '" maxlength="120" aria-label="What makes an ideal client" data-pref="crit-text" placeholder="For example: 10 to 50 staff">' +
+      '<label class="pref-crit__deal"><input type="checkbox" data-pref="crit-breaker"' + (c.dealBreaker ? " checked" : "") + '> Must have</label>' +
+      '<button type="button" class="icon-btn" data-action="pref-remove-crit" aria-label="Remove">' + icon("trash") + "</button></li>";
+  }
+
   function render(ctx) {
     const d = ctx.d, s = d.settings;
     const section = function (title, body, intro) {
@@ -45,8 +52,15 @@
         '<span class="field__hint">In the order a deal moves through them. Deals in a stage you remove go back to the first one.</span></div>' +
         '<div class="field-row">' + field("Currency", '<select class="select" name="currency">' + options(CURRENCIES, s.currency) + "</select>") +
         field("Chase after", '<select class="select" name="chaseAfterDays">' + options([3, 5, 7, 10, 14, 21].map(function (n) { return [String(n), n + " days with no reply"]; }), String(s.chaseAfterDays)) + "</select>", "Claude drafts a chase when a deal goes this long without contact.") + "</div>" +
+        '<label class="switch"><input type="checkbox" name="claudeSends"' + (s.claudeSends !== false ? " checked" : "") + '><span class="switch__track" aria-hidden="true"></span>Show Claude emails: I check an email and press Send, and Claude sends it for me</label>' +
         '<label class="switch"><input type="checkbox" name="autoMove"' + (s.autoMove !== false ? " checked" : "") + '><span class="switch__track" aria-hidden="true"></span>Let Claude move deals to the next stage when it’s clear (you can undo any move)</label>',
         "The stages your deals move through, and how Claude keeps them moving.") +
+
+      section("Your ideal client",
+        '<ul class="pref-cats" id="prefCrits" role="list">' + (s.fitCriteria || []).map(function (c) { return critRow(typeof c === "string" ? { text: c } : c); }).join("") + "</ul>" +
+        '<button type="button" class="btn btn--sm" data-action="pref-add-crit">' + icon("plus") + "Add one</button>" +
+        '<span class="field__hint">Claude researches everyone you\'re about to meet and checks them against this list. The fit score on each deal is how many they match. Tick Must have for a deal-breaker. Claude wrote these from your answers in setup; change them any time.</span>',
+        "What makes someone a good client for you.") +
 
       section("The deal check",
         '<div class="pref-checks">' + M.CHECK.map(function (c) {
@@ -75,9 +89,15 @@
     const f = form.elements;
     const values = {
       yourName: f.yourName.value.trim(), businessName: f.businessName.value.trim(),
-      currency: f.currency.value, chaseAfterDays: Number(f.chaseAfterDays.value) || 7, autoMove: f.autoMove.checked,
+      currency: f.currency.value, chaseAfterDays: Number(f.chaseAfterDays.value) || 7, autoMove: f.autoMove.checked, claudeSends: f.claudeSends.checked,
       emailProvider: f.emailProvider.value, calendarProvider: f.calendarProvider.value
     };
+    const fitCriteria = [];
+    form.querySelectorAll("[data-crit]").forEach(function (row) {
+      const text = row.querySelector('[data-pref="crit-text"]').value.trim();
+      if (text) fitCriteria.push({ text: text, dealBreaker: row.querySelector('[data-pref="crit-breaker"]').checked });
+    });
+    values.fitCriteria = fitCriteria;
     const checkLabels = {};
     M.CHECK.forEach(function (c) { const v = f["check-" + c.key].value.trim(); if (v && v !== c.label) checkLabels[c.key] = v; });
     const seen = {};
@@ -101,6 +121,13 @@
     return error ? { error: error } : { values: values, stages: stages, checkLabels: checkLabels };
   }
 
+  function addCritRow(list) {
+    const li = document.createElement("li");
+    li.innerHTML = critRow({ text: "" });
+    list.appendChild(li.firstChild);
+    list.lastChild.querySelector("input").focus();
+  }
+
   function addStageRow(list) {
     const li = document.createElement("li");
     li.innerHTML = stageRow({ key: "", label: "" });
@@ -115,6 +142,7 @@
     sub: function () { return "How Pipeline OS works for you"; },
     render: render,
     collect: collect,
-    addStageRow: addStageRow
+    addStageRow: addStageRow,
+    addCritRow: addCritRow
   };
 })();

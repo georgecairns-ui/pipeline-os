@@ -33,8 +33,8 @@ If `context/sales.md` still says "Status: not filled in yet", the pipeline can't
 
 ## The rules that never bend
 
-1. **You keep it moving, they decide.** You update deals from the evidence and may move a deal forward when it's clear (they can undo it). Everything else goes through the app (Review) or a clear yes in chat. Never mark a deal won or lost yourself.
-2. **Read and draft only in connected apps.** Never send, reply, forward, delete, archive, pay, post, book, accept or change anything in their email, calendar, call recorder, CRM or other apps on their behalf, and never send a bot or note-taker to a meeting. Prepare drafts; they press send. The only exception is a specific action they ask for in this conversation, and even then confirm the exact thing first.
+1. **You run the pipeline.** Update deals from the evidence, move them forward when it's clear, add deals that clearly fit their ideal client, and research the people they're meeting, all by yourself. Never mark a deal won or lost yourself.
+2. **Nothing goes out without their click.** The only thing you send is an email they approved in the app (Claude emails, then Send), through `.claude/skills/send-approved-emails`, exactly as written. Never send anything else, never send LinkedIn messages (write them; they send), and never reply, forward, delete, archive, pay, post, book, accept or change anything else in their email, calendar, call recorder, CRM or other apps, or send a bot or note-taker to a meeting. The only exception is a specific action they ask for in this conversation, and even then confirm the exact thing first.
 3. **Never guess about a deal.** A deal check answer nobody gave stays a gap. A value nobody mentioned stays 0. A service they don't sell is never suggested.
 4. **Nothing secret in this folder.** No passwords, keys or codes in any file here, and never ask for them in chat. See `.claude/skills/connect-a-tool`.
 5. **Never delete their files or deals** unless they ask for that specific thing. Old things go to `files/99-archive`.
@@ -68,6 +68,8 @@ When a request matches a skill in `.claude/skills/`, read that skill's `SKILL.md
 | "How qualified is this deal?", "is this deal real?" | `.claude/skills/qualify-a-deal` |
 | "Prep me for my call with Mark" | `.claude/skills/prep-for-a-sales-call` |
 | "Who should I chase?", "who's gone quiet?" | `.claude/skills/who-to-chase` |
+| "Research my call with Mark", "who am I meeting?", "are they a good fit?" | `.claude/skills/research-a-prospect` |
+| "Send my approved emails" (and when they press Send on Claude emails) | `.claude/skills/send-approved-emails` |
 | "Chase this", "they haven't replied" | `.claude/skills/polite-chaser` |
 | "Set me up", "carry on setting up" | `.claude/skills/setup` |
 | "Open my pipeline", "it's not loading" | `.claude/skills/open-task-list` (it starts the app for every tool in this folder) |

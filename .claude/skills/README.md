@@ -13,7 +13,9 @@ In Claude Code, every skill is also a command: type `/` and its name, for exampl
 | `pipeline-check-in` | "Update my pipeline" (runs every hour if you turned that on) | New sales calls written up, new enquiries and replies spotted, sales meetings found in your calendar, deals updated, chases drafted |
 | `update-a-deal` | Paste your call notes, or press **Update the deal** in the app | The deal fills itself in: the write-up, the deal check, next steps, a coaching tip and the email back, drafted |
 | `qualify-a-deal` | "How qualified is this deal?" | The deal check: 8 questions (based on MEDDPICC), what's known, what isn't, and what to ask next time |
+| `research-a-prospect` | "Who am I meeting tomorrow?" (and before every booked call) | Who they are, their role and business, how well they fit your ideal client, and how to run the call |
 | `prep-for-a-sales-call` | "Prep me for my call with Mark" | Who you're meeting, what's happened, what you promised and the questions to ask |
+| `send-approved-emails` | Press **Claude emails**, then **Send** | Claude sends exactly that email from your email. Nothing else, ever |
 | `who-to-chase` | "Who should I chase?" | A chase drafted for every deal gone quiet, with a real reason to get back in touch |
 
 ## Writing
@@ -37,8 +39,8 @@ In Claude Code, every skill is also a command: type `/` and its name, for exampl
 
 ## The rules every skill follows
 
-- Claude keeps your pipeline moving; you decide. Nothing is sent, paid, deleted or posted on your behalf.
-- Drafts only in your email. You press send.
+- Claude keeps your pipeline moving and makes the everyday calls. Nothing goes out without your click: Claude only sends an email you've checked and pressed Send on.
+- Nothing is paid, deleted or posted on your behalf, and LinkedIn messages are yours to send.
 - Claude never guesses about a deal: anything nobody said stays "Not known yet".
 - Everything stays in this folder or in the apps you've connected.
 

@@ -15,19 +15,48 @@
     "emailProvider": "gmail",
     "calendarProvider": "google",
     "stages": [
-      { "key": "new", "label": "New enquiry" },
-      { "key": "call-completed", "label": "Call completed" },
-      { "key": "talking", "label": "Talking" },
-      { "key": "proposal", "label": "Proposal sent" },
-      { "key": "negotiating", "label": "Negotiating" },
-      { "key": "won", "label": "Won" },
-      { "key": "lost", "label": "Lost" }
-    ]
+      {
+        "key": "new",
+        "label": "New enquiry"
+      },
+      {
+        "key": "call-completed",
+        "label": "Call completed"
+      },
+      {
+        "key": "talking",
+        "label": "Talking"
+      },
+      {
+        "key": "proposal",
+        "label": "Proposal sent"
+      },
+      {
+        "key": "negotiating",
+        "label": "Negotiating"
+      },
+      {
+        "key": "won",
+        "label": "Won"
+      },
+      {
+        "key": "lost",
+        "label": "Lost"
+      }
+    ],
+    "claudeSends": false,
+    "fitCriteria": []
   },
   "deals": [],
   "people": [],
   "calls": [],
   "suggestions": [],
-  "checkIn": { "lastRunAt": null, "nextRunAt": null, "emailsRead": 0, "callsRead": 0, "dealsUpdated": 0 },
+  "checkIn": {
+    "lastRunAt": null,
+    "nextRunAt": null,
+    "emailsRead": 0,
+    "callsRead": 0,
+    "dealsUpdated": 0
+  },
   "activity": []
 }

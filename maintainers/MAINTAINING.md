@@ -27,6 +27,9 @@ Pipeline OS is tool 2 of the small business toolkit, built the same way as Task 
 - Every number the person relies on (stage values, pipeline total, won this month, win rate, the deal check score) is worked out in `model.js` from the raw data. Claude never writes a number for the app to show.
 - The deal check never guesses. Claude's instructions (`qualify-a-deal`) say a gap stays a gap.
 - Claude may move a deal forward by itself (`settings.autoMove`), always with `moved` so the person can undo it. Never backwards, never to won or lost.
+- **Sending (decided by George, 9 October 2026).** Claude sends an email only when the person pressed Claude emails, checked it and pressed Send (`sendStatus: "queued"`), through `send-approved-emails`, the only skill that sends. The send tool is approved per computer in `.claude/settings.local.json` during setup step 2.5, with the person's agreement; `.claude/settings.json` never pre-approves anything that sends, deletes or posts (the release check enforces it). This is a written rule for Claude, not a technical lock: once the send tool is approved, any Claude run in that folder could send. LinkedIn messages are never sent by Claude: LinkedIn's terms ban automated messaging.
+- Claude makes the everyday calls itself: moves (no Keep or Undo in Review, a "Move it back" link on the deal for a week), adding deals that clearly fit `settings.fitCriteria`, and whether a meeting is a sales call. Review is for what only the person can do.
+- The fit score is worked out in `model.js` (`fitScore`) from Claude's yes, partly, no or unknown per criterion; unknowns are left out and the app says how many it's based on.
 
 ## Open questions for George
 

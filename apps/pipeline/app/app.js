@@ -24,7 +24,6 @@
 
   // Number keys 1 to 4 follow the sidebar
   const VIEW_ORDER = ["pipeline", "review", "calls", "people"];
-  const JOB = "/api/claude/run/pipeline/update-deals";
 
   function remembered(key, allowed) {
     try { const v = localStorage.getItem(key); return allowed.indexOf(v) > -1 ? v : null; } catch (e) { return null; }
@@ -41,7 +40,7 @@
     drawer: null
   };
   // Deals Claude is updating right now (from call notes), so the panel can say so
-  const claude = { dealIds: [], timer: null };
+  const claude = { dealIds: [], research: [], sends: [], timer: null };
 
   let data = null;
   let status = "checking";
@@ -281,36 +280,115 @@
     el.hidden = false;
     el.innerHTML = icon("loader", "claude-status__spin") + '<span class="claude-status__text">' + esc(text) + "</span>";
   }
-  // Ask the helper to have Claude update the deals with notes waiting. Resolves true if it started.
-  function askClaude(dealId) {
+  // Claude's 3 jobs (claude-jobs.json): read call notes, send the emails the person approved, and
+  // research the people they're meeting. The app asks the helper to start one; it never sends the
+  // words Claude follows, only the job's name.
+  const JOBS = {
+    notes: { name: "update-deals", doing: "Claude is updating your deal" },
+    send: { name: "send-emails", doing: "Claude is sending your email" },
+    research: { name: "research-deals", doing: "Claude is researching" }
+  };
+  // Resolves true if Claude was started (or queued)
+  function askClaude(kind, dealId, extra) {
     if (!store.isHelper()) return Promise.resolve(false);
-    return fetch(JOB, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    return fetch("/api/claude/run/pipeline/" + JOBS[kind].name, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
       .then(function (r) {
         if (r.status !== 202) return false;
-        if (claude.dealIds.indexOf(dealId) === -1) claude.dealIds.push(dealId);
+        const list = kind === "notes" ? claude.dealIds : kind === "research" ? claude.research : claude.sends;
+        const item = kind === "send" ? extra : dealId;
+        if (item && list.indexOf(item) === -1) list.push(item);
         watchClaude();
         return true;
       })
       .catch(function () { return false; });
   }
+  function claudeDoing() {
+    if (claude.sends.length) return JOBS.send.doing;
+    if (claude.dealIds.length) return JOBS.notes.doing;
+    if (claude.research.length) return JOBS.research.doing;
+    return "Claude is working";
+  }
   function watchClaude() {
-    setClaudeStatus("Claude is updating your deal");
+    setClaudeStatus(claudeDoing());
     renderDrawer();
     clearInterval(claude.timer);
     claude.timer = setInterval(function () {
       fetch("/api/claude/status", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (st) {
-        if (st.running || st.queued) return;
+        if (st.running || st.queued) { setClaudeStatus(claudeDoing()); return; }
         clearInterval(claude.timer);
-        const ids = claude.dealIds.slice();
-        claude.dealIds = [];
-        setClaudeStatus(null);
-        render();
-        const ok = st.lastJob === "pipeline:update-deals" && st.lastResult === "ok";
-        const x = ids.length === 1 ? M.dealById(data, ids[0]) : null;
-        if (ok) ui.toast("Claude has updated " + (x ? x.title : "your deals") + ": next steps, the deal check and a reply are ready", { icon: "sparkle", duration: 9000, actionLabel: x ? "Open it" : null, onAction: x ? function () { openDrawer("deal", x.id); } : null });
-        else ui.toast("Claude couldn't finish. Your notes are safe on the deal; press Open in Claude on it to try again", { icon: "info", duration: 9000 });
+        // Give the app a moment to pick up what Claude saved, then say how it went
+        setTimeout(finishedClaude, 2500);
       }).catch(function () { /* helper briefly unavailable; keep watching */ });
     }, 3000);
+  }
+  // Read the file fresh to say how it went (the app's own refresh pauses while its tab is hidden)
+  function finishedClaude() {
+    fetch("/api/data/pipeline/pipeline.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (fresh) { reportClaude(fresh ? M.normalise(fresh) : data); }, function () { reportClaude(data); });
+  }
+  function reportClaude(now) {
+    const data = now;
+    const notes = claude.dealIds.splice(0), research = claude.research.splice(0), sends = claude.sends.splice(0);
+    setClaudeStatus(null);
+    render();
+    notes.forEach(function (id) {
+      const x = M.dealById(data, id);
+      if (!x) return;
+      if (!M.notesWaiting(x).length) ui.toast("Claude has updated " + x.title + ": next steps, the deal check and the email back are ready", { icon: "sparkle", duration: 9000, actionLabel: "Open it", onAction: function () { openDrawer("deal", x.id); } });
+      else ui.toast("Claude couldn't finish " + x.title + ". Your notes are safe; press Open in Claude on the deal to try again", { icon: "info", duration: 9000 });
+    });
+    sends.forEach(function (key) {
+      const parts = key.split(":"), holder = parts[0] === "deal" ? M.dealById(data, parts[1]) : M.suggestionById(data, parts[1]);
+      const e = holder && holder.email;
+      if (!e) return;
+      if (e.sendStatus === "sent") ui.toast("Claude sent your email to " + (e.to || "them"), { icon: "check", duration: 7000 });
+      else ui.toast("That email wasn't sent" + (e.sendError ? ": " + e.sendError : "") + ". Press I'll do it to send it yourself", { icon: "alert", duration: 10000 });
+    });
+    research.forEach(function (id) {
+      const x = M.dealById(data, id);
+      if (!x) return;
+      if (x.research && x.research.researchedAt && (!x.researchRequestedAt || x.research.researchedAt >= x.researchRequestedAt)) ui.toast("Claude has researched " + (x.organisation || x.title) + ". See Who you're meeting on the deal", { icon: "sparkle", duration: 8000, actionLabel: "Open it", onAction: function () { openDrawer("deal", x.id); } });
+      else ui.toast("Claude couldn't finish the research. Try again from the deal", { icon: "info", duration: 8000 });
+    });
+  }
+
+  // ---------- Sending: Claude emails, or I'll do it ----------
+  function sendHolder(where, id) { return where === "deal" ? M.dealById(data, id) : M.suggestionById(data, id); }
+  function openSendConfirm(where, id) {
+    const h = sendHolder(where, id);
+    if (!h || !h.email) return;
+    const e = h.email;
+    const from = L.emailLabel(data.settings.emailProvider);
+    openGeneric('<form data-form="claude-send" data-where="' + esc(where) + '" data-id="' + esc(id) + '" autocomplete="off">' + modalHead("Claude emails this for you") + '<div class="modal__body send-confirm">' +
+      '<label class="field"><span class="field__label">To</span><input class="input" name="to" required maxlength="300" value="' + esc(e.to || "") + '"></label>' +
+      '<label class="field"><span class="field__label">Subject</span><input class="input" name="subject" maxlength="200" value="' + esc(e.subject || "") + '"></label>' +
+      '<label class="field"><span class="field__label">Email</span><textarea class="textarea" name="body" rows="10" maxlength="10000">' + esc(e.body || "") + "</textarea></label>" +
+      '<p class="send-confirm__note">' + icon("info") + "<span>Check it, change anything you like, then press Send. Claude sends exactly this, from your " + esc(from === "your email app" ? "email" : from) + ", within a minute or 2. It only ever sends emails you've sent this way.</span></p>" +
+      '</div><div class="modal__foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn--primary">' + icon("sparkle") + "Send</button></div></form>");
+  }
+  function selfSend(where, id) {
+    const h = sendHolder(where, id);
+    if (!h || !h.email) return;
+    openDraft(h.email, function () {
+      if (where === "deal") change(function (d) { mut.emailOpened(d, id); }); else change(function (d) { mut.suggestionOpened(d, id); });
+      ui.toast("Your email is open in " + L.emailLabel(data.settings.emailProvider) + ". Check it and press send", { icon: "mail", duration: 9000, actionLabel: "I sent it", onAction: function () {
+        change(function (d) {
+          if (where === "deal") mut.emailSent(d, id);
+          else { const sg = M.suggestionById(d, id); if (sg) { sg.email.sentAt = new Date().toISOString(); mut.decide(d, id, "approve"); } }
+        });
+      } });
+    });
+  }
+  function linkedinOpen(where, id) {
+    const h = sendHolder(where, id);
+    const msg = h && h.linkedin;
+    if (!msg) return;
+    ui.copyText(msg.body || "").then(function (ok) {
+      if (msg.profileUrl && /^https:\/\/([a-z]+\.)?linkedin\.com\//i.test(msg.profileUrl)) window.open(msg.profileUrl, "_blank", "noopener");
+      ui.toast((ok ? "Message copied. " : "") + "Press Message on their LinkedIn profile, paste it and send", { icon: "external", duration: 10000, actionLabel: "I sent it", onAction: function () {
+        change(function (d) { const r = where === "deal" ? M.dealById(d, id) : M.suggestionById(d, id); if (r && r.linkedin) r.linkedin.sentAt = new Date().toISOString(); if (where === "suggestion") mut.decide(d, id, "approve"); });
+      } });
+    });
   }
   function saveNotes(dealId, text, fileName) {
     if (!String(text || "").trim()) return Promise.resolve(false);
@@ -319,7 +397,7 @@
       return Promise.resolve(false);
     }
     return change(function (d) { mut.addNotes(d, dealId, text, fileName); }).then(function () {
-      return askClaude(dealId);
+      return askClaude("notes", dealId);
     }).then(function (started) {
       if (started) ui.toast("Got it. Claude is reading your notes now", { icon: "sparkle", duration: 6000 });
       else ui.toast("Notes saved on the deal. Press Open in Claude on it, or say “update my deals” to Claude", { icon: "info", duration: 8000 });
@@ -543,16 +621,27 @@
         if (x && x.nextSteps[i]) change(function (d) { mut.setNextStepDone(d, dealId, i, !x.nextSteps[i].done); });
         break;
       }
-      case "deal-draft": {
-        const x = M.dealById(data, dealId);
-        if (x && x.email) openDraft(x.email, function () {
-          change(function (d) { mut.emailOpened(d, dealId); });
-          ui.toast("Your email is open in " + L.emailLabel(data.settings.emailProvider) + ". Check it and press send", { icon: "mail", duration: 8000, actionLabel: "I sent it", onAction: function () { change(function (d) { mut.emailSent(d, dealId); }); } });
+      case "copy-email": { const x = M.dealById(data, dealId); if (x && x.email) ui.copyText(x.email.body || "").then(function (ok) { ui.toast(ok ? "Email copied" : "Couldn't copy"); }); break; }
+      // Sending: Claude emails (after the person checks it) or I'll do it
+      case "claude-send": {
+        if (store.isDemo()) { ui.toast("Demo mode: nothing is saved, so Claude can't send. In your own pipeline, Claude sends it within a minute or 2", { icon: "info", duration: 8000 }); break; }
+        openSendConfirm(btn.getAttribute("data-send-where"), btn.getAttribute("data-send-id"));
+        break;
+      }
+      case "self-send": selfSend(btn.getAttribute("data-send-where"), btn.getAttribute("data-send-id")); break;
+      case "cancel-send": {
+        const w = btn.getAttribute("data-send-where"), id = btn.getAttribute("data-send-id");
+        change(function (d) { mut.cancelSend(d, w, id); }).then(function () { ui.toast("Stopped. It won't be sent unless you ask again"); });
+        break;
+      }
+      case "linkedin-open": linkedinOpen(btn.getAttribute("data-send-where"), btn.getAttribute("data-send-id")); break;
+      case "research-deal": {
+        if (store.isDemo()) { ui.toast("Demo mode: nothing is saved, so Claude can't research. In your own pipeline, it takes a minute or 2", { icon: "info", duration: 8000 }); break; }
+        change(function (d) { mut.requestResearch(d, dealId); }).then(function () { return askClaude("research", dealId); }).then(function (started) {
+          ui.toast(started ? "Claude is researching them now" : "Asked. Claude researches them on its next check-in, or say \u201cresearch my next call\u201d", { icon: "sparkle", duration: 7000 });
         });
         break;
       }
-      case "copy-email": { const x = M.dealById(data, dealId); if (x && x.email) ui.copyText(x.email.body || "").then(function (ok) { ui.toast(ok ? "Email copied" : "Couldn't copy"); }); break; }
-      case "email-sent": change(function (d) { mut.emailSent(d, dealId); }).then(function () { ui.toast("Noted. Claude will chase if they go quiet"); }); break;
       case "mark-won": closeWith(dealId, "won"); break;
       case "mark-lost": closeWith(dealId, "lost"); break;
       case "reopen-deal": viewActions.setStage(dealId, M.openStages()[M.openStages().length - 1].key); break;
@@ -566,11 +655,10 @@
       }
 
       // Claude's moves and suggestions
-      case "keep-move": leave(function () { change(function (d) { mut.seenMove(d, dealId); }).then(function () { ui.toast("Kept"); }); }); break;
       case "undo-move": {
         const x = M.dealById(data, dealId);
         const back = x && x.moved ? M.stageLabel(x.moved.from) : "";
-        leave(function () { change(function (d) { mut.undoMove(d, dealId); }).then(function () { ui.toast("Moved back to " + back); }); });
+        change(function (d) { mut.undoMove(d, dealId); }).then(function () { ui.toast("Moved back to " + back); });
         break;
       }
       case "approve-deal": leave(function () { change(function (d) { mut.approveDeal(d, dealId); }).then(function () { ui.toast("Added to your pipeline", { icon: "check" }); }); }); break;
@@ -586,19 +674,12 @@
         leave(function () { change(function (d) { mut.decide(d, sId, how); }).then(function () { ui.toast(how === "approve" ? "Done" : "Skipped", { actionLabel: "Undo", onAction: function () { change(function (d) { mut.undecide(d, sId); }); } }); }); });
         break;
       }
-      case "suggestion-draft": {
-        const s = M.suggestionById(data, sId);
-        if (s && s.email) openDraft(s.email, function () {
-          change(function (d) { mut.suggestionOpened(d, sId); });
-          ui.toast("Your email is open in " + L.emailLabel(data.settings.emailProvider) + ". Check it and press send, then press Done", { icon: "mail", duration: 8000 });
-        });
-        break;
-      }
-
       // everything else
       case "settings": go("preferences"); break;
       case "pref-add-stage": V.preferences.addStageRow($("#prefStages")); break;
       case "pref-remove-stage": btn.closest(".pref-cat").remove(); break;
+      case "pref-add-crit": V.preferences.addCritRow($("#prefCrits")); break;
+      case "pref-remove-crit": btn.closest(".pref-cat").remove(); break;
       case "shortcuts": $("#shortcutsDialog").showModal(); break;
       case "open-sidebar": document.body.classList.add("sidebar-open"); break;
       case "close-sidebar": document.body.classList.remove("sidebar-open"); break;
@@ -668,6 +749,17 @@
       generic.close();
       let made = null;
       change(function (d) { made = mut.addPerson(d, fields); }).then(function () { go("people"); openDrawer("person", made.id); });
+    }
+    if (kind === "claude-send") {
+      const where = form.getAttribute("data-where"), id = form.getAttribute("data-id");
+      const email = { to: f.to.value.trim(), subject: f.subject.value.trim(), body: f.body.value };
+      if (!email.to) return f.to.focus();
+      if (!email.body.trim()) return f.body.focus();
+      generic.close();
+      change(function (d) { mut.approveSend(d, where, id, email); }).then(function () { return askClaude("send", null, where + ":" + id); }).then(function (started) {
+        ui.toast(started ? "Claude is sending it now" : "Claude sends it on its next check-in. To send it straight away, say \u201csend my approved emails\u201d to Claude", { icon: "sparkle", duration: 8000 });
+      });
+      return;
     }
     if (kind === "group-email") {
       if (!f.subject.value.trim()) return f.subject.focus();

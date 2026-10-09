@@ -82,7 +82,7 @@
 
   const DEFAULT_SETTINGS = {
     yourName: "", businessName: "",
-    currency: "GBP", chaseAfterDays: 7, autoMove: true,
+    currency: "GBP", chaseAfterDays: 7, autoMove: true, fitCriteria: [],
     emailProvider: "gmail", calendarProvider: "google"
   };
 
@@ -212,6 +212,25 @@
   function checkGaps(x) { return CHECK.filter(function (c) { return (x.check[c.key] || {}).status !== "known"; }); }
   function hasBeenChecked(x) { return !!x.check.checkedAt; }
 
+  // How well a prospect fits the ideal client, from Claude's research: each of the person's own
+  // criteria (settings.fitCriteria) is yes 1, partly 0.5 or no 0. Criteria Claude couldn't find
+  // out ("unknown") are left out, and the app says how many it's based on.
+  const FIT = { yes: { label: "Yes", score: 1 }, partly: { label: "Partly", score: 0.5 }, no: { label: "No", score: 0 }, unknown: { label: "Couldn't tell", score: null } };
+  function fitScore(x) {
+    const fit = x && x.research && Array.isArray(x.research.fit) ? x.research.fit : [];
+    const assessed = fit.filter(function (f) { return f && FIT[f.result] && FIT[f.result].score != null; });
+    if (!assessed.length) return null;
+    const total = assessed.reduce(function (sum, f) { return sum + FIT[f.result].score; }, 0);
+    return { score: Math.round(total / assessed.length * 100), assessed: assessed.length, of: fit.length, dealBreaker: fit.some(function (f) { return f.result === "no" && f.dealBreaker; }) };
+  }
+  // Emails waiting for Claude to send: the person pressed Claude emails, then Send
+  function queuedEmails(d) {
+    const out = [];
+    d.deals.forEach(function (x) { if (x.email && x.email.sendStatus === "queued") out.push(x.email); });
+    d.suggestions.forEach(function (sg) { if (sg.email && sg.email.sendStatus === "queued") out.push(sg.email); });
+    return out;
+  }
+
   // Gone quiet: no contact for longer than the person's chase setting
   function quietDays(x) { return daysSince(x.lastContact || x.created); }
   function needsChase(d, x) { const q = quietDays(x); return isOpen(x) && q != null && q >= (Number(d.settings.chaseAfterDays) || 7); }
@@ -231,7 +250,7 @@
   }
 
   function waitingSuggestions(d) { return d.suggestions.filter(function (s) { return s.status === "waiting"; }); }
-  function reviewCount(d) { return waitingSuggestions(d).length + d.deals.filter(isSuggested).length + d.deals.filter(function (x) { return x.moved && !x.moved.seen; }).length; }
+  function reviewCount(d) { return waitingSuggestions(d).length + d.deals.filter(isSuggested).length; }
 
   function callsSorted(d) { return d.calls.slice().sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); }); }
   function callsForDeal(d, id) { return callsSorted(d).filter(function (c) { return c.dealId === id; }); }
@@ -391,6 +410,21 @@
       if (!x || !x.email) return;
       x.email.openedAt = nowISO();
     },
+    // The person pressed Claude emails, checked it, and pressed Send. Claude sends it on its next
+    // run (started straight away through the helper) and sets sendStatus to "sent" or "failed".
+    approveSend: function (d, where, id, email) {
+      const holder = where === "deal" ? dealById(d, id) : suggestionById(d, id);
+      if (!holder || !holder.email) return;
+      Object.assign(holder.email, email, { sendApprovedAt: nowISO(), sendStatus: "queued" });
+      delete holder.email.sendError;
+      const x = where === "deal" ? holder : dealById(d, holder.dealId);
+      if (x) addTimeline(x, { kind: "email", title: "You asked Claude to send: " + (email.subject || "an email"), by: "you" });
+    },
+    cancelSend: function (d, where, id) {
+      const holder = where === "deal" ? dealById(d, id) : suggestionById(d, id);
+      if (holder && holder.email && holder.email.sendStatus === "queued") { holder.email.sendStatus = ""; delete holder.email.sendApprovedAt; }
+    },
+    requestResearch: function (d, id) { const x = dealById(d, id); if (x) x.researchRequestedAt = nowISO(); },
     emailSent: function (d, id) {
       const x = dealById(d, id);
       if (!x || !x.email) return;
@@ -420,7 +454,7 @@
     suggestionOpened: function (d, id) { const s = suggestionById(d, id); if (s) s.draftOpenedAt = nowISO(); },
 
     addPerson: function (d, fields) {
-      const p = { id: newId("p"), name: fields.name, organisation: fields.organisation || "", role: fields.role || "prospect", email: fields.email || "", phone: "", notes: "" };
+      const p = { id: newId("p"), name: fields.name, organisation: fields.organisation || "", role: fields.role || "prospect", email: fields.email || "", phone: "", linkedin: fields.linkedin || "", notes: "" };
       d.people.push(p);
       return p;
     },
@@ -449,7 +483,7 @@
   window.PL.model = {
     DEFAULT_STAGES: DEFAULT_STAGES, STAGES: STAGES, STAGE: STAGE, CHECK: CHECK, STATUS: STATUS, ROLES: ROLES,
     openStages: openStages, stageLabel: stageLabel, checkLabel: checkLabel,
-    validate: validate, normalise: normalise,
+    validate: validate, normalise: normalise, FIT: FIT, fitScore: fitScore, queuedEmails: queuedEmails,
     todayISO: todayISO, daysSince: daysSince, splitLocal: splitLocal, timeLabel: timeLabel, whenLabel: whenLabel, money: money,
     dealById: dealById, callById: callById, suggestionById: suggestionById,
     setLinkedPeople: setLinkedPeople, allPeople: allPeople, personById: personById,

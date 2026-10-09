@@ -41,6 +41,7 @@ If they still don't want to answer, stop here. Note it in `setup/progress.md` ("
 - If `context/business.md` is still empty, fill its first lines from the same answers (name, what you do, who for, what you sell). Never overwrite what's there; add.
 - In `apps/pipeline/data/pipeline.json`, set `settings.stages` (their stages, keeping `won` and `lost` last; keys are lowercase words with hyphens), `settings.chaseAfterDays`, `settings.currency` if not pounds, and `settings.salesSetUp` to `true`.
 - Add their main competitors and their usual decision-maker to `context/sales.md`, not `people.md`.
+- **Their ideal client, as a checklist.** From questions 2 and 4, write 4 to 6 short criteria into `settings.fitCriteria`, `[{ "text": "Independent business in the South West", "dealBreaker": true }]`: where, what kind of business, how big, who decides, the budget, what they need. Mark a criterion `dealBreaker` only if they said so ("we never work outside the South West"). Show them the list in one message and fix what they change. Claude checks every prospect against it before a call, and the app turns it into a fit score.
 
 ## 4. Check it with them
 
