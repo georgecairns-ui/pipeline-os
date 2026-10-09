@@ -19,6 +19,7 @@ You copy the kit, open it in Claude Code and type **/setup**. In about 25 minute
 
 ## What it does
 
+- **Brain dump.** Press **Brain dump** at the top of any page and talk about your sales, as messy as you like: how a call went, who to chase, a new lead you met. Pick what it's about (a deal, a person, your pipeline, or your task list) or let Claude decide. Claude updates the deals, adds the new ones, moves them on and writes the emails, usually within a minute or 2.
 - **Fills in a deal from your call.** If you record calls, Claude reads each sales call and updates the deal. If you don't, press **Call notes**, paste a few rough lines or the transcript (or drop in a text file), and the deal fills itself in within a minute or 2: what happened, the deal check, your next steps and the email back to them.
 - **Writes the email back, and sends it if you want.** In your voice, recapping what was agreed, with one question that moves the deal on. Press **Claude emails**, check it and press Send, and Claude sends it from your own email. Or press **I'll do it** and it opens in Gmail or Outlook for you. LinkedIn messages too: Claude writes them, you paste and send.
 - **Researches everyone before the call.** Who they are, their role, what their business does, how well they fit your ideal client (a score worked out from your own setup answers), and how to run the call.

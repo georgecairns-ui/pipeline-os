@@ -44,7 +44,7 @@ If `context/sales.md` still says "Status: not filled in yet", the pipeline can't
 
 | Folder | What's in it |
 |---|---|
-| **http://localhost:4747** | The app. It opens on Home (a dashboard of boxes they arrange themselves), then the pipeline's pages: Pipeline (every deal by stage, as a board or a list), Review, Calls and People, plus Preferences (the cog). The **Call notes** button at the top adds notes to a deal and starts you straight away. A small helper in `apps/server/` runs it on this computer. If it isn't running, use `.claude/skills/open-task-list` |
+| **http://localhost:4747** | The app. It opens on Home (a dashboard of boxes they arrange themselves), then the pipeline's pages: Pipeline (every deal by stage, as a board or a list), Review, Calls and People, plus Preferences (the cog). The **Brain dump** button at the top records a voice note (or a typed one) about their sales, with what it's about, and starts you straight away. A small helper in `apps/server/` runs it on this computer. If it isn't running, use `.claude/skills/open-task-list` |
 | `Open Pipeline.html` | Double-clicking it goes to the link above when the app is running |
 | `apps/pipeline/` | The pipeline app. `CLAUDE.md` in there explains its data. Their deals are in `apps/pipeline/data/pipeline.json` |
 | `apps/shared/` | The app's look: `theme.css` holds every colour and font. Also the toolkit menu: `catalogue.json` lists all 9 tools and the booking link |
@@ -68,6 +68,7 @@ When a request matches a skill in `.claude/skills/`, read that skill's `SKILL.md
 | "How qualified is this deal?", "is this deal real?" | `.claude/skills/qualify-a-deal` |
 | "Prep me for my call with Mark" | `.claude/skills/prep-for-a-sales-call` |
 | "Who should I chase?", "who's gone quiet?" | `.claude/skills/who-to-chase` |
+| "Sort my brain dump", a messy note about their sales (and when they press Done on Brain dump) | `.claude/skills/sort-pipeline-brain-dump` |
 | "Research my call with Mark", "who am I meeting?", "are they a good fit?" | `.claude/skills/research-a-prospect` |
 | "Send my approved emails" (and when they press Send on Claude emails) | `.claude/skills/send-approved-emails` |
 | "Chase this", "they haven't replied" | `.claude/skills/polite-chaser` |

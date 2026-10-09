@@ -12,6 +12,10 @@
     "research-deals": {
       "label": "researching people before a call",
       "prompt": "The person has asked for research in Pipeline OS. Follow .claude/skills/research-a-prospect for every deal in apps/pipeline/data/pipeline.json whose researchRequestedAt is newer than its research (or that has no research). Read context/sales.md first. Change nothing else."
+    },
+    "sort-brain-dump": {
+      "label": "sorting a brain dump",
+      "prompt": "A new brain dump has just been added in Pipeline OS. Follow .claude/skills/sort-pipeline-brain-dump for the unsorted items in the dump list of apps/pipeline/data/pipeline.json. Read context/sales.md first. Be quick and change nothing else."
     }
   }
 }

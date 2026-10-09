@@ -103,7 +103,8 @@
     d.formatVersion = 1;
     d.settings = Object.assign({}, DEFAULT_SETTINGS, d.settings || {});
     useStages(d.settings.stages);
-    ["deals", "people", "calls", "suggestions", "activity"].forEach(function (k) { d[k] = arr(d[k]); });
+    ["deals", "people", "calls", "suggestions", "activity", "dump"].forEach(function (k) { d[k] = arr(d[k]); });
+    d.dump = d.dump.filter(function (x) { return x && x.id && x.text; });
     d.deals = d.deals.filter(function (x) { return x && x.id && x.title; });
     d.deals.forEach(function (x) {
       if (!STAGE[x.stage]) x.stage = openStages()[0].key;
@@ -423,6 +424,15 @@
     cancelSend: function (d, where, id) {
       const holder = where === "deal" ? dealById(d, id) : suggestionById(d, id);
       if (holder && holder.email && holder.email.sendStatus === "queued") { holder.email.sendStatus = ""; delete holder.email.sendApprovedAt; }
+    },
+    // Brain dump: what they said, and what it's about (deals, people, the pipeline, other tools).
+    // Claude sorts it (sort-pipeline-brain-dump) and writes back what it did as summary.
+    addBrainDump: function (d, text, about) {
+      const item = { id: newId("b"), text: String(text).slice(0, 20000), about: (about || []).map(function (a) { return { type: a.type, id: a.id || "", label: a.label || "" }; }),
+        createdAt: nowISO(), status: "unsorted", kind: "voice" };
+      d.dump.push(item);
+      (about || []).forEach(function (a) { if (a.type === "deal") { const x = dealById(d, a.id); if (x) addTimeline(x, { kind: "note", title: "You added a brain dump about this deal", by: "you" }); } });
+      return item;
     },
     requestResearch: function (d, id) { const x = dealById(d, id); if (x) x.researchRequestedAt = nowISO(); },
     emailSent: function (d, id) {
