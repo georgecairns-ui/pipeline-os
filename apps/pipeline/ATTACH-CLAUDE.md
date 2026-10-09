@@ -17,7 +17,7 @@ Every deal on one board. Claude writes up sales calls, checks every deal against
 | "How qualified is this deal?", "is this deal real?" | `.claude/skills/qualify-a-deal` |
 | "Prep me for my call with Mark" | `.claude/skills/prep-for-a-sales-call` |
 | "Who should I chase?", "who's gone quiet?" | `.claude/skills/who-to-chase` |
-| A brain dump from Pipeline OS (its Brain dump button) | `.claude/skills/sort-pipeline-brain-dump` (Task List OS's own Brain dump still uses `sort-my-brain-dump`) |
+| The sales part of a brain dump (handed over by the shared `sort-brain-dump`) | `.claude/skills/sort-pipeline-brain-dump` |
 
 Day to day:
 

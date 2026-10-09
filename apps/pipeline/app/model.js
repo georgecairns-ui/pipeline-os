@@ -103,8 +103,7 @@
     d.formatVersion = 1;
     d.settings = Object.assign({}, DEFAULT_SETTINGS, d.settings || {});
     useStages(d.settings.stages);
-    ["deals", "people", "calls", "suggestions", "activity", "dump"].forEach(function (k) { d[k] = arr(d[k]); });
-    d.dump = d.dump.filter(function (x) { return x && x.id && x.text; });
+    ["deals", "people", "calls", "suggestions", "activity"].forEach(function (k) { d[k] = arr(d[k]); });
     d.deals = d.deals.filter(function (x) { return x && x.id && x.title; });
     d.deals.forEach(function (x) {
       if (!STAGE[x.stage]) x.stage = openStages()[0].key;
@@ -224,6 +223,40 @@
     const total = assessed.reduce(function (sum, f) { return sum + FIT[f.result].score; }, 0);
     return { score: Math.round(total / assessed.length * 100), assessed: assessed.length, of: fit.length, dealBreaker: fit.some(function (f) { return f.result === "no" && f.dealBreaker; }) };
   }
+  // How important a Review item is to the pipeline, worked out from its deal (never typed in by
+  // Claude): what it's worth against the biggest open deal (up to 35), how far along it is (20),
+  // how well they fit (15), and how urgent it is (a call today or tomorrow 25, in 3 days 12; gone
+  // quiet twice the chase setting 18, once 10; a new enquiry from the last day 10; a chase 5).
+  // 55 or more is High, 30 or more Medium, otherwise Low. item is a suggestion or a suggested deal.
+  function importance(d, item) {
+    let x = item && item.title && item.check && item.timeline ? item : dealById(d, item && item.dealId);
+    if (!x && item && item.personId) x = openDeals(d).find(function (dl) { return dl.personIds.indexOf(item.personId) > -1; }) || null;
+    const reasons = [];
+    let score = 0;
+    if (x) {
+      const max = Math.max.apply(null, openDeals(d).map(function (dl) { return Number(dl.value) || 0; }).concat([Number(x.value) || 0, 1]));
+      if (x.value) { score += Math.round((Number(x.value) || 0) / max * 35); reasons.push(money(d, x.value) + " deal"); }
+      const open = openStages();
+      const i = open.findIndex(function (s) { return s.key === x.stage; });
+      if (!x.suggested && i > 0) { score += Math.round(i / Math.max(1, open.length - 1) * 20); reasons.push(open[i].label); }
+      const f = fitScore(x);
+      if (f) { score += Math.round(f.score / 100 * 15) - (f.dealBreaker ? 10 : 0); reasons.push(f.score + "% fit"); } else score += 7;
+      const m = upcomingMeeting(x);
+      if (m) {
+        const days = Math.round((ui.parseDate(splitLocal(m.start).date) - ui.parseDate(todayISO())) / 86400000);
+        if (days <= 1) { score += 25; reasons.push(days === 0 ? "call today" : "call tomorrow"); }
+        else if (days <= 3) { score += 12; reasons.push("call in " + days + " days"); }
+      }
+      const q = quietDays(x), chase = Number(d.settings.chaseAfterDays) || 7;
+      if (isOpen(x) && !m && q != null && q >= chase * 2) { score += 18; reasons.push(q + " days quiet"); }
+      else if (isOpen(x) && !m && q != null && q >= chase) { score += 10; reasons.push(q + " days quiet"); }
+      if (x.suggested && daysSince(x.created) <= 1) { score += 10; reasons.push("new enquiry, reply fast"); }
+    } else reasons.push("not linked to a deal yet");
+    if (item && item.kind === "chase") score += 5;
+    const level = score >= 55 ? "high" : score >= 30 ? "medium" : "low";
+    return { score: score, level: level, label: { high: "High", medium: "Medium", low: "Low" }[level], reasons: reasons };
+  }
+
   // Emails waiting for Claude to send: the person pressed Claude emails, then Send
   function queuedEmails(d) {
     const out = [];
@@ -425,15 +458,6 @@
       const holder = where === "deal" ? dealById(d, id) : suggestionById(d, id);
       if (holder && holder.email && holder.email.sendStatus === "queued") { holder.email.sendStatus = ""; delete holder.email.sendApprovedAt; }
     },
-    // Brain dump: what they said, and what it's about (deals, people, the pipeline, other tools).
-    // Claude sorts it (sort-pipeline-brain-dump) and writes back what it did as summary.
-    addBrainDump: function (d, text, about) {
-      const item = { id: newId("b"), text: String(text).slice(0, 20000), about: (about || []).map(function (a) { return { type: a.type, id: a.id || "", label: a.label || "" }; }),
-        createdAt: nowISO(), status: "unsorted", kind: "voice" };
-      d.dump.push(item);
-      (about || []).forEach(function (a) { if (a.type === "deal") { const x = dealById(d, a.id); if (x) addTimeline(x, { kind: "note", title: "You added a brain dump about this deal", by: "you" }); } });
-      return item;
-    },
     requestResearch: function (d, id) { const x = dealById(d, id); if (x) x.researchRequestedAt = nowISO(); },
     emailSent: function (d, id) {
       const x = dealById(d, id);
@@ -493,7 +517,7 @@
   window.PL.model = {
     DEFAULT_STAGES: DEFAULT_STAGES, STAGES: STAGES, STAGE: STAGE, CHECK: CHECK, STATUS: STATUS, ROLES: ROLES,
     openStages: openStages, stageLabel: stageLabel, checkLabel: checkLabel,
-    validate: validate, normalise: normalise, FIT: FIT, fitScore: fitScore, queuedEmails: queuedEmails,
+    validate: validate, normalise: normalise, FIT: FIT, fitScore: fitScore, importance: importance, queuedEmails: queuedEmails,
     todayISO: todayISO, daysSince: daysSince, splitLocal: splitLocal, timeLabel: timeLabel, whenLabel: whenLabel, money: money,
     dealById: dealById, callById: callById, suggestionById: suggestionById,
     setLinkedPeople: setLinkedPeople, allPeople: allPeople, personById: personById,

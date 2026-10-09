@@ -4,6 +4,8 @@
       "Read(./**)",
       "Edit(./apps/pipeline/data/**)",
       "Write(./apps/pipeline/data/**)",
+      "Write(./apps/home/data/**)",
+      "Edit(./apps/home/data/**)",
       "Edit(./context/**)",
       "Write(./context/**)",
       "Edit(./files/**)",

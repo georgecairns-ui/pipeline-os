@@ -40,7 +40,7 @@
     drawer: null
   };
   // Deals Claude is updating right now (from call notes), so the panel can say so
-  const claude = { dealIds: [], research: [], sends: [], dumps: [], timer: null };
+  const claude = { dealIds: [], research: [], sends: [], timer: null };
 
   let data = null;
   let status = "checking";
@@ -286,8 +286,7 @@
   const JOBS = {
     notes: { name: "update-deals", doing: "Claude is updating your deal" },
     send: { name: "send-emails", doing: "Claude is sending your email" },
-    research: { name: "research-deals", doing: "Claude is researching" },
-    dump: { name: "sort-brain-dump", doing: "Claude is sorting your brain dump" }
+    research: { name: "research-deals", doing: "Claude is researching" }
   };
   // Resolves true if Claude was started (or queued)
   function askClaude(kind, dealId, extra) {
@@ -295,7 +294,7 @@
     return fetch("/api/claude/run/pipeline/" + JOBS[kind].name, { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
       .then(function (r) {
         if (r.status !== 202) return false;
-        const list = kind === "notes" ? claude.dealIds : kind === "research" ? claude.research : kind === "dump" ? claude.dumps : claude.sends;
+        const list = kind === "notes" ? claude.dealIds : kind === "research" ? claude.research : claude.sends;
         const item = kind === "send" ? extra : dealId;
         if (item && list.indexOf(item) === -1) list.push(item);
         watchClaude();
@@ -305,7 +304,6 @@
   }
   function claudeDoing() {
     if (claude.sends.length) return JOBS.send.doing;
-    if (claude.dumps.length) return JOBS.dump.doing;
     if (claude.dealIds.length) return JOBS.notes.doing;
     if (claude.research.length) return JOBS.research.doing;
     return "Claude is working";
@@ -330,14 +328,7 @@
   }
   function reportClaude(now) {
     const data = now;
-    const notes = claude.dealIds.splice(0), research = claude.research.splice(0), sends = claude.sends.splice(0), dumps = claude.dumps.splice(0);
-    dumps.forEach(function (id) {
-      const b = data.dump.find(function (x) { return x.id === id; });
-      if (b && b.status === "sorted") ui.toast("Claude has sorted your brain dump" + (b.summary ? ": " + b.summary : ""), { icon: "sparkle", duration: 12000, actionLabel: M.reviewCount(data) ? "See Review" : null, onAction: M.reviewCount(data) ? function () { go("review"); } : null });
-      else ui.toast("Claude couldn't finish sorting it. It's saved; say \u201csort my brain dump\u201d to Claude", { icon: "info", duration: 9000 });
-    });
-    setClaudeStatus(null);
-    render();
+    const notes = claude.dealIds.splice(0), research = claude.research.splice(0), sends = claude.sends.splice(0);
     notes.forEach(function (id) {
       const x = M.dealById(data, id);
       if (!x) return;
@@ -359,27 +350,23 @@
     });
   }
 
-  // ---------- Brain dump: talk, and Claude sorts the pipeline ----------
-  function recordBrainDump() {
-    const open = M.openDeals(data).concat(data.deals.filter(M.isSuggested)).sort(function (a, b) { return a.title.localeCompare(b.title); });
-    const opts = {
-      deals: open.map(function (x) { return { id: x.id, label: x.organisation ? x.organisation + ": " + x.title : x.title }; }),
-      people: M.allPeople(data).slice().sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (p) { return { id: p.id, label: C.personLabel(p) }; }),
-      tools: installedTools.filter(function (t) { return t.id !== "pipeline"; }).map(function (t) { return { id: t.id, label: t.name }; }),
-      preset: state.drawer && state.drawer.kind === "deal" && M.dealById(data, state.drawer.id) ? { type: "deal", id: state.drawer.id, label: M.dealById(data, state.drawer.id).title } : null
-    };
-    window.PL.voice.open(function (text, about) {
-      if (store.isDemo()) { ui.toast("Demo mode: nothing is saved, so Claude can't sort it. In your own pipeline, Claude sorts it straight away", { icon: "info", duration: 8000 }); return; }
-      let made = null;
-      change(function (d) { made = mut.addBrainDump(d, text, about); }).then(function () { return askClaude("dump", made.id); }).then(function (started) {
-        if (started) ui.toast("Got it. Claude is sorting your brain dump", { icon: "mic", duration: 6000 });
-        else ui.toast("Saved. Say \u201csort my brain dump\u201d to Claude and it sorts your pipeline", { icon: "mic", duration: 8000 });
-      });
-    }, opts);
-  }
-  // The other tools in this folder, so the brain dump can be about them too
-  let installedTools = [];
-  fetch("../installed.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : { tools: [] }; }).then(function (inst) { installedTools = (inst.tools || []).filter(function (t) { return t && t.id && t.name; }); }).catch(function () {});
+  // ---------- Brain dump (shared, ../shared/js/braindump.js) ----------
+  // The button, V and the sorting are shared by every tool. Pipeline OS adds "A deal..." and
+  // "A person..." to "What's it about?", and starts with the deal that's open, if one is.
+  if (window.TaskListOS.brainDump) window.TaskListOS.brainDump.register("pipeline", {
+    pickers: function () {
+      if (!data) return [];
+      const deals = M.openDeals(data).concat(data.deals.filter(M.isSuggested)).sort(function (a, b) { return a.title.localeCompare(b.title); });
+      return [
+        { type: "deal", label: "A deal\u2026", items: deals.map(function (x) { return { id: x.id, label: x.organisation ? x.organisation + ": " + x.title : x.title }; }) },
+        { type: "person", label: "A person\u2026", items: M.allPeople(data).slice().sort(function (a, b) { return a.name.localeCompare(b.name); }).map(function (p) { return { id: p.id, label: C.personLabel(p) }; }) }
+      ];
+    },
+    preset: function () {
+      const x = data && state.drawer && state.drawer.kind === "deal" ? M.dealById(data, state.drawer.id) : null;
+      return x ? { type: "deal", id: x.id, label: x.title, tool: "pipeline" } : null;
+    }
+  });
 
   // ---------- Sending: Claude emails, or I'll do it ----------
   function sendHolder(where, id) { return where === "deal" ? M.dealById(data, id) : M.suggestionById(data, id); }
@@ -614,7 +601,6 @@
       case "add-deal": openAddDeal(); break;
       case "add-deal-person": openAddDeal({ personId: btn.closest("[data-person]").getAttribute("data-person") }); break;
       case "add-notes": openAddNotes(dealId); break;
-      case "voice-note": recordBrainDump(); break;
       case "add-person": openAddPerson(); break;
       case "pipe-view": state.pipeView = btn.getAttribute("data-value"); remember("plos-pipe-view", state.pipeView); seen.clear(); renderView(); break;
       case "people-group": {
@@ -878,7 +864,6 @@
     }
     if (typing || e.metaKey || e.ctrlKey || e.altKey || document.querySelector("dialog[open]")) return;
     if (e.key === "n" || e.key === "N") { e.preventDefault(); openAddDeal(); }
-    else if (e.key === "v" || e.key === "V") { e.preventDefault(); recordBrainDump(); }
     else if (e.key === "/") { e.preventDefault(); searchInput.focus(); }
     else if (/^[1-9]$/.test(e.key)) { const v = VIEW_ORDER[Number(e.key) - 1]; if (v) go(v); }
   });

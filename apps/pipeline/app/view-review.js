@@ -18,14 +18,24 @@
     return x ? '<button type="button" class="source-line source-line--btn" data-action="open-deal" data-deal="' + esc(x.id) + '">' + icon("trendingUp") + "<span><strong>" + esc(x.title) + "</strong> " + esc(M.stageLabel(x.stage)) + ", " + esc(M.money(d, x.value)) + "</span></button>" : "";
   }
 
+  // High, Medium or Low, with why (model.js, importance)
+  function grade(ctx, item) {
+    const g = M.importance(ctx.d, item);
+    return '<span class="grade grade--' + g.level + '" title="' + esc("Importance to your pipeline: " + g.reasons.join(", ")) + '">' + esc(g.label) + "</span>";
+  }
+  function why(ctx, item) {
+    const g = M.importance(ctx.d, item);
+    return g.reasons.length ? '<p class="grade-why">' + esc(g.reasons.join(" \u00b7 ")) + "</p>" : "";
+  }
+
   function newDealRow(ctx, x) {
     const d = ctx.d;
     const p = M.personById(d, x.personIds[0]);
     return '<li class="proposal' + ctx.anim("nd-" + x.id) + '" data-deal="' + esc(x.id) + '">' +
-      '<div class="proposal__body"><div class="proposal__top"><span class="new-tag">New</span>' + (x.value ? '<span class="chip num">' + esc(M.money(d, x.value)) + "</span>" : "") +
+      '<div class="proposal__body"><div class="proposal__top">' + grade(ctx, x) + '<span class="new-tag">New</span>' + (x.value ? '<span class="chip num">' + esc(M.money(d, x.value)) + "</span>" : "") +
       (p ? '<span class="who">' + C.avatar(p) + '<span class="who__name">' + esc(p.name) + "</span></span>" : "") + "</div>" +
       '<button type="button" class="proposal__title" data-action="open-deal">' + esc(x.title) + "</button>" +
-      (x.suggestReason ? '<p class="proposal__reason">' + esc(x.suggestReason) + "</p>" : "") + "</div>" +
+      (x.suggestReason ? '<p class="proposal__reason">' + esc(x.suggestReason) + "</p>" : "") + why(ctx, x) + "</div>" +
       '<div class="proposal__actions"><button type="button" class="btn btn--approve btn--sm" data-action="approve-deal">' + icon("check") + "<span>Add to pipeline</span></button>" +
       '<button type="button" class="btn btn--sm" data-action="open-deal">' + icon("pencil") + "Edit</button>" +
       '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-deal">Not a deal</button></div></li>';
@@ -52,13 +62,13 @@
         '<button type="button" class="btn btn--ghost btn--sm" data-action="skip-suggestion">Skip</button>';
     }
     return '<li class="proposal' + ctx.anim("s-" + s.id) + '" data-suggestion="' + esc(s.id) + '">' +
-      '<div class="proposal__body"><div class="proposal__top"><span class="chip chip--info">' + icon(k[0]) + esc(k[1]) + "</span></div>" +
+      '<div class="proposal__body"><div class="proposal__top">' + grade(ctx, s) + '<span class="chip chip--info">' + icon(k[0]) + esc(k[1]) + "</span></div>" +
       '<p class="proposal__title proposal__title--static">' + esc(s.title) + "</p>" +
       (s.reason ? '<p class="proposal__reason">' + esc(s.reason) + "</p>" : "") +
       (s.linkedin && s.linkedin.body ? '<details class="peek"><summary>' + icon("external") + "Read the message</summary><p class=\"peek__body\">" + esc(s.linkedin.body) + "</p></details>" : "") +
       (s.email && s.email.body ? '<details class="peek"><summary>' + icon("mail") + "Read the email</summary><p class=\"peek__to muted\">To " + esc(s.email.to || "") + " · " + esc(s.email.subject || "") + '</p><p class="peek__body">' + esc(s.email.body) + "</p></details>" : "") +
       (s.notes ? '<details class="peek"><summary>' + icon("list") + (s.kind === "prep" ? "Read the prep" : "More") + '</summary><p class="peek__body">' + esc(s.notes) + "</p></details>" : "") +
-      dealLine(d, x) + "</div>" +
+      dealLine(d, x) + why(ctx, s) + "</div>" +
       '<div class="proposal__actions">' + actions + "</div></li>";
   }
 
@@ -67,13 +77,16 @@
     const fresh = d.deals.filter(M.isSuggested);
     const sugg = M.waitingSuggestions(d);
     const order = { chase: 0, email: 1, linkedin: 2, prep: 3, task: 4, question: 5 };
+    // Most important to the pipeline first; kind breaks a tie
     const rank = function (s) { return s.kind in order ? order[s.kind] : 9; };
-    sugg.sort(function (a, b) { return rank(a) - rank(b); });
+    sugg.sort(function (a, b) { return M.importance(d, b).score - M.importance(d, a).score || rank(a) - rank(b); });
+    fresh.sort(function (a, b) { return M.importance(d, b).score - M.importance(d, a).score; });
+    const high = sugg.concat(fresh).filter(function (it) { return M.importance(d, it).level === "high"; }).length;
     if (!fresh.length && !sugg.length) {
       return '<div class="page page--narrow">' + C.empty("celebrate", "All caught up.", "Nothing needs you. Claude keeps your deals moving; when there's an email to send or a deal it isn't sure about, it lands here.",
         '<div class="empty__actions">' + C.say("Update my pipeline") + C.say("Who should I chase?") + "</div>") + "</div>";
     }
-    let html = '<div class="page page--narrow"><div class="page-intro"><p>Claude moves your deals on and adds the ones that clearly fit by itself. This is what it needs from you. Press <strong>Claude emails</strong> to check an email and have Claude send it, or <strong>I\'ll do it</strong> to send it yourself.</p></div>';
+    let html = '<div class="page page--narrow"><div class="page-intro"><p>Claude moves your deals on and adds the ones that clearly fit by itself. This is what it needs from you, most important first' + (high ? ': <strong>' + high + " high</strong>" : "") + '. Press <strong>Claude emails</strong> to check an email and have Claude send it, or <strong>I\'ll do it</strong> to send it yourself.</p></div>';
     if (sugg.length) html += '<section class="panel">' + C.sectionHead("To send and to do", { icon: "inbox", count: sugg.length }) + '<ul class="proposals" role="list">' + sugg.map(function (s) { return suggestionRow(ctx, s); }).join("") + "</ul></section>";
     if (fresh.length) html += '<section class="panel">' + C.sectionHead("Deals Claude wasn\'t sure about", { icon: "trendingUp", count: fresh.length }) + '<ul class="proposals" role="list">' + fresh.map(function (x) { return newDealRow(ctx, x); }).join("") + "</ul></section>";
     return html + "</div>";

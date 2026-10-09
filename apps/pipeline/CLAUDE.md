@@ -34,7 +34,6 @@ The routines live as skills in `.claude/skills/`: `pipeline-check-in` (the regul
   "people":      [ { ...person... } ],
   "calls":       [ { ...a sales call, written up... } ],
   "suggestions": [ { ...something waiting for the person to decide... } ],
-  "dump":        [ { ...a brain dump, waiting to be sorted... } ],
   "checkIn":     { "lastRunAt": "2026-10-08T10:30:00.000Z", "nextRunAt": "2026-10-08T11:30:00.000Z", "emailsRead": 34, "callsRead": 1, "dealsUpdated": 3 },
   "activity":    [ { "at": "...", "type": "deal-moved", "dealId": "d-x7k2m9", "from": "talking", "to": "proposal" } ]
 }
@@ -137,14 +136,7 @@ Only sales calls go here. `noTranscript: true` for a sales meeting with no recor
 
 ### Brain dump
 
-What the person said (or typed) with the **Brain dump** button at the top of the app, and what they said it's about:
-
-```json
-{ "id": "b-x7k2p9", "text": "...", "kind": "voice", "status": "unsorted", "createdAt": "...",
-  "about": [ { "type": "deal", "id": "d-hollins", "label": "..." } ], "sortedAt": null, "summary": "" }
-```
-
-`about` items are `deal`, `person`, `pipeline` or `tool` (another tool in this folder, such as `task-list`); empty means "Let Claude decide". The app asks the helper to start `.claude/skills/sort-pipeline-brain-dump` straight away. When you've sorted one, set `status: "sorted"`, `sortedAt` and a one-line `summary` of what you did: the app shows it. Never delete an item.
+**Brain dump** (the button at the top of every page, shared by every tool, and V) saves notes to `apps/home/data/braindump.json`, and the helper starts `.claude/skills/sort-brain-dump`. That shared skill hands the sales part of each note to `.claude/skills/sort-pipeline-brain-dump`, with what the person said it's about (a deal, a person, the pipeline, another tool). The pipeline file has no brain dump list of its own.
 
 ### Suggestions
 
@@ -200,7 +192,7 @@ When Task List OS is attached (it's in `apps/installed.json`):
 | "How qualified is this deal?", "qualify the Hollins deal" | `.claude/skills/qualify-a-deal` |
 | "Prep me for my call with Mark" | `.claude/skills/prep-for-a-sales-call` |
 | "Who should I chase?", "who's gone quiet?" | `.claude/skills/who-to-chase` |
-| "Sort my brain dump" (and when they press Done on Brain dump) | `.claude/skills/sort-pipeline-brain-dump` |
+| "Sort my brain dump" (and when they press Done on Brain dump) | `.claude/skills/sort-brain-dump` (shared; it hands sales to `sort-pipeline-brain-dump`) |
 | "Research my call with Mark", "who am I meeting?", "are they a good fit?" (and when they press Research them) | `.claude/skills/research-a-prospect` |
 | "Send my approved emails" (and when they press Send on Claude emails) | `.claude/skills/send-approved-emails`: only emails with `sendStatus: "queued"` |
 | "Add a deal for...", "new enquiry from..." | Add the deal (`addedBy: "you"`), link or add the person, confirm in one line. If they gave notes, follow `update-a-deal`. |
