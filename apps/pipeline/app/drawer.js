@@ -127,7 +127,7 @@
       '<div class="drawer__body" data-deal="' + esc(x.id) + '">' + banner(ctx, x) +
       '<textarea class="input-bare drawer__title" data-field="title" rows="1" maxlength="160" aria-label="Deal name">' + esc(x.title) + "</textarea>" +
       (x.summary ? '<p class="deal-summary">' + esc(x.summary) + "</p>" : "") +
-      (meeting ? '<div class="drawer__banner drawer__banner--quiet"><span>' + icon("phone") + "<strong>" + esc(M.whenLabel(meeting.start)) + "</strong>&nbsp;" + esc(meeting.title || "Sales call") + "</span></div>" : "") +
+      (meeting ? '<div class="drawer__banner drawer__banner--quiet"><span>' + icon("phone") + "<strong>Call booked: " + esc(M.meetingLabel(meeting.start)) + "</strong>&nbsp;" + esc(meeting.title || "Sales call") + "</span></div>" : "") +
       '<div class="props">' +
       prop("Stage", '<select class="select select--bare" data-field="stage" aria-label="Stage">' + C.stageOptions(x.stage) + "</select>") +
       prop("Value", '<input class="input input--bare num" type="number" min="0" step="50" data-field="value" value="' + esc(x.value || "") + '" placeholder="0" aria-label="Value">') +

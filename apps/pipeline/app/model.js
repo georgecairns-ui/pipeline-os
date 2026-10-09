@@ -26,6 +26,7 @@
   // "won" and "lost" always exist and always come last: they close a deal.
   const DEFAULT_STAGES = [
     { key: "new", label: "New enquiry" },
+    { key: "call-completed", label: "Call completed" },
     { key: "talking", label: "Talking" },
     { key: "proposal", label: "Proposal sent" },
     { key: "negotiating", label: "Negotiating" },
@@ -160,6 +161,16 @@
       diff > 1 && diff < 7 ? day.toLocaleDateString("en-GB", { weekday: "short" }) : day.toLocaleDateString("en-GB", { day: "numeric", month: "short" });
     return name + (s.minutes != null ? " " + timeLabel(s.minutes) : "");
   }
+  // "Today, 2pm", "Tomorrow, Fri 10 Oct, 10am", "Mon 13 Oct, 11am": the day a call is booked for, in full
+  function meetingLabel(dt) {
+    if (!dt) return "";
+    const s = splitLocal(dt);
+    const day = ui.parseDate(s.date);
+    const diff = Math.round((day - ui.parseDate(todayISO())) / 86400000);
+    const full = day.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+    const time = s.minutes != null ? ", " + timeLabel(s.minutes) : "";
+    return diff === 0 ? "Today" + time : diff === 1 ? "Tomorrow, " + full + time : full + time;
+  }
   function money(d, n, opts) {
     const value = Number(n) || 0;
     try {
@@ -225,6 +236,40 @@
   function callsSorted(d) { return d.calls.slice().sort(function (a, b) { return String(b.date || "").localeCompare(String(a.date || "")); }); }
   function callsForDeal(d, id) { return callsSorted(d).filter(function (c) { return c.dealId === id; }); }
   function dealsForPerson(d, personId) { return d.deals.filter(function (x) { return x.personIds.indexOf(personId) > -1 && !x.suggested; }); }
+
+  // People, in groups. Worked out from their deals, so a person moves between groups by themselves:
+  //   clients    a client or customer, or anyone you've won a deal with
+  //   prospects  anyone with an open deal, or a prospect with no deal yet
+  //   untouched  prospects you haven't spoken to yet: no deal yet, or only at the first stage with no call booked or held
+  //   quiet      prospects with an open deal that's gone quiet (no contact for the chase setting)
+  //   lost       people whose deals were all lost, with nothing open or won
+  const GROUPS = [
+    { key: "clients", label: "Clients", icon: "check", hint: "Clients and customers, and anyone you've won a deal with" },
+    { key: "prospects", label: "Prospects", icon: "trendingUp", hint: "Everyone you're selling to right now" },
+    { key: "untouched", label: "Not contacted yet", icon: "user", hint: "Prospects you haven't spoken to yet" },
+    { key: "quiet", label: "Gone quiet", icon: "hourglass", hint: "Prospects who've stopped replying" },
+    { key: "lost", label: "Closed, lost", icon: "x", hint: "Deals that didn't happen, worth a friendly nudge later" }
+  ];
+  function peopleGroups(d) {
+    const g = { clients: [], prospects: [], untouched: [], quiet: [], lost: [], all: [] };
+    const first = openStages()[0].key;
+    allPeople(d).slice().sort(function (a, b) { return a.name.localeCompare(b.name); }).forEach(function (p) {
+      const deals = dealsForPerson(d, p.id);
+      const open = deals.filter(isOpen);
+      const won = deals.some(function (x) { return x.stage === "won"; });
+      const lost = deals.some(function (x) { return x.stage === "lost"; });
+      g.all.push(p);
+      if (p.role === "client" || p.role === "customer" || won) g.clients.push(p);
+      const prospect = open.length > 0 || (p.role === "prospect" && !deals.length);
+      if (prospect) g.prospects.push(p);
+      const quiet = open.some(function (x) { return needsChase(d, x); });
+      const untouched = prospect && !quiet && open.every(function (x) { return x.stage === first && !upcomingMeeting(x) && !callsForDeal(d, x.id).length; });
+      if (untouched) g.untouched.push(p);
+      if (quiet) g.quiet.push(p);
+      if (lost && !open.length && !won) g.lost.push(p);
+    });
+    return g;
+  }
 
   // Won this month and win rate (deals closed in the last 90 days), worked out from the activity log
   function numbers(d) {
@@ -412,6 +457,6 @@
     checkScore: checkScore, checkGaps: checkGaps, hasBeenChecked: hasBeenChecked,
     quietDays: quietDays, needsChase: needsChase, notesWaiting: notesWaiting, upcomingMeeting: upcomingMeeting, meetingsThisWeek: meetingsThisWeek,
     waitingSuggestions: waitingSuggestions, reviewCount: reviewCount, callsSorted: callsSorted, callsForDeal: callsForDeal, dealsForPerson: dealsForPerson,
-    numbers: numbers, search: search, mut: mut
+    numbers: numbers, search: search, meetingLabel: meetingLabel, GROUPS: GROUPS, peopleGroups: peopleGroups, mut: mut
   };
 })();

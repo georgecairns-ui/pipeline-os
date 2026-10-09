@@ -26,7 +26,17 @@
       { id: "p-nadia", name: "Nadia Brook", organisation: "Northgate Physio", role: "prospect", email: "nadia@northgatephysio.example", notes: "Opening a second clinic in the spring." },
       { id: "p-amy", name: "Amy Cole", organisation: "Bramble & Co", role: "prospect", email: "amy@brambleandco.example", notes: "Found us through the Greenway case study." },
       { id: "p-lena", name: "Lena Hart", organisation: "Hart Interiors", role: "other", email: "lena@hartinteriors.example", notes: "" },
-      { id: "p-ben", name: "Ben Ward", organisation: "Kettle Yard Bakery", role: "prospect", email: "ben@kettleyard.example", notes: "" }
+      { id: "p-ben", name: "Ben Ward", organisation: "Kettle Yard Bakery", role: "prospect", email: "ben@kettleyard.example", notes: "" },
+      { id: "p-ivy", name: "Ivy Morgan", organisation: "Copper Kettle Tearooms", role: "prospect", email: "ivy@copperkettle.example", notes: "Booked a call through your Calendly link." },
+      { id: "p-omar", name: "Omar Reid", organisation: "Harbour View Dental", role: "prospect", email: "omar@harbourviewdental.example", notes: "Practice owner. Decides quickly." },
+      { id: "p-sian", name: "Si\u00e2n Davies", organisation: "The Fox & Hound", role: "prospect", email: "sian@foxandhound.example", notes: "Landlady. Pub reopening after a refurb." },
+      { id: "p-leo", name: "Leo Grant", organisation: "Willow Bistro", role: "prospect", email: "leo@willowbistro.example", notes: "Chef owner. Busy, short emails." },
+      { id: "p-hana", name: "Hana Kim", organisation: "Oak & Ivy Florist", role: "prospect", email: "hana@oakandivy.example", notes: "" },
+      { id: "p-jack", name: "Jack Hale", organisation: "Brightside Tutors", role: "prospect", email: "jack@brightsidetutors.example", notes: "" },
+      { id: "p-dan", name: "Dan Price", organisation: "Pennywell Garage", role: "prospect", email: "dan@pennywell.example", notes: "Wants to revisit in the spring." },
+      { id: "p-zoe", name: "Zoe Hart", organisation: "Bloom Yoga", role: "prospect", email: "zoe@bloomyoga.example", notes: "" },
+      { id: "p-rosa", name: "Rosa Lind", organisation: "Lind Architects", role: "prospect", email: "rosa@lindarchitects.example", notes: "Met at the Bristol Chamber breakfast. Interested in a new website next year." },
+      { id: "p-tim", name: "Tim Shaw", organisation: "Shaw Builders", role: "prospect", email: "", notes: "Connected on LinkedIn. No email yet." }
     ];
 
     const blankCheck = function () { return {}; };
@@ -69,7 +79,7 @@
         ]
       },
       {
-        id: "d-ellis", title: "Logo refresh for Ellis Joinery", organisation: "Ellis Joinery", personIds: ["p-mark"], value: 1200, stage: "talking",
+        id: "d-ellis", title: "Logo refresh for Ellis Joinery", organisation: "Ellis Joinery", personIds: ["p-mark"], value: 1200, stage: "new",
         source: "Referral from Tom", created: at(-5, 9), lastContact: at(-1, 11), summary: "Family joinery workshop. Wants a logo that looks as good as their work.",
         nextSteps: [{ text: "Get Mark's brand questionnaire back before the call", due: day(1), done: false }],
         coaching: "First call is tomorrow. Go in with the 3 questions below: you know almost nothing about how they'll decide yet.",
@@ -100,13 +110,15 @@
           { id: "e-m2", at: at(-9, 15), kind: "email", title: "Hannah asked for a lower price", summary: "“Dr Marlow thinks it's a bit more than we planned.”", by: "claude" }]
       },
       {
-        id: "d-northgate", title: "Brand for Northgate Physio's second clinic", organisation: "Northgate Physio", personIds: ["p-nadia"], value: 1800, stage: "new",
-        source: "Website enquiry", created: at(-3, 13), lastContact: at(-1, 15), summary: "Opening a second clinic in the spring and wants signage that matches.",
+        id: "d-northgate", title: "Brand for Northgate Physio's second clinic", organisation: "Northgate Physio", personIds: ["p-nadia"], value: 1800, stage: "call-completed",
+        source: "Website enquiry", created: at(-3, 13), lastContact: at(-1, 15), stageChangedAt: at(-1, 16), summary: "Opening a second clinic in the spring and wants signage that matches.",
+        moved: { from: "new", to: "call-completed", at: at(-1, 16), reason: "Your Google Meet call with Nadia was yesterday at 3pm.", seen: false },
         noTranscript: true,
         nextSteps: [{ text: "Write 3 lines on how yesterday's call went, so Claude can fill this in", due: day(0), done: false }],
         check: { risks: [], signals: [], questions: [] }, alsoHelp: [],
         timeline: [{ id: "e-n1", at: at(-3, 13), kind: "email", title: "Enquiry from Nadia", summary: "Second clinic opening in the spring.", by: "claude" },
-          { id: "e-n2", at: at(-1, 15), kind: "meeting", title: "Video call (Google Meet)", summary: "No recording or transcript for this call.", by: "claude" }]
+          { id: "e-n2", at: at(-1, 15), kind: "meeting", title: "Video call (Google Meet)", summary: "No recording or transcript for this call.", by: "claude" },
+          { id: "e-n3", at: at(-1, 16), kind: "stage", title: "Moved from New enquiry to Call completed", by: "claude" }]
       },
       {
         id: "d-bramble", title: "Packaging for Bramble & Co", organisation: "Bramble & Co", personIds: ["p-amy"], value: 3000, stage: "new", suggested: true,
@@ -114,6 +126,82 @@
         suggestReason: "Amy emailed this morning asking for a quote for packaging for 4 new candle scents. She found you through the Greenway case study.",
         check: { risks: [], signals: [], questions: [] }, alsoHelp: [], nextSteps: [],
         timeline: [{ id: "e-b1", at: at(0, 8, 5), kind: "email", title: "Enquiry from Amy", summary: "Quote for packaging for 4 candle scents.", by: "claude" }]
+      },
+      {
+        id: "d-copper", title: "Rebrand for Copper Kettle Tearooms", organisation: "Copper Kettle Tearooms", personIds: ["p-ivy"], value: 2200, stage: "new",
+        source: "Calendly booking", created: at(-1, 18), lastContact: at(-1, 18), summary: "Tearoom in Clifton taking over a second site. Wants a fresher look for both.",
+        nextSteps: [{ text: "Look at their current menus and Instagram before the call", due: day(2), done: false }],
+        check: { risks: [], signals: [], questions: [] }, alsoHelp: [],
+        nextMeeting: { start: local(3, "14:00"), title: "Intro call with Copper Kettle Tearooms", prep: ["What's prompting the change now?", "Who else is involved in choosing?"] },
+        timeline: [{ id: "e-c1", at: at(-1, 18), kind: "meeting", title: "Ivy booked an intro call", summary: "Through your Calendly link: \u201cthinking about a rebrand\u201d.", by: "claude" }]
+      },
+      {
+        id: "d-oak", title: "Website for Oak & Ivy Florist", organisation: "Oak & Ivy Florist", personIds: ["p-hana"], value: 2800, stage: "new",
+        source: "Website enquiry", created: at(-6, 11), lastContact: at(-6, 11), summary: "Florist who wants to take wedding orders online.",
+        nextSteps: [{ text: "Reply to Hana and offer a call", due: day(0), done: false }],
+        email: { to: "hana@oakandivy.example", subject: "Your new website", why: "Hana asked 6 days ago and hasn't had a reply yet.",
+          body: "Hi Hana,\n\nThanks for getting in touch about a new website, and sorry for the slow reply. Taking wedding orders online is something we've done for a couple of florists, and it makes a real difference in the busy months.\n\nWould a 20 minute call this week work? Here's my calendar: [your booking link]\n\nCheers,\nSam" },
+        check: { risks: [], signals: [], questions: [] }, alsoHelp: [],
+        timeline: [{ id: "e-o1", at: at(-6, 11), kind: "email", title: "Enquiry from Hana", summary: "Wants to take wedding orders online.", by: "claude" }]
+      },
+      {
+        id: "d-bright", title: "Logo for Brightside Tutors", organisation: "Brightside Tutors", personIds: ["p-jack"], value: 800, stage: "new",
+        source: "Referral from Priya", created: at(0, 9, 20), lastContact: at(0, 9, 20), summary: "New tutoring business. Needs a logo before their website goes live.",
+        check: { risks: [], signals: [], questions: [] }, alsoHelp: [], nextSteps: [],
+        timeline: [{ id: "e-b2", at: at(0, 9, 20), kind: "email", title: "Enquiry from Jack", summary: "Needs a logo before the website goes live next month.", by: "claude" }]
+      },
+      {
+        id: "d-harbour", title: "Website for Harbour View Dental", organisation: "Harbour View Dental", personIds: ["p-omar"], value: 5200, stage: "call-completed",
+        source: "Google search", created: at(-5, 10), lastContact: at(-2, 11, 30), stageChangedAt: at(-2, 12), summary: "Dental practice whose site can't take online bookings. Losing new patients to the practice down the road.",
+        nextSteps: [{ text: "Send Omar 3 examples of booking pages", due: day(0), done: false }, { text: "Send the proposal", due: day(3), done: false }],
+        email: { to: "omar@harbourviewdental.example", subject: "3 booking pages, as promised", why: "You promised examples on the call. Sending them today keeps you ahead of the other quote.",
+          body: "Hi Omar,\n\nThanks for your time on Tuesday. As promised, here are 3 booking pages we've built for other practices: [links]\n\nYou mentioned losing around 10 new patients a month to online booking elsewhere. Each of these lets patients book in under a minute, day or night.\n\nI'll have the proposal with you by Friday. Is it just you deciding, or will your practice manager want to see it too?\n\nKind regards,\nSam" },
+        coaching: "Great call: you got a real number (10 patients a month). You didn't ask about the other quote. Find out who it's from before you price.",
+        check: {
+          metrics: K("known", "Losing about 10 new patients a month to practices with online booking.", "Omar on the call"),
+          economicBuyer: K("partly", "Omar owns the practice. Not clear if the practice manager has a say.", "Omar"),
+          decisionCriteria: K("known", "Online booking that works with their practice software, and a site that looks modern.", "Omar, twice"),
+          decisionProcess: K("partly", "Wants it live before January. No steps discussed.", "Omar"),
+          paperProcess: K("gap"), pain: K("known", "Patients ring after hours and go elsewhere.", "Omar: \u201cthe phone rings off the hook at 6pm\u201d"),
+          competition: K("partly", "Has one other quote. Didn't say who.", "Omar"), champion: K("known", "Omar. He found you and wants it done.", "Omar"),
+          risks: ["Another quote is in, and you don't know whose it is."], signals: ["Asked how soon you could start."],
+          questions: ["Who's the other quote from, and what do you like about it?", "Will your practice manager want to see the proposal?", "Is there anything that has to happen before you sign?"], checkedAt: at(-2, 12)
+        },
+        alsoHelp: [{ problem: "Their leaflets in reception are \u201cfrom 2018\u201d.", service: "Print design", question: "Want the leaflets to match the new site?" }],
+        moved: { from: "new", to: "call-completed", at: at(-2, 12), reason: "Your Fathom call with Omar on Tuesday was written up.", seen: true },
+        timeline: [{ id: "e-hv1", at: at(-5, 10), kind: "email", title: "Enquiry from Omar", summary: "Found you on Google. Wants online booking.", by: "claude" },
+          { id: "e-hv2", at: at(-2, 11, 30), kind: "call", title: "Discovery call (Fathom)", summary: "Losing about 10 new patients a month. Wants it live before January. Has another quote.", by: "claude", callId: "c-harbour" },
+          { id: "e-hv3", at: at(-2, 12), kind: "stage", title: "Moved from New enquiry to Call completed", by: "claude" }]
+      },
+      {
+        id: "d-fox", title: "Signage for The Fox & Hound", organisation: "The Fox & Hound", personIds: ["p-sian"], value: 1600, stage: "talking",
+        source: "Walk-in", created: at(-12, 10), lastContact: at(-4, 16), summary: "Pub reopening after a refurb. Needs outside signage and menus.",
+        nextSteps: [{ text: "Bring 2 signage sketches to next week's call", due: day(6), done: false }],
+        coaching: "You've done 2 calls and still don't know the budget. Ask straight out next time: it saves you sketching for the wrong price.",
+        check: { metrics: K("partly", "Reopening date is fixed, so signs must be up in time. No money figure.", "Si\u00e2n"), economicBuyer: K("known", "Si\u00e2n and the brewery's area manager.", "Si\u00e2n"),
+          decisionCriteria: K("partly", "Must fit the brewery's rules on signage.", "Si\u00e2n"), decisionProcess: K("partly", "The brewery signs off on outside signs.", "Si\u00e2n"),
+          paperProcess: K("partly", "Brewery approval, and possibly planning permission.", "Si\u00e2n"), pain: K("known", "Reopening in 6 weeks with old, peeling signs.", "Si\u00e2n"),
+          competition: K("gap"), champion: K("known", "Si\u00e2n.", "Si\u00e2n"), risks: ["Needs the brewery's approval, which can be slow."], signals: ["Has a fixed reopening date."],
+          questions: ["What budget has the brewery set for the signs?", "Who at the brewery approves it, and how long does that take?", "Is anyone else quoting?"], checkedAt: at(-4, 17) },
+        alsoHelp: [], nextMeeting: { start: local(7, "10:30"), title: "Second call with The Fox & Hound", prep: ["What budget has the brewery set?"] },
+        timeline: [{ id: "e-f1", at: at(-12, 10), kind: "note", title: "Si\u00e2n came into the studio", by: "you" },
+          { id: "e-f2", at: at(-4, 16), kind: "call", title: "Call (Zoom)", summary: "Talked through the brewery's signage rules. Second call booked.", by: "claude", callId: "c-fox" }]
+      },
+      {
+        id: "d-willow", title: "New menus for Willow Bistro", organisation: "Willow Bistro", personIds: ["p-leo"], value: 900, stage: "proposal",
+        source: "Referral from Tom", created: at(-25, 10), lastContact: at(-12, 9), summary: "Seasonal menus and a specials board.",
+        nextSteps: [{ text: "Chase Leo: no reply to the quote for 12 days", due: day(0), done: false }],
+        check: { metrics: K("gap"), economicBuyer: K("known", "Leo owns it.", "Leo"), decisionCriteria: K("partly", "Price and turnaround.", "Leo"), decisionProcess: K("gap"),
+          paperProcess: K("known", "None. Leo pays on invoice.", "Leo"), pain: K("partly", "Menus are printed at home and look it.", "Leo"), competition: K("gap"), champion: K("known", "Leo.", "Leo"),
+          risks: ["No reply for 12 days."], signals: [], questions: ["Is the autumn menu still happening this year?"], checkedAt: at(-12, 10) },
+        alsoHelp: [], timeline: [{ id: "e-w1", at: at(-12, 9), kind: "email", title: "You sent the quote", summary: "\u00a3900 for seasonal menus and a specials board.", by: "claude" }]
+      },
+      {
+        id: "d-bloom", title: "Website refresh for Bloom Yoga", organisation: "Bloom Yoga", personIds: ["p-zoe"], value: 0, stage: "new", suggested: true,
+        source: "Email enquiry", created: at(0, 7, 40), lastContact: at(0, 7, 40),
+        suggestReason: "Zoe replied to your newsletter asking whether you \u201cdo websites for small studios\u201d. No budget mentioned yet.",
+        check: { risks: [], signals: [], questions: [] }, alsoHelp: [], nextSteps: [],
+        timeline: [{ id: "e-z1", at: at(0, 7, 40), kind: "email", title: "Reply from Zoe", summary: "Asked if you do websites for small studios.", by: "claude" }]
       },
       {
         id: "d-greenway", title: "Menu boards and rebrand for Greenway Café", organisation: "Greenway Café", personIds: ["p-tom"], value: 3200, stage: "won",
@@ -124,6 +212,11 @@
         id: "d-kettle", title: "Website for Kettle Yard Bakery", organisation: "Kettle Yard Bakery", personIds: ["p-ben"], value: 2600, stage: "lost",
         source: "Website enquiry", created: at(-50, 10), lastContact: at(-20, 10), closedAt: at(-20, 10), lostReason: "Went with a cheaper freelancer.", check: blankCheck(), nextSteps: [], alsoHelp: [],
         timeline: [{ id: "e-k1", at: at(-20, 10), kind: "lost", title: "Ben went with a cheaper freelancer", by: "claude" }]
+      },
+      {
+        id: "d-penny", title: "Website for Pennywell Garage", organisation: "Pennywell Garage", personIds: ["p-dan"], value: 3000, stage: "lost",
+        source: "Referral", created: at(-70, 10), lastContact: at(-35, 10), closedAt: at(-35, 10), lostReason: "Timing. Revisit in the spring.", check: blankCheck(), nextSteps: [], alsoHelp: [],
+        timeline: [{ id: "e-p1", at: at(-35, 10), kind: "lost", title: "Dan said not this year", by: "claude" }]
       }
     ];
 
@@ -131,11 +224,23 @@
       { id: "c-hollins", title: "Discovery call with Hollins Lettings", date: local(-7, "14:00"), source: "Fathom", ref: "demo-1", dealId: "d-hollins", personIds: ["p-dev"],
         summary: "Dev explained that their old developer won't update the site and landlords keep calling about listings that are already let. About 6 hours a week lost. Wants examples and a proposal.",
         decisions: ["Sam sends a proposal by Monday", "Dev shares the current site's login"] },
+      { id: "c-harbour", title: "Discovery call with Harbour View Dental", date: local(-2, "11:00"), source: "Fathom", ref: "demo-2", dealId: "d-harbour", personIds: ["p-omar"],
+        summary: "Omar is losing about 10 new patients a month because the site can't take online bookings. Wants it live before January. Has one other quote.",
+        decisions: ["Sam sends 3 booking page examples", "Proposal by Friday"] },
+      { id: "c-fox", title: "Call with The Fox & Hound", date: local(-4, "16:00"), source: "Zoom", ref: "demo-3", dealId: "d-fox", personIds: ["p-sian"],
+        summary: "Went through the brewery's rules for outside signs. Si\u00e2n needs them up before the reopening in 6 weeks.", decisions: ["Second call next week", "Sam brings 2 sketches"] },
+      { id: "c-greenway", title: "Contract call with Greenway Caf\u00e9", date: local(-4, "09:00"), source: "Microsoft Teams", ref: "demo-4", dealId: "d-greenway", personIds: ["p-tom"],
+        summary: "Tom agreed the scope and the price and signed during the call.", decisions: ["Work starts on the 1st", "50% deposit invoiced this week"] },
       { id: "c-northgate", title: "Video call with Northgate Physio", date: local(-1, "15:00"), source: "Google Meet", dealId: "d-northgate", personIds: ["p-nadia"], noTranscript: true,
         summary: "" }
     ];
 
     const suggestions = [
+      { id: "s-chase-willow", kind: "chase", dealId: "d-willow", title: "Chase Leo about the menus", reason: "No reply to your quote for 12 days. Leo likes short emails, so this one is 3 lines.",
+        email: { to: "leo@willowbistro.example", subject: "Re: Menus for Willow Bistro", body: "Hi Leo,\n\nIs the autumn menu still on? If so, I can have first designs with you within a week of a yes.\n\nCheers,\nSam" }, status: "waiting", createdAt: at(0, 7, 50) },
+      { id: "s-task-harbour", kind: "task", dealId: "d-harbour", title: "Send Omar the 3 booking page examples", reason: "You promised them on Tuesday's call. The email is ready on the deal.", status: "waiting", createdAt: at(0, 7, 50) },
+      { id: "s-email-rosa", kind: "email", personId: "p-rosa", title: "Email Rosa Lind after the Chamber breakfast", reason: "You met Rosa 3 days ago and she mentioned a new website next year. A short hello keeps you in mind.",
+        email: { to: "rosa@lindarchitects.example", subject: "Good to meet you at the Chamber breakfast", body: "Hi Rosa,\n\nGood to meet you on Tuesday. You mentioned the website might be next year's job: when you're ready to think about it, I'd be happy to have a chat, no pressure.\n\nIn the meantime, here's a site we built for another practice you might like: [link]\n\nBest,\nSam" }, status: "waiting", createdAt: at(0, 7, 50) },
       { id: "s-chase-marlow", kind: "chase", dealId: "d-marlow", title: "Chase Hannah about the brochure", reason: "No reply for 9 days after she asked for a lower price. The draft offers a smaller first step instead of a discount.",
         email: deals[2].email, status: "waiting", createdAt: at(0, 7, 50) },
       { id: "s-prep-ellis", kind: "prep", dealId: "d-ellis", title: "Prep for your call with Mark Ellis tomorrow at 10am", reason: "You know little about how they'll decide. Go in with the 3 questions on the deal.", status: "waiting", createdAt: at(0, 7, 50),
@@ -149,7 +254,7 @@
       formatVersion: 1,
       settings: { yourName: "Sam", businessName: "Fern & Finch", currency: "GBP", chaseAfterDays: 7, autoMove: true, emailProvider: "gmail", calendarProvider: "google" },
       deals: deals, people: people, calls: calls, suggestions: suggestions,
-      checkIn: { lastRunAt: at(0, 7, 50), nextRunAt: at(0, 8, 50), emailsRead: 34, callsRead: 1, dealsUpdated: 3 },
+      checkIn: { lastRunAt: at(0, 7, 50), nextRunAt: at(0, 8, 50), emailsRead: 34, callsRead: 2, dealsUpdated: 6 },
       activity: [
         { at: at(-4, 9), type: "deal-moved", dealId: "d-greenway", from: "negotiating", to: "won" },
         { at: at(-20, 10), type: "deal-moved", dealId: "d-kettle", from: "proposal", to: "lost" }

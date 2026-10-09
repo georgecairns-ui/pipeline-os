@@ -1,6 +1,6 @@
 # Pipeline: standing instructions for Claude
 
-This folder is the pipeline app inside Pipeline OS. You (Claude) and the app share one file, `data/pipeline.json`. The person you work for sees it as a proper piece of software: Pipeline (every deal on a board by stage, or a list), Review (what you're waiting for them to decide), Calls (every sales call, written up), People, and Preferences. Each deal opens in a panel with the call notes box, next steps, your tip, the email to send, the deal check, other ways they could help, and everything that has happened. Read this file every time you work with the pipeline.
+This folder is the pipeline app inside Pipeline OS. You (Claude) and the app share one file, `data/pipeline.json`. The person you work for sees it as a proper piece of software: Pipeline (every deal on a board by stage, or a list; a card with a call booked shows the day and time), Review (what you're waiting for them to decide), Calls (sales calls coming up, and every sales call written up), People (contacts in 5 groups), and Preferences. Each deal opens in a panel with the call notes box, next steps, your tip, the email to send, the deal check, other ways they could help, and everything that has happened. Read this file every time you work with the pipeline.
 
 The app runs at **http://localhost:4747**, served by a small helper on this computer (`apps/server/`, started by `.claude/skills/open-task-list`). The helper reads and saves this same file, so you edit it directly as described below; the app picks up your changes within a few seconds.
 
@@ -41,7 +41,7 @@ The routines live as skills in `.claude/skills/`: `pipeline-check-in` (the regul
 
 | Field | What it means |
 |---|---|
-| `stages` | Their stages, in order, `[{ "key", "label" }]`. `won` and `lost` always exist and always come last. The person edits them in Preferences; use their labels when you talk to them. |
+| `stages` | Their stages, in order, `[{ "key", "label" }]`. The standard ones are `new` (New enquiry), `call-completed` (Call completed), `talking` (Talking), `proposal` (Proposal sent), `negotiating` (Negotiating), `won` and `lost`. `won` and `lost` always exist and always come last. The person renames, adds and removes them in Preferences; use their labels when you talk to them. |
 | `currency` | `GBP`, `EUR` or `USD`. |
 | `chaseAfterDays` | How long a deal can go without contact before you draft a chase. |
 | `autoMove` | `true` means you may move a deal forward when the evidence is clear (see "Moving deals"). `false` means suggest every move instead. |
@@ -69,7 +69,7 @@ Change settings only when the person asks, or in setup.
 | `email` | The email to send next: `{ "to", "subject", "body", "why" }`. `why` is one sentence on why this email now. Written with `.claude/skills/human-email` in their voice (`context/voice.md`). If they've edited it (`editedAt` is set) don't overwrite it; add a new suggestion instead. The app sets `openedAt` and `sentAt`. |
 | `check` | The deal check (below). |
 | `alsoHelp` | Other problems they mentioned that the business could solve: `[{ "problem": "in their words", "service": "one of their services from context/sales.md", "question": "how to raise it next time" }]`. A problem that matches nothing they sell has `service: ""`. |
-| `nextMeeting` | The next sales call in their calendar: `{ "start": "2026-10-10T11:00", "title": "...", "prep": ["question to ask", "..."] }` (local time). Remove it once it has happened. |
+| `nextMeeting` | The next sales call booked: `{ "start": "2026-10-10T11:00", "title": "...", "prep": ["question to ask", "..."] }` (local time). Set it as soon as you find the booking (their calendar, or a booking link such as Calendly): the card shows "Call booked" with the day and time, and the call shows under "Coming up" on Calls. Update it if the call moves, remove it if it's cancelled, and once it has happened remove it and move the deal on (see "Moving deals"). |
 | `noTranscript` | `true` when the last sales call had no recording or transcript. The app asks the person for a few lines. Remove it when you've had their notes. |
 | `notesInbox` | Call notes or transcripts the person added in the app: `[{ "id", "text", "fileName", "addedAt", "status": "waiting" }]`. When you've read one, set `status` to `done` and add `readAt`. Never delete them. |
 | `moved` | Set when you move a deal by yourself: `{ "from", "to", "at", "reason", "seen": false }`. The app shows it in Review with Keep and Undo. |
@@ -104,6 +104,22 @@ Plus `risks` (list), `signals` (buying signals, list), `questions` (3 to 5 to as
 
 **When Task List OS is attached**, contacts are kept once, in the task list (`apps/task-list/data/tasks.json`, `people`). The app shows them in People too, read only. Link deals to their ids instead of adding a copy here. Add someone new here only if they aren't in the task list; tell the person, and offer to add them to the task list's contacts instead.
 
+### People groups
+
+The People page shows contacts in 5 groups, worked out by the app from their deals (`peopleGroups` in `app/model.js`), so you never set a group yourself:
+
+| Group | Who's in it |
+|---|---|
+| Clients | Role `client` or `customer`, or anyone with a won deal |
+| Prospects | Anyone with an open deal, or a `prospect` with no deal yet |
+| Not contacted yet | Prospects with no deal yet, or whose deals are all still at the first stage with no call booked or held |
+| Gone quiet | Prospects with an open deal that's gone `chaseAfterDays` without contact |
+| Closed, lost | People whose deals were all lost, with nothing open or won |
+
+Keep `role` accurate (a prospect who becomes a client is `client`) and add prospects you hear about (someone they met at an event) with `role: "prospect"`, so the groups stay right.
+
+**Emailing a group.** The person can email a group from People in 2 ways, and sends either way: one email to everyone, opened in their email with the addresses in Bcc (the app does this; you're not involved), or "Ask Claude to write them", which opens a conversation with you. Then write a short, personal email to each person in that group (what you know about them and their deal, `context/sales.md`, their voice), and add each as an `email` suggestion with `personId` and the `email`, so they check and send them one by one from Review. Never send them, never put more than 25 in one go without asking, and leave out anyone who said no or asked not to be contacted.
+
 ### A call
 
 ```json
@@ -122,17 +138,21 @@ What you're waiting for the person to decide. Shown in Review.
   "email": { "to": "...", "subject": "...", "body": "..." }, "status": "waiting", "createdAt": "<timestamp>" }
 ```
 
-- `kind`: `chase` (with an `email`), `prep` (call prep, the day before a sales call), `question` (a yes or no you need, such as "Is your call with Lena a sales call?"; set `personId`), or `task` (anything else they should do).
+- `kind`: `chase` (with an `email`), `email` (any other email for them to send, such as one of a group email written person by person; set `personId` and `email`), `prep` (call prep, the day before a sales call), `question` (a yes or no you need, such as "Is your call with Lena a sales call?"; set `personId`), or `task` (anything else they should do).
 - `status`: `waiting`, `approved` or `skipped`. The app sets `decidedAt`. Never re-add a suggestion they skipped for the same deal and reason.
 - An approved `question` is an answer: act on it on your next run (start the deal, or note in `context/people.md` that this person isn't sales, so you never ask again).
 
 ## Moving deals
 
-When `settings.autoMove` is true, move a deal to the next stage yourself when the evidence is clear, and only forward:
+When `settings.autoMove` is true, move a deal to the next stage yourself when the evidence is clear, and only forward. With the standard stages:
 
-- They sent the proposal or quote (it's in their sent email) → the proposal stage.
-- The prospect has come back to negotiate price, terms or start date → the negotiating stage.
-- A first real conversation happened (a call, or a reply that shows interest) → the talking stage.
+- **A call is booked**: don't move it. Set `nextMeeting`, so the card shows the day and time. A new enquiry with a call booked stays in New enquiry.
+- **The sales call has happened** → Call completed (`call-completed`). Clear evidence is a recording or transcript, notes the person added, or the meeting's time has passed with nothing to say it was cancelled or moved (check the calendar and their email). Say which in the `reason` ("Your Google Meet call with Nadia was yesterday at 3pm").
+- **The conversation carries on after the call** (they reply to your follow-up, ask questions, or book a second call) → Talking.
+- **They sent the proposal or quote** (it's in their sent email) → Proposal sent.
+- **The prospect comes back on price, terms or start date** → Negotiating.
+
+If they've renamed or removed a stage, use the one that means the same thing; if there isn't one, skip that move.
 
 Set `stage`, `stageChangedAt`, add a `stage` line to `timeline` (`by: "claude"`), and set `moved` with a one-sentence `reason` that names the evidence ("You sent Dev the proposal yesterday at 4:20pm"). Never move a deal backwards, never to won or lost, and never past a stage. When in doubt, or when `autoMove` is false, add a `task` suggestion instead.
 

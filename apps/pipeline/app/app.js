@@ -37,7 +37,7 @@
   const state = {
     view: "pipeline",
     pipeView: remembered("plos-pipe-view", ["board", "list"]) || "board",
-    filterRole: "all",
+    peopleGroup: remembered("plos-people-group", ["clients", "prospects", "untouched", "quiet", "lost"]) || "",
     drawer: null
   };
   // Deals Claude is updating right now (from call notes), so the panel can say so
@@ -425,6 +425,37 @@
       '<div class="modal__foot"><button type="button" class="btn" data-close>Cancel</button><button type="submit" class="btn btn--primary">Add person</button></div></form>');
   }
 
+  // Email a whole group from People. 2 ways, and the person sends either way:
+  //   one email to everyone, opened in their email with every address in Bcc
+  //   a personal email to each, written by Claude and put in Review to check and send one by one
+  function groupPrompt(g, topic) {
+    return "In Pipeline OS, write a short personal email to each person in my \u201c" + g.label + "\u201d group on the People page" +
+      (topic ? ", about: " + topic : "") + ". Use what you know about each person and their deal (apps/pipeline/data/pipeline.json, context/sales.md) and write in my voice (context/voice.md, .claude/skills/human-email). " +
+      "Add each one as a suggestion of kind \"email\" with the draft, so I can check and send them from Review. Don't send anything.";
+  }
+  function openGroupEmail(key) {
+    const g = M.GROUPS.find(function (x) { return x.key === key; });
+    if (!g) return;
+    const list = M.peopleGroups(data)[key];
+    const emails = list.filter(function (p) { return p.email; }).map(function (p) { return p.email; });
+    const missing = list.filter(function (p) { return !p.email; });
+    const where = L.emailLabel(data.settings.emailProvider);
+    openGeneric('<form data-form="group-email" data-group="' + esc(key) + '" data-emails="' + esc(emails.join(", ")) + '" autocomplete="off">' + modalHead("Email " + g.label.toLowerCase()) + '<div class="modal__body">' +
+      '<p class="gmail__who">' + icon("users") + "<span><strong>" + emails.length + (emails.length === 1 ? " person" : " people") + "</strong> with an email address" +
+      (missing.length ? ". No address for " + esc(missing.map(function (p) { return p.name; }).join(", ")) : "") + ".</span></p>" +
+      '<section class="gmail__way"><h3>A personal email to each, written by Claude</h3><p class="muted">Claude writes a short email to each person, using what it knows about them and their deal, and puts them in Review. You check each one and send it. Best for prospects and anyone gone quiet.</p>' +
+      '<label class="field"><span class="field__label">What\'s it about? (optional)</span><input class="input" name="topic" maxlength="200" placeholder="Our new winter offer, a check-in, a case study"></label>' +
+      '<a class="btn" data-group-claude href="' + esc(C.claudeLink(groupPrompt(g, ""))) + '">' + icon("sparkle") + "Ask Claude to write them</a></section>" +
+      '<section class="gmail__way"><h3>One email to everyone</h3>' +
+      '<label class="field"><span class="field__label">Subject</span><input class="input" name="subject" maxlength="200"></label>' +
+      '<label class="field"><span class="field__label">Message</span><textarea class="textarea" name="body" rows="6" maxlength="8000" placeholder="Hi,\n\n..."></textarea></label>' +
+      '<p class="field__hint">Opens in ' + esc(where) + ' with everyone in Bcc, so nobody sees anyone else\'s address. Nothing is sent until you press send there. For a marketing email, include a line saying how to opt out.</p>' +
+      '<div class="gmail__actions"><button type="submit" class="btn btn--primary">' + icon("mail") + "Open in " + esc(where) + '</button><button type="button" class="btn btn--ghost" data-action="group-email-copy">Copy the addresses</button></div></section>' +
+      '</div><div class="modal__foot"><span class="spacer"></span><button type="button" class="btn" data-close>Close</button></div></form>');
+    const form = generic.querySelector("form");
+    form.topic.addEventListener("input", function () { form.querySelector("[data-group-claude]").href = C.claudeLink(groupPrompt(g, form.topic.value.trim())); });
+  }
+
   function closeWith(id, how) {
     const x = M.dealById(data, id);
     if (!x) return;
@@ -478,7 +509,24 @@
       case "add-notes": openAddNotes(dealId); break;
       case "add-person": openAddPerson(); break;
       case "pipe-view": state.pipeView = btn.getAttribute("data-value"); remember("plos-pipe-view", state.pipeView); seen.clear(); renderView(); break;
-      case "filter-role": state.filterRole = btn.getAttribute("data-role"); renderView(); break;
+      case "people-group": {
+        const g = btn.getAttribute("data-group") || "";
+        state.peopleGroup = state.peopleGroup === g ? "" : g;
+        remember("plos-people-group", state.peopleGroup);
+        seen.clear(); renderView(); break;
+      }
+      case "group-copy": {
+        const list = state.peopleGroup ? M.peopleGroups(data)[state.peopleGroup] : [];
+        const emails = list.filter(function (p) { return p.email; }).map(function (p) { return p.email; });
+        ui.copyText(emails.join(", ")).then(function (ok) { ui.toast(ok ? emails.length + " addresses copied" : "Couldn't copy"); });
+        break;
+      }
+      case "group-email": openGroupEmail(btn.getAttribute("data-group")); break;
+      case "group-email-copy": {
+        const f = generic.querySelector("form");
+        ui.copyText(f.dataset.emails).then(function (ok) { ui.toast(ok ? "Addresses copied. Paste them into Bcc" : "Couldn't copy"); });
+        break;
+      }
 
       // the deal panel
       case "save-notes": {
@@ -620,6 +668,19 @@
       generic.close();
       let made = null;
       change(function (d) { made = mut.addPerson(d, fields); }).then(function () { go("people"); openDrawer("person", made.id); });
+    }
+    if (kind === "group-email") {
+      if (!f.subject.value.trim()) return f.subject.focus();
+      if (!f.body.value.trim()) return f.body.focus();
+      // A very long Bcc list can be too long for a link; then the person pastes the addresses themselves
+      const bcc = form.dataset.emails;
+      const draft = { to: "", bcc: bcc.length > 1500 ? "" : bcc, subject: f.subject.value.trim(), body: f.body.value };
+      openDraft(draft, function () {
+        if (!draft.bcc) { ui.copyText(bcc); ui.toast("Your email is open. The addresses are copied: paste them into Bcc, then send", { icon: "mail", duration: 9000 }); }
+        else ui.toast("Your email is open in " + L.emailLabel(data.settings.emailProvider) + " with everyone in Bcc. Check it and press send", { icon: "mail", duration: 8000 });
+      });
+      generic.close();
+      return;
     }
     if (kind === "mark-lost") {
       const id = form.getAttribute("data-deal");

@@ -16,6 +16,7 @@
     "calendarProvider": "google",
     "stages": [
       { "key": "new", "label": "New enquiry" },
+      { "key": "call-completed", "label": "Call completed" },
       { "key": "talking", "label": "Talking" },
       { "key": "proposal", "label": "Proposal sent" },
       { "key": "negotiating", "label": "Negotiating" },

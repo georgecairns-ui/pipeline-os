@@ -24,7 +24,7 @@ Say why in one line, then show your draft answers and ask them to correct and fi
 > 2. **Who do you sell to?** The kind of business or person, how big, what sector, what area. And who usually says yes: the owner, a manager, a committee? (I've got: ...)
 > 3. **What problems do they come to you with?** In their words, as many as come to mind. What's usually going wrong when they get in touch? (I've got: ...)
 > 4. **Who isn't a good fit?** Too small, wrong area, wants something you don't do. (I've got: ...)
-> 5. **How does a sale usually go?** Where enquiries come from, the steps from first chat to yes, roughly how long it takes. What do you call each stage? I'll use New enquiry, Talking, Proposal sent, Negotiating, Won and Lost unless you'd like your own.
+> 5. **How does a sale usually go?** Where enquiries come from, the steps from first chat to yes, roughly how long it takes. What do you call each stage? I'll use New enquiry, Call completed, Talking, Proposal sent, Negotiating, Won and Lost unless you'd like your own.
 > 6. **Who else do they usually consider?** Another firm, doing it themselves, or doing nothing.
 > 7. **Where do your deals live today?** A spreadsheet, Pipedrive, HubSpot, your inbox, your head. I'll bring them in.
 > 8. **How many days before you'd chase someone who's gone quiet?** (I'll use 7 unless you say otherwise.)

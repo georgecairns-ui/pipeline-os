@@ -76,7 +76,6 @@
     const flags = [];
     if (x.moved && !x.moved.seen) flags.push('<span class="chip chip--accent" title="' + esc(x.moved.reason || "") + '">' + icon("sparkle") + "Claude moved this</span>");
     if (M.notesWaiting(x).length) flags.push('<span class="chip chip--info">' + icon("loader") + "Notes waiting</span>");
-    if (meeting) flags.push('<span class="chip chip--info" title="' + esc(meeting.title || "") + '">' + icon("phone") + esc(M.whenLabel(meeting.start)) + "</span>");
     if (x.noTranscript) flags.push('<span class="chip chip--warning">' + icon("mic") + "Tell Claude how it went</span>");
     if (M.needsChase(d, x) && !meeting) flags.push('<span class="chip chip--danger">' + icon("hourglass") + M.quietDays(x) + " days quiet</span>");
     const who = people.length ? '<span class="dcard__who" title="' + esc(people.map(personLabel).join(", ") + "") + '">' + people.slice(0, 3).map(function (p) { return avatar(p); }).join("") +
@@ -84,6 +83,7 @@
     return '<article class="dcard' + (o.anim ? o.anim("card-" + x.id) : "") + '" data-deal="' + esc(x.id) + '"' + (o.draggable ? ' draggable="true"' : "") + ">" +
       '<button type="button" class="dcard__title" data-action="open-deal">' + esc(x.title) + "</button>" +
       '<div class="dcard__row"><span class="dcard__org">' + esc(x.organisation || "") + '</span><span class="dcard__value num">' + esc(M.money(d, x.value)) + "</span></div>" +
+      (meeting ? '<div class="dcard__call" title="' + esc(meeting.title || "Sales call") + '">' + icon("phone") + "<span>Call booked: <strong>" + esc(M.meetingLabel(meeting.start)) + "</strong></span></div>" : "") +
       (flags.length ? '<div class="dcard__flags">' + flags.join("") + "</div>" : "") +
       '<div class="dcard__foot">' + who + checkMeter(x, { quiet: true }) + "</div></article>";
   }

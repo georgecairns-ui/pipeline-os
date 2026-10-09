@@ -43,7 +43,7 @@
     const d = ctx.d;
     const x = M.dealById(d, s.dealId);
     const L = window.PL.links;
-    const kinds = { chase: ["mail", "Chase"], prep: ["phone", "Call prep"], question: ["info", "Question"], task: ["checkSquare", "To do"] };
+    const kinds = { chase: ["mail", "Chase"], email: ["mail", "Email"], prep: ["phone", "Call prep"], question: ["info", "Question"], task: ["checkSquare", "To do"] };
     const k = kinds[s.kind] || ["sparkle", "Suggestion"];
     let actions;
     if (s.kind === "question") {
@@ -73,7 +73,7 @@
     const moved = d.deals.filter(function (x) { return x.moved && !x.moved.seen; });
     const fresh = d.deals.filter(M.isSuggested);
     const sugg = M.waitingSuggestions(d);
-    const order = { chase: 0, prep: 1, question: 2, task: 3 };
+    const order = { chase: 0, prep: 1, email: 2, question: 3, task: 4 };
     const rank = function (s) { return s.kind in order ? order[s.kind] : 9; };
     sugg.sort(function (a, b) { return rank(a) - rank(b); });
     if (!moved.length && !fresh.length && !sugg.length) {

@@ -37,16 +37,17 @@
 
   // A new, filled-in email. draft = { to, cc, subject, body }
   function composeUrl(draft, provider) {
-    const to = draft.to || "", cc = draft.cc || "", subject = draft.subject || "", body = draft.body || "";
+    const to = draft.to || "", cc = draft.cc || "", bcc = draft.bcc || "", subject = draft.subject || "", body = draft.body || "";
     if (provider === "gmail") {
-      return "https://mail.google.com/mail/?view=cm&fs=1&to=" + enc(to) + (cc ? "&cc=" + enc(cc) : "") + "&su=" + enc(subject) + "&body=" + enc(body);
+      return "https://mail.google.com/mail/?view=cm&fs=1&to=" + enc(to) + (cc ? "&cc=" + enc(cc) : "") + (bcc ? "&bcc=" + enc(bcc) : "") + "&su=" + enc(subject) + "&body=" + enc(body);
     }
     // Outlook on the web, for work and school (Microsoft 365) accounts. Outlook.com has no
     // reliable link for this, so it falls through to the computer's email app below.
+    // Bcc on this link isn't documented by Microsoft; group emails also offer "Copy the addresses".
     if (provider === "outlook-work") {
-      return "https://outlook.office.com/mail/deeplink/compose?to=" + enc(to) + "&subject=" + enc(subject) + "&body=" + enc(body) + (cc ? "&cc=" + enc(cc) : "");
+      return "https://outlook.office.com/mail/deeplink/compose?to=" + enc(to) + "&subject=" + enc(subject) + "&body=" + enc(body) + (cc ? "&cc=" + enc(cc) : "") + (bcc ? "&bcc=" + enc(bcc) : "");
     }
-    return "mailto:" + enc(to).replace(/%40/g, "@").replace(/%2C/gi, ",") + "?" + (cc ? "cc=" + enc(cc) + "&" : "") + "subject=" + enc(subject) + "&body=" + enc(body);
+    return "mailto:" + enc(to).replace(/%40/g, "@").replace(/%2C/gi, ",") + "?" + (cc ? "cc=" + enc(cc) + "&" : "") + (bcc ? "bcc=" + enc(bcc).replace(/%40/g, "@").replace(/%2C/gi, ",") + "&" : "") + "subject=" + enc(subject) + "&body=" + enc(body);
   }
 
   // "2026-10-06" + "14:30" + 45 minutes, as local date-time pieces

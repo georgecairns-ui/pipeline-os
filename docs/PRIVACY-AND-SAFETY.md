@@ -22,7 +22,7 @@ Call notes you paste into a deal are kept on that deal in your pipeline file, so
 
 ## What happens when I press Draft or Add to calendar?
 
-Draft opens a new email in Gmail, Outlook or your email app, already written and addressed. Nothing is sent until you press send there. Add to calendar opens a new event, already filled in, for you to save. The pipeline app itself never sends anything and holds no passwords.
+Draft opens a new email in Gmail, Outlook or your email app, already written and addressed. Nothing is sent until you press send there. Emailing a group from People works the same way, with everyone in Bcc so nobody sees anyone else's address. Add to calendar opens a new event, already filled in, for you to save. The pipeline app itself never sends anything and holds no passwords.
 
 ## Does Claude keep copies of my emails?
 
