@@ -19,7 +19,7 @@ Pipeline OS is tool 2 of the small business toolkit, built the same way as Task 
 
 - Run the app: `node apps/server/server.js` (or `python3 apps/server/server.py`), then open http://localhost:4747.
 - Test: by hand, see `maintainers/TESTING.md`. Point `TLOS_CLAUDE` at a stand-in script to test the call notes loop without using Claude.
-- Publish: the same as Task List OS. Run `bash maintainers/make-release.sh` first (it refuses to build if the shipped files contain real data). Bring `public-main` level with the work branch in one commit, push it with `git push origin public-main:main`, never force-push, then refresh the Drive copy with `git archive public-main`.
+- Publish (from 9 October 2026, by pull request): the same as Task List OS. Start every change on a `claude/...` branch made from `origin/main`, run `bash maintainers/make-release.sh`, push the branch and open a pull request into `main` for George to review and merge. Nobody pushes to `main` directly and nobody force-pushes. After the merge, refresh the Drive copy with `git archive origin/main`. (The old `public-main` release branch is retired; it stays for history.)
 
 ## Rules
 
