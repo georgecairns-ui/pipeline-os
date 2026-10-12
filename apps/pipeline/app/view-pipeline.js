@@ -47,8 +47,8 @@
         '<div class="pcol__cards">' + (shown.length ? shown.map(function (x) { return C.dealCard(d, x, { anim: ctx.anim, draggable: true }); }).join("") :
           '<p class="pcol__empty">' + (closed ? "None yet" : "Drop a deal here") + "</p>") + "</div></section>";
     };
-    // Open stages share the width; Won and Lost are a little narrower
-    return '<div class="pboard" style="grid-template-columns:repeat(' + M.openStages().length + ', minmax(210px, 1fr)) repeat(2, minmax(170px, 0.7fr))">' + M.STAGES.map(col).join("") + "</div>";
+    // The columns are laid out in app.css (all on one row when there's room, wrapping on smaller screens)
+    return '<div class="pboard" style="--open:' + M.openStages().length + '">' + M.STAGES.map(col).join("") + "</div>";
   }
 
   function list(ctx) {
