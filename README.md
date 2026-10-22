@@ -6,7 +6,7 @@ Every conversation you have with a prospective customer, by email, on a call or 
 
 Nothing goes out without your click. Claude reads, researches, drafts and keeps your pipeline moving. When an email is ready you choose: **Claude emails** (you check it, press Send, and Claude sends it) or **I'll do it**.
 
-Pipeline OS is part of a toolkit of 9 free tools from Get AI Powers. The others (a task list, proposals, content, money and more) show in the app's menu, and Get AI Powers sets them up with you on a free call.
+Pipeline OS is part of a toolkit of 8 free tools from Get AI Powers. The others (a task list, proposals, content, money and more) show in the app's menu, and Get AI Powers sets them up with you on a free call.
 
 ## What happens when you type /setup
 
