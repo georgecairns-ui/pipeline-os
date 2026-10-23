@@ -47,7 +47,7 @@ If `context/sales.md` still says "Status: not filled in yet", the pipeline can't
 | **http://localhost:4747** | The app. It opens on Home (a dashboard of boxes they arrange themselves), then the pipeline's pages: Pipeline (every deal by stage, as a board or a list), Review, Calls and People, plus Preferences (the cog). The **Brain dump** button at the top (shared by every tool, and on Home) records a voice note or a typed one, with what it's about, and starts you straight away. A small helper in `apps/server/` runs it on this computer. If it isn't running, use `.claude/skills/open-task-list` |
 | `Open Pipeline.html` | Double-clicking it goes to the link above when the app is running |
 | `apps/pipeline/` | The pipeline app. `CLAUDE.md` in there explains its data. Their deals are in `apps/pipeline/data/pipeline.json` |
-| `apps/shared/` | The app's look: `theme.css` holds every colour and font. Also the toolkit menu: `catalogue.json` lists all 8 tools and the booking link |
+| `apps/shared/` | The app's look: `theme.css` holds every colour and font. Also the toolkit menu: `catalogue.json` lists all 7 tools and the booking link |
 | `apps/installed.json` | The tools in this folder. The menu and the helper both read it |
 | `context/` | Your notes about the business (see above) |
 | `files/` | Their documents, in numbered folders. Proposals and quotes usually go in `files/03-sales/` |
