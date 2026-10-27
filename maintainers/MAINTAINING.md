@@ -18,7 +18,7 @@ Pipeline OS is tool 2 of the small business toolkit, built the same way as Task 
 ## Commands
 
 - Run the app: `node apps/server/server.js` (or `python3 apps/server/server.py`), then open http://localhost:4747.
-- Test: by hand, see `maintainers/TESTING.md`. Point `TLOS_CLAUDE` at a stand-in script to test the call notes loop without using Claude.
+- Test: by hand, see `maintainers/TESTING.md`. Point `TLOS_CLAUDE` at a stand-in script to test the call notes loop without using Claude. The helper has automatic checks that start it on a spare port and run against both `server.js` and `server.py`: `node maintainers/test-helper-media.js` (photos and videos) and `node maintainers/test-helper-safety.js` (badly formed requests, and saves that must not overwrite a change made in between).
 - Publish (from 9 October 2026, by pull request): the same as Task List OS. Start every change on a `claude/...` branch made from `origin/main`, run `bash maintainers/make-release.sh`, push the branch and open a pull request into `main` for George to review and merge. Nobody pushes to `main` directly and nobody force-pushes. After the merge, refresh the Drive copy with `git archive origin/main`. (The old `public-main` release branch is retired; it stays for history.)
 
 ## Rules
@@ -30,6 +30,7 @@ Pipeline OS is tool 2 of the small business toolkit, built the same way as Task 
 - **Sending (decided by George, 9 October 2026).** Claude sends an email only when the person pressed Claude emails, checked it and pressed Send (`sendStatus: "queued"`), through `send-approved-emails`, the only skill that sends. The send tool is approved per computer in `.claude/settings.local.json` during setup step 2.5, with the person's agreement; `.claude/settings.json` never pre-approves anything that sends, deletes or posts (the release check enforces it). This is a written rule for Claude, not a technical lock: once the send tool is approved, any Claude run in that folder could send. LinkedIn messages are never sent by Claude: LinkedIn's terms ban automated messaging.
 - Claude makes the everyday calls itself: moves (no Keep or Undo in Review, a "Move it back" link on the deal for a week), adding deals that clearly fit `settings.fitCriteria`, and whether a meeting is a sales call. Review is for what only the person can do.
 - The fit score is worked out in `model.js` (`fitScore`) from Claude's yes, partly, no or unknown per criterion; unknowns are left out and the app says how many it's based on.
+- **The toolkit.** Pipeline OS is tool 2 of 7. `ATTACHING.md` (identical in every tool) is the spec for how they attach. The shared parts are at shared version 11 (`apps/shared/VERSION`); each `maintainers/SHARED-V<n>-CHANGES.md` lists exactly what changed in that version and what every other tool copies (the latest is `SHARED-V11-CHANGES.md`). A shared part never changes here: it changes in Task List OS, the version goes up, then it's copied here.
 
 ## Open questions for George
 

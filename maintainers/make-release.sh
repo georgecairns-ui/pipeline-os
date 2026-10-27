@@ -9,6 +9,7 @@
 # What it does:
 #   1. Checks the files that ship are still blank templates, so nobody's real deals,
 #      business notes or setup progress can go out by mistake. Stops if not.
+#      That includes anything in setup/as-installed/ except its README (a customer's saved download).
 #   2. Copies the kit into a temporary folder called "Pipeline OS", leaving out this
 #      maintainers folder, git history, old builds, backups and computer clutter.
 #   3. Checks the copy is complete and the data file is valid.
@@ -70,6 +71,31 @@ if "Setup: not done yet" not in (root / "CLAUDE.md").read_text():
 for f in sorted((root / "apps").glob("*/data/media/**/*")):
     if f.is_file() and f.name != ".gitkeep":
         problems.append(f"{f.relative_to(root)} is a person's own photo or video and must not ship")
+# A customer's saved downloads never ship: setup/as-installed/ holds only its README
+for f in sorted((root / "setup/as-installed").rglob("*")):
+    if f.is_file() and f.name not in ("README.md", ".DS_Store"):
+        problems.append(f"{f.relative_to(root)} is a customer's saved download and must not ship")
+# The shared version in toolkit.json must be the one in apps/shared/VERSION
+shared_version = (root / "apps/shared/VERSION").read_text().split()[0]
+if str(json.loads((root / "toolkit.json").read_text()).get("sharedVersion")) != shared_version:
+    problems.append(f"toolkit.json sharedVersion is {json.loads((root / 'toolkit.json').read_text()).get('sharedVersion')!r} but apps/shared/VERSION says {shared_version}: change them together")
+# Shared parts are identical in every tool, so they must not name one. No file may use the old start-up names,
+# and no message in the scripts, the helper or the shared page code may say "Pipeline OS" (they read the tool's name from toolkit.json)
+skip_dirs = {".git", "dist", "maintainers", "node_modules"}
+for f in sorted(root.rglob("*")):
+    if not f.is_file() or skip_dirs & set(f.relative_to(root).parts) or f.suffix in (".png", ".jpg", ".woff2", ".zip", ".gz", ".ico"):
+        continue
+    txt = f.read_text(errors="ignore")
+    rel = str(f.relative_to(root))
+    for old in ("open-task-list", "start-task-list"):
+        if old in txt:
+            problems.append(f"{rel} uses the old name {old} (it is now open-the-app / start-app, the same in every tool)")
+    # apps/shared/js/braindump.js is shared byte for byte and names Pipeline OS once, as the
+    # illustrative example of a tool using register(); that line is not this tool naming itself
+    if rel == "apps/shared/js/braindump.js":
+        continue
+    if re.match(r"setup/scripts/|apps/server/|apps/shared/js/", rel) and re.search(r"Pipeline OS|(?<!window\.)PipelineOS", txt):
+        problems.append(f"{rel} names a tool (Pipeline OS): shared parts read the name from toolkit.json")
 for p in problems:
     print("  - " + p, file=sys.stderr)
 sys.exit(1 if problems else 0)
@@ -78,6 +104,7 @@ PYEOF
 # ---------- 2. Copy, leaving out what customers don't need ----------
 mkdir -p "$OUT" "$DIST"
 rsync -a \
+  --include 'setup/as-installed/README.md' --exclude 'setup/as-installed/*' \
   --exclude '.git' --exclude '.gitignore' --exclude 'dist' --exclude 'maintainers' \
   --exclude '.claude/launch.json' --exclude '.claude/settings.local.json' --exclude '.claude/.cc-writes' \
   --exclude '*.backup.json' --exclude 'apps/home/data' --exclude '.DS_Store' --exclude '._*' --exclude 'Thumbs.db' --exclude 'desktop.ini' \
@@ -86,7 +113,7 @@ rsync -a \
 find "$OUT" -mindepth 2 -type d -name .claude -empty -prune -exec rm -rf {} +
 
 # ---------- 3. Checks ----------
-for f in "START-HERE.md" "CLAUDE.md" "Open Pipeline.html" "apps/pipeline/index.html" "apps/pipeline/data/pipeline.json" "apps/pipeline/menu.json" "apps/pipeline/home-boxes.js" "apps/pipeline/claude-jobs.json" "apps/pipeline/CLAUDE.md" "apps/pipeline/ATTACH-CLAUDE.md" "apps/pipeline/app/app.js" "apps/pipeline/app/drawer.js" "apps/pipeline/app/confetti.js" "setup/progress.md" ".claude/skills/README.md" ".claude/settings.json" ".claude/skills/update-a-deal/SKILL.md" ".claude/skills/qualify-a-deal/SKILL.md" ".claude/skills/pipeline-check-in/SKILL.md" "setup/scripts/save-key.sh" "setup/scripts/start-task-list.sh" "apps/server/server.js" "apps/server/server.py" "setup/connections/README.md" "toolkit.json" "ATTACHING.md" "apps/installed.json" "apps/shared/catalogue.json" "apps/shared/VERSION" "apps/shared/sidebar.css" "apps/shared/js/sidebar.js" "apps/shared/js/theme.js" "apps/shared/js/braindump.js" ".claude/skills/sort-brain-dump/SKILL.md" "apps/shared/images/claude-icon.png" "apps/home/index.html" "apps/home/home.js" "apps/home/home.css" "apps/shared/fonts/Figtree-Variable.woff2" "context/sales.md" "setup/pipeline-01-your-customers.md" "setup/pipeline-02-first-run.md" "setup/pipeline-03-check-ins.md" "setup/06-build-your-skills.md" "setup/09-check-and-hand-over.md" "skills-to-upload/README.md"; do
+for f in "START-HERE.md" "CLAUDE.md" "Open Pipeline.html" "apps/pipeline/index.html" "apps/pipeline/data/pipeline.json" "apps/pipeline/menu.json" "apps/pipeline/home-boxes.js" "apps/pipeline/claude-jobs.json" "apps/pipeline/CLAUDE.md" "apps/pipeline/ATTACH-CLAUDE.md" "apps/pipeline/app/app.js" "apps/pipeline/app/drawer.js" "apps/pipeline/app/confetti.js" "setup/progress.md" ".claude/skills/README.md" ".claude/settings.json" ".claude/skills/update-a-deal/SKILL.md" ".claude/skills/qualify-a-deal/SKILL.md" ".claude/skills/pipeline-check-in/SKILL.md" "setup/scripts/save-key.sh" "setup/scripts/start-app.sh" "apps/server/server.js" "apps/server/server.py" "setup/connections/README.md" "toolkit.json" "ATTACHING.md" "apps/installed.json" "apps/shared/catalogue.json" "apps/shared/VERSION" "apps/shared/sidebar.css" "apps/shared/js/sidebar.js" "apps/shared/js/theme.js" "apps/shared/js/braindump.js" ".claude/skills/sort-brain-dump/SKILL.md" "apps/shared/images/claude-icon.png" "apps/home/index.html" "apps/home/home.js" "apps/home/home.css" "apps/shared/fonts/Figtree-Variable.woff2" "context/sales.md" "setup/pipeline-01-your-customers.md" "setup/pipeline-02-first-run.md" "setup/pipeline-03-check-ins.md" "setup/06-build-your-skills.md" "setup/09-check-and-hand-over.md" "skills-to-upload/README.md" "setup/as-installed/README.md" ".claude/skills/get-updates/SKILL.md"; do
   [ -e "$OUT/$f" ] || fail "missing $f"
 done
 for f in apps/pipeline/data/pipeline.json apps/pipeline/menu.json apps/pipeline/claude-jobs.json toolkit.json apps/installed.json apps/shared/catalogue.json; do

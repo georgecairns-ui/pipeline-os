@@ -44,7 +44,7 @@ If `context/sales.md` still says "Status: not filled in yet", the pipeline can't
 
 | Folder | What's in it |
 |---|---|
-| **http://localhost:4747** | The app. It opens on Home (a dashboard of boxes they arrange themselves), then the pipeline's pages: Pipeline (every deal by stage, as a board or a list), Review, Calls and People, plus Preferences (the cog). The **Brain dump** button at the top (shared by every tool, and on Home) records a voice note or a typed one, with what it's about, and starts you straight away. A small helper in `apps/server/` runs it on this computer. If it isn't running, use `.claude/skills/open-task-list` |
+| **http://localhost:4747** | The app. It opens on Home (a dashboard of boxes they arrange themselves), then the pipeline's pages: Pipeline (every deal by stage, as a board or a list), Review, Calls and People, plus Preferences (the cog). The **Brain dump** button at the top (shared by every tool, and on Home) records a voice note or a typed one, with what it's about, and starts you straight away. A small helper in `apps/server/` runs it on this computer. If it isn't running, use `.claude/skills/open-the-app` |
 | `Open Pipeline.html` | Double-clicking it goes to the link above when the app is running |
 | `apps/pipeline/` | The pipeline app. `CLAUDE.md` in there explains its data. Their deals are in `apps/pipeline/data/pipeline.json` |
 | `apps/shared/` | The app's look: `theme.css` holds every colour and font. Also the toolkit menu: `catalogue.json` lists all 7 tools and the booking link |
@@ -73,12 +73,13 @@ When a request matches a skill in `.claude/skills/`, read that skill's `SKILL.md
 | "Send my approved emails" (and when they press Send on Claude emails) | `.claude/skills/send-approved-emails` |
 | "Chase this", "they haven't replied" | `.claude/skills/polite-chaser` |
 | "Set me up", "carry on setting up" | `.claude/skills/setup` |
-| "Open my pipeline", "it's not loading" | `.claude/skills/open-task-list` (it starts the app for every tool in this folder) |
+| "Open my pipeline", "it's not loading" | `.claude/skills/open-the-app` (it starts the app for every tool in this folder) |
 | "Make this sound less robotic", any email you write | `.claude/skills/human-email` |
 | "Write it like me", "learn how I write" | `.claude/skills/write-like-me` |
 | "Where should this go?", "save this proposal" | `.claude/skills/file-it` |
 | "Connect my Pipedrive", "can you see my calendar?" | `.claude/skills/connect-a-tool` |
 | "Make it match my brand", "use our colours", "put our logo on it" | `.claude/skills/match-my-brand` |
+| "Get the latest version", "any updates?", "update the app" | `.claude/skills/get-updates` |
 | They mention a new service, price, kind of customer, competitor or contact | `.claude/skills/keep-context-fresh` (sales facts go in `context/sales.md`) |
 
 Any email or message you draft for them follows `.claude/skills/human-email` and uses `context/voice.md`.
