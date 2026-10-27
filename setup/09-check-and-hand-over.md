@@ -59,4 +59,5 @@ Mention it once. Never suggest the pipeline is broken without it.
    - The one habit that makes it work: after every sales call, paste your notes into the deal (or let your recorder do it). The deal check, next steps and email follow.
    - Whether you're checking in automatically, and when.
    - The phrases that do most of the work: "update my pipeline", "prep me for my call with...", "who should I chase?", "how qualified is this deal?". In Claude Code each also works as a command, for example `/pipeline-check-in`.
+   - That they can say "get the latest version" any time and you will bring the app up to date, keeping everything of theirs.
    - That they can ask for anything in plain words, and change the stages and the deal check wording in Preferences.

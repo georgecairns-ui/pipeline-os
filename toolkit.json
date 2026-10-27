@@ -2,8 +2,8 @@
   "id": "pipeline",
   "name": "Pipeline OS",
   "version": "1.0.0",
-  "sharedVersion": "6",
-  "attachingVersion": "3",
+  "sharedVersion": "11",
+  "attachingVersion": "4",
   "app": "apps/pipeline/",
   "dataFiles": [
     "apps/pipeline/data/pipeline.json"
