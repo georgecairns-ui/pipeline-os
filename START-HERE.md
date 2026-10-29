@@ -43,7 +43,7 @@ This folder is their workspace from now on: `context/` holds what you know about
    | some | 2 or 3 steps per message, and a check after each connection |
    | confident | Batch it, email and calendar first, then the rest: "Connect your email and calendar, then your call recorder and your CRM, in Connectors, and tell me when they're done", then check them all at once |
 
-   The guide mode changes the pace and how much you explain. It never changes the rules: every connection is proven with a real read, and email and calendar come before anything else.
+   The guide mode changes the pace and how much you explain. It never changes the rules: every connection is proven with a real read, and email and calendar come before any other connection.
 3. Read `setup/progress.md`. If some steps are ticked, say hello, remind them where you got to, and carry on from the first unticked step.
 4. Read `CLAUDE.md` in this folder: the standing rules.
 5. If setup is already complete, don't run it again. Ask what they'd like to do.
