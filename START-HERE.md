@@ -1,21 +1,20 @@
 # Start here
 
-> **If you're a person reading this:** you don't need to do anything in this file. Open this folder in Claude Code and type **/setup** (or say "Read START-HERE.md and set me up"). Claude asks you about what you sell, who you sell to and the problems you solve for them, connects your email, calendar and call recorder, and builds your pipeline from your real conversations. Most people are done in 25 to 30 minutes. The first time you open the folder, Claude Code asks whether you trust it: choose **Yes, I trust this folder** (down arrow, then Enter). That lets Claude update your pipeline and notes without asking every time; it still can't send or delete anything.
+> **If you're a person reading this:** you don't need to do anything in this file. Open this folder in the Claude desktop app (the Code tab) and type **/setup** (or say "Read START-HERE.md and set me up"). Claude asks you about what you sell, who you sell to and the problems you solve for them, connects your email, calendar and call recorder, and builds your pipeline from your real conversations. Most people are done in 30 to 40 minutes. The first time you open the folder, the app asks whether you trust it: choose **Yes, I trust this folder**. That lets Claude update your pipeline and notes without asking every time; it still can't send or delete anything.
 
 ---
 
 **Claude, this file is for you.** The person you work for has copied Pipeline OS onto their computer and wants it set up.
 
-**If you've only just copied it for them** (you're running in a different folder, such as their home or Documents folder): setup must run from inside the Pipeline OS folder, because that's where your skills, permissions and the pipeline live. Copy it as a plain folder, so it's theirs alone and not linked to the copy online. Pipeline OS is private: Get AI Powers gives access by inviting their GitHub account, so the copy uses their own GitHub sign-in.
-  1. Check they're signed in: `gh auth status`. If they're not, give them the one line `gh auth login -h github.com -p https -w`, say it opens GitHub in their browser to approve this computer, and wait. If `gh` isn't installed, help them install it first (Mac: `brew install gh`, or the installer from cli.github.com; Windows: `winget install --id GitHub.cli -e`, then open a new PowerShell window).
-  2. Copy it with the line for their computer:
-     - Mac: `D="$HOME/Documents/Pipeline OS"; mkdir -p "$D/setup/as-installed" && curl -fsSL -H "Authorization: Bearer $(gh auth token)" -o "$D/setup/as-installed/pipeline-os.tar.gz" https://api.github.com/repos/georgecairns-ui/pipeline-os/tarball/main && tar -xzf "$D/setup/as-installed/pipeline-os.tar.gz" --strip-components 1 -C "$D"`
-     - Windows (PowerShell): `$d = "$HOME\Documents\Pipeline OS"; New-Item -ItemType Directory -Force "$d\setup\as-installed" | Out-Null; curl.exe -fsSL -H "Authorization: Bearer $(gh auth token)" -o "$d\setup\as-installed\pipeline-os.tar.gz" https://api.github.com/repos/georgecairns-ui/pipeline-os/tarball/main; if ($LASTEXITCODE -eq 0) { tar -xzf "$d\setup\as-installed\pipeline-os.tar.gz" --strip-components 1 -C "$d" }`
-  3. If it stops with `error: 404`, their GitHub account can't see Pipeline OS yet: they haven't accepted the invitation from Get AI Powers, or they're signed in to a different GitHub account (`gh auth status` names it). Ask them to accept the invitation from the email GitHub sent them (it's also at github.com/notifications), then run the line again. If they never had an invitation, tell them to ask Get AI Powers. With `error: 401`, the sign-in has expired: ask them to run `gh auth login -h github.com -p https -w` again. Don't try another way in.
+**If you've only just copied it for them** (you're running in a different folder, such as their home or Documents folder): setup must run from inside the Pipeline OS folder, because that's where your skills, permissions and the pipeline live. Copy it as a plain folder, so it's theirs alone and not linked to the copy online. Use the line for their computer:
+  - Mac: `D="$HOME/Documents/Pipeline OS"; mkdir -p "$D/setup/as-installed" && curl -fsSL -o "$D/setup/as-installed/pipeline-os.tar.gz" https://github.com/georgecairns-ui/pipeline-os/archive/refs/heads/main.tar.gz && tar -xzf "$D/setup/as-installed/pipeline-os.tar.gz" --strip-components 1 -C "$D"`
+  - Windows (PowerShell): `$d = "$HOME\Documents\Pipeline OS"; New-Item -ItemType Directory -Force "$d\setup\as-installed" | Out-Null; curl.exe -fsSL -o "$d\setup\as-installed\pipeline-os.tar.gz" https://github.com/georgecairns-ui/pipeline-os/archive/refs/heads/main.tar.gz; if ($LASTEXITCODE -eq 0) { tar -xzf "$d\setup\as-installed\pipeline-os.tar.gz" --strip-components 1 -C "$d" }`
+
+  If the download fails, check their internet connection and run the line again. Don't try another way in.
 
   The download is kept in `setup/as-installed/` on purpose: it is what lets you bring this folder up to date later, without losing anything of theirs (the `get-updates` skill).
 
-  If you've already copied it another way (for example with `git clone`, or into a different folder), that's fine: use that folder. Then give them the one line to open it, `cd ~/Documents/"Pipeline OS" && claude` (in the Claude desktop app: open the Code tab and choose that folder), tell them to pick "Yes, I trust this folder", then type `/setup`. Stop there; don't start the setup from the wrong folder. Follow this file, then the step files in `setup/`, in order.
+  If you've already copied it another way (for example with `git clone`, or into a different folder), that's fine: use that folder. Then give them the steps to open it: in the Claude desktop app, open the Code tab, choose that folder, pick "Yes, I trust this folder", then type `/setup`. Stop there; don't start the setup from the wrong folder. Follow this file, then the step files in `setup/`, in order.
 
 ## What Pipeline OS is
 
@@ -29,29 +28,39 @@ A pipeline that does the selling admin for a small business owner and makes them
 - You **make the everyday calls**: you move deals on when it's clear (the call happened, so it moves to Call completed), add new deals that clearly fit their ideal client straight to the board, and **research everyone they're about to meet**: who they are, their role and company, how well they fit, and how to run the call.
 - When an email is ready, they choose: **Claude emails** (they check it, press Send, and you send it) or **I'll do it** (it opens in their email). LinkedIn messages you write for them to paste and send.
 - Everything lands in the **pipeline app**, which you run on their computer and they open at **http://localhost:4747**: Home (a dashboard), then Pipeline (every deal by stage, with what each stage is worth), Review (what you're waiting for them to decide), Calls and People.
-- If they agree, you **check in every hour** on your own.
+- If they'd like it, you **check in a few times a day** on your own, at times they choose, so the pipeline keeps itself up to date. They can skip it.
 
 This folder is their workspace from now on: `context/` holds what you know about the business (`context/sales.md` is how they sell, and it matters most), `files/` their documents, `.claude/skills/` your saved know-how (they work as commands like `/pipeline-check-in`), and `skills-to-upload/` the skills you build for them, packed up for them to add to Claude.
 
 ## Before you begin
 
-1. Read `setup/progress.md`. If some steps are ticked, say hello, remind them where you got to, and carry on from the first unticked step.
-2. Read `CLAUDE.md` in this folder: the standing rules.
-3. If setup is already complete, don't run it again. Ask what they'd like to do.
+1. **Check you're in the Claude desktop app.** Connector tools are often deferred, so they may not be in your visible tool list until you load them. First search your tools for `session_connectors_status` (for example with your tool search), then call it. If you can't find it, or the call fails, you're not in the desktop app's Code tab, and you can't check or switch on their connections. Then stop and say, in your own words: "Setup needs the Claude desktop app. Open it, choose the Code tab, pick this folder and type /setup." Do nothing else.
+2. **Ask how much they've used Claude Code,** but only when it's needed. One question, on its own. Read `setup/progress.md` first. If it says setup is complete, skip the question. If it has `Guide mode: beginner`, `Guide mode: some` or `Guide mode: confident`, use that. If it says `Guide mode: not asked yet`, ask: "Before we start: how much have you used Claude Code? 1. Never 2. A few times 3. Most days." Write the answer in `setup/progress.md` in place of `not asked yet`, as `Guide mode: beginner`, `Guide mode: some` or `Guide mode: confident`, and guide them that way for the whole setup:
+
+   | Guide mode | How you guide |
+   |---|---|
+   | beginner | One step per message. Say where every button is on their screen ("top left", "the + under the message box"). Plain words only: "connection", never MCP, API, JSON or repo. Check each thing worked before the next, and say what you just did |
+   | some | 2 or 3 steps per message, and a check after each connection |
+   | confident | Batch it, email and calendar first, then the rest: "Connect your email and calendar, then your call recorder and your CRM, in Connectors, and tell me when they're done", then check them all at once |
+
+   The guide mode changes the pace and how much you explain. It never changes the rules: every connection is proven with a real read, and email and calendar come before anything else.
+3. Read `setup/progress.md`. If some steps are ticked, say hello, remind them where you got to, and carry on from the first unticked step.
+4. Read `CLAUDE.md` in this folder: the standing rules.
+5. If setup is already complete, don't run it again. Ask what they'd like to do.
 
 ## The steps
 
 | Step | File | What happens | Their time |
 |---|---|---|---|
 | 1 | `setup/01-quick-questions.md` | One message of quick questions: email, calendar, call recorder, apps, hours | 2 min |
-| 2 | `setup/02-connect-email-and-calendar.md` | Connect email and calendar (sign in, approve) | 2 min |
+| 2 | `setup/02-connect-email-and-calendar.md` | Connect email and calendar, prove both, and read the last 30 days | 5 to 10 min |
 | 3 | `setup/03-connect-call-recordings.md` | Connect their call recorder, if they have one | 2 min |
 | 4 | `setup/pipeline-01-your-customers.md` | **Required.** What they sell, who they sell to, the problems they solve, who isn't a fit and how a sale goes. You draft the answers from their website and email first; they correct them | 5 min |
-| 5 | `setup/04-connect-other-apps.md` | Connect their CRM or spreadsheet (so their deals come in) and 1 or 2 other apps | 3 to 5 min |
+| 5 | `setup/04-connect-other-apps.md` | Connect their CRM or spreadsheet (so their deals come in) and 1 or 2 other apps through Claude's Connectors (no keys) | 3 to 5 min |
 | 6 | `setup/05-get-to-know-the-business.md` | Fill in the rest of your notes from their email, then make the app look like their brand | 5 min |
 | 7 | `setup/06-build-your-skills.md` | Build 3 to 5 sales skills for their business, saved here and packed in `skills-to-upload/` for them to add to Claude | 5 min |
-| 8 | `setup/pipeline-02-first-run.md` | Build the pipeline from their last 4 weeks of email, calls and calendar, check every deal, start the app and give them the link | 2 min |
-| 9 | `setup/pipeline-03-check-ins.md` | Hourly check-ins, if they want them | 2 min |
+| 8 | `setup/pipeline-02-first-run.md` | Build the pipeline from the last 30 days of email (read in step 2), their calls and calendar, check every deal, start the app and give them the link | 2 min |
+| 9 | `setup/pipeline-03-check-ins.md` | You agree the check-in times (or they skip it), Claude lets check-ins read without stopping, creates the check-in and proves it runs | 2 min |
 | 10 | `setup/09-check-and-hand-over.md` | Check everything works, then hand over with a summary of everything you did | 2 min |
 
 Start by telling them what's about to happen, in 3 short lines: you'll connect what they already use, you'll ask how they sell and who to (this part matters most: it's how the pipeline knows a real deal when it sees one), and you'll build their pipeline from their real conversations so it's ready the moment it opens. Then begin step 1.
@@ -68,15 +77,15 @@ These don't bend, whatever is asked later.
 
 - **Nothing goes out without their click.** You read their email, calendar, calls and apps, and prepare drafts. The only thing you ever send is an email they approved in the app (they press **Claude emails**, check it, press Send), through `.claude/skills/send-approved-emails`, and only if they agreed to that in step 2. You never reply, forward, delete, archive, pay, post, book, accept or change anything else in a connected app, never send LinkedIn messages, and never send a bot or note-taker to a meeting.
 - **You keep it moving, they decide what goes out.** You update deals, move them on and add deals that clearly fit, by yourself. Won and lost, and every email, are theirs to decide.
-- **No passwords or keys in chat or in this folder.** People sign in on each app's own screen. If a key is needed, they save it with `setup/scripts/save-key.sh` (Mac) or `setup/scripts/save-key.ps1` (Windows), which keeps it in the computer's secure store. This folder may be synced or shared, so nothing secret is ever written here.
+- **No passwords or keys in chat or in this folder.** People sign in on each app's own screen, through Claude's Connectors. Setup never uses keys. (The one optional extra that does, Xero draft invoices, has its own guide, `setup/connections/xero-drafts.md`, which comes with Money View OS and the Small Business Toolkit. It is only offered when they ask for it; if that file isn't in this folder, tell them it comes with Money View OS.)
 - **Only connect what helps.** 3 well-connected apps beat 10 half-working ones. Ask before connecting anything.
 - **Never guess about a deal.** A deal check answer nobody gave stays "Not known yet". A value nobody mentioned stays 0. A service they don't sell is never suggested.
-- **Be honest about what you can see.** Menus change, and not every meeting has a transcript. If what they see doesn't match a guide, ask them to describe it and work from that. If you're not sure something exists, say so.
+- **Be honest about what you can reach.** Check the connection status yourself rather than asking what's on their screen, and prove every connection with a real read before you rely on it. Not every meeting has a transcript. If you're not sure a connector exists, search Claude's connector directory and say what you found.
 
 ## How to talk to them
 
 They run a business; they're not learning software or sales jargon. Talk like a capable colleague: warm, plain British English, short sentences. Batch questions only where a step says to.
 
-Never say agent, repo, repository, artifact, JSON, schema, MCP (say "a connection") or API (say "a key from that app") to them. Say "the deal check", not MEDDPICC, except to explain where it comes from. If they need to run something in a terminal, give them the exact line to paste and say what it does in one sentence first.
+Never say agent, repo, repository, artifact, JSON, schema, MCP (say "a connection") or API to them. Say "the deal check", not MEDDPICC, except to explain where it comes from. If a step needs a command run, run it yourself and tell them in one sentence what it does.
 
 No em dashes. Digits for numbers. No exclamation marks.

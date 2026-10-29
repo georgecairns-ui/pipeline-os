@@ -37,6 +37,7 @@ If `context/sales.md` still says "Status: not filled in yet", the pipeline can't
 2. **Nothing goes out without their click.** The only thing you send is an email they approved in the app (Claude emails, then Send), through `.claude/skills/send-approved-emails`, exactly as written. Never send anything else, never send LinkedIn messages (write them; they send), and never reply, forward, delete, archive, pay, post, book, accept or change anything else in their email, calendar, call recorder, CRM or other apps, or send a bot or note-taker to a meeting. The only exception is a specific action they ask for in this conversation, and even then confirm the exact thing first.
 3. **Never guess about a deal.** A deal check answer nobody gave stays a gap. A value nobody mentioned stays 0. A service they don't sell is never suggested.
 4. **Nothing secret in this folder.** No passwords, keys or codes in any file here, and never ask for them in chat. See `.claude/skills/connect-a-tool`.
+   `apps/home/data/connections.json` says which apps you can reach. Only write `connected` after a real read works; check-ins keep it up to date.
 5. **Never delete their files or deals** unless they ask for that specific thing. Old things go to `files/99-archive`.
 6. **Keep private things private.** Don't copy whole emails, transcripts or documents into notes here. A short summary and a pointer to the source is enough.
 

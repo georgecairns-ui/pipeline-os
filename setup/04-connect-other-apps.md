@@ -9,7 +9,8 @@ Rule of thumb: connect what holds **deals in progress**, **who their customers a
 | App type | What it gives Pipeline OS | Guide |
 |---|---|---|
 | Accounts: Xero | Who's already a customer, so their meetings aren't mistaken for new sales | `setup/connections/xero.md` |
-| Accounts: QuickBooks, FreeAgent | Usually no simple connection; a monthly export works | `setup/connections/quickbooks.md`, `setup/connections/freeagent.md` |
+| Accounts: QuickBooks | The "Intuit QuickBooks" connector for US customers; otherwise a monthly export works | `setup/connections/quickbooks.md` |
+| Accounts: FreeAgent | No Claude connector found on 29 October 2026; a monthly export works | `setup/connections/freeagent.md` |
 | Sales: HubSpot, Pipedrive | Their existing deals come into the pipeline; contacts fill People. Read only: nothing changes in the CRM | `setup/connections/hubspot.md`, `setup/connections/pipedrive.md` |
 | Payments: Stripe | Who's already a customer | `setup/connections/stripe.md` |
 | Files: Google Drive | Find and file documents; Meet transcripts | `setup/connections/google-drive.md` |
@@ -19,20 +20,14 @@ Rule of thumb: connect what holds **deals in progress**, **who their customers a
 
 `setup/connections/README.md` lists every guide. If their app isn't listed, follow `.claude/skills/connect-a-tool`.
 
-Suggest a shortlist of 2 or 3 with a reason each, and let them choose.
+Suggest a shortlist of 2 or 3 with a reason each, and let them choose. Apps they named in step 1 but didn't put on the shortlist stay `not-connected` in `apps/home/data/connections.json`, with the note "Chose not to connect yet".
 
 ## 5.2 Connect each one
 
-Follow its guide exactly. The order is always: a Claude connector (sign in, approve), then the app maker's own connection, then a key, then an export.
+For each app on the shortlist, follow its guide and `.claude/skills/connect-a-tool`: find the route (our guide, or a search of Claude's connector directory), check, switch on or point to Connect, then prove it with one harmless read ("I can see 12 open deals in Pipedrive, the newest from Ellis Joinery").
 
-**If a key is needed**, never ask for it in chat. Tell them where to find it (the guide says), then:
+An app with no connector gets this sentence, word for word with its name: "There's no Claude connector for [app], so I can't connect to it live. If you export a CSV or PDF from it and drop it in the files folder, I'll read it whenever you ask." Record it as `export-only`.
 
-> Open the Terminal app (on Windows, PowerShell) in your Pipeline OS folder and paste this line, then press Enter:
-> `bash setup/scripts/save-key.sh FIREFLIES_API_KEY` (Mac) or `powershell -ExecutionPolicy Bypass -File setup\scripts\save-key.ps1 FIREFLIES_API_KEY` (Windows)
-> It asks for your key. Paste it and press Enter (it won't show on screen). Then close and reopen Claude so it can see it.
+## 5.3 Record
 
-The script keeps the key in the computer's own secure store (Keychain on a Mac). Nothing is written into this folder. Afterwards, check it's visible without printing it: `[ -n "$FIREFLIES_API_KEY" ] && echo found` (Mac) or `if ($env:FIREFLIES_API_KEY) { "found" }` (Windows).
-
-## 5.3 Check and record
-
-One harmless read per app ("I can see 4 unpaid invoices, the oldest from 12 September"). Add each to `context/tools.md` with what you may and may not do. If something gets fiddly, note it in `setup/progress.md` and move on: a partly connected setup that works beats a long afternoon. Tick step 5.
+Each app goes into `apps/home/data/connections.json` and `context/tools.md` (see `connect-a-tool`, part 3). An app that still won't connect after the loop is `needs-attention`: the Connections box on Home shows a Fix it button for it, so setup doesn't stall on it. Apps left off the shortlist stay `not-connected` with the note "Chose not to connect yet". Tick step 5.

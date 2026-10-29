@@ -46,7 +46,7 @@ Your pipeline app runs from a small program in your Pipeline OS folder, so it op
 
 ## Does it run when I'm not there?
 
-Only if you turn on hourly check-ins during setup. Then the Claude app checks your inbox, calls and calendar every hour during your working day, while your computer is on and the app is open. It uses a little of your Claude allowance each time. You can pause it in the Claude app.
+Only if you choose check-ins during setup; you can skip them. Then the Claude app checks your inbox, calls and calendar a few times a day, at the times you agreed, while your computer is on and the app is open. It uses a little of your Claude allowance each time, and it only reads your apps; the only thing it ever sends is an email you've checked and pressed Send on. You can pause it in the Claude app.
 
 ## Who sees my information?
 

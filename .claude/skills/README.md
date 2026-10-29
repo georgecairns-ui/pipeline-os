@@ -10,7 +10,7 @@ In Claude Code, every skill is also a command: type `/` and its name, for exampl
 
 | Skill | Say something like | What happens |
 |---|---|---|
-| `pipeline-check-in` | "Update my pipeline" (runs every hour if you turned that on) | New sales calls written up, new enquiries and replies spotted, sales meetings found in your calendar, deals updated, chases drafted |
+| `pipeline-check-in` | "Update my pipeline" (runs a few times a day, at times you agreed) | New sales calls written up, new enquiries and replies spotted, sales meetings found in your calendar, deals updated, chases drafted |
 | `update-a-deal` | Paste your call notes, or press **Update the deal** in the app | The deal fills itself in: the write-up, the deal check, next steps, a coaching tip and the email back, drafted |
 | `sort-brain-dump` | Press **Brain dump** on any page (or V) and talk | Claude sorts it and sends each part to the right tool |
 | `sort-pipeline-brain-dump` | (used by `sort-brain-dump`) | The sales part: Claude updates and adds deals, moves them on and writes emails |
