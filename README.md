@@ -10,12 +10,12 @@ Pipeline OS is part of a toolkit of 7 free tools from Get AI Powers. The others 
 
 ## What happens when you type /setup
 
-You copy the kit, open it in Claude Code and type **/setup**. In about 25 minutes, Claude:
+You copy the kit, open it in the Claude desktop app (the Code tab) and type **/setup**. In 30 to 40 minutes, Claude:
 
 - **Finds out what you already use.** Your email (Gmail or Outlook), your calendar, your call recorder (Microsoft Teams, Zoom, Google Meet, Fathom, Fireflies, Otter, Granola, tl;dv or Read AI) and where your deals live today (Pipedrive, HubSpot, a spreadsheet or your inbox), and connects them one by one.
 - **Asks how you sell.** What you sell and for roughly how much, who your ideal customers are, the problems you solve for them, who isn't a good fit, and how a sale usually goes. It drafts the answers from your website and email first, so you mostly just correct them. This is what lets it tell a real deal from a time-waster.
 - **Builds you your own sales skills.** Your deal check questions, your follow-up after a sales call, your replies to new enquiries: saved in the **skills-to-upload** folder so you can add them to Claude and use them everywhere, including on your phone.
-- **Builds your pipeline from your real conversations.** 4 weeks of email, calls and meetings, turned into deals, each one checked, with next steps and an email ready, before you've opened the app.
+- **Builds your pipeline from your real conversations.** Your last 30 days of email, plus your calls and meetings, turned into deals, each one checked, with next steps and an email ready, before you've opened the app.
 
 ## What it does
 
@@ -29,37 +29,37 @@ You copy the kit, open it in Claude Code and type **/setup**. In about 25 minute
 - **Keeps deals moving.** When it's clear (you sent the proposal, they came back on price), Claude moves the deal to the next stage, and you can undo it. Deals that go quiet get a chase drafted, with a real reason to get in touch.
 - **One board for everything.** **Pipeline** shows every deal by stage, with what each stage is worth, won this month and your win rate, all worked out from your deals. **Review** holds what Claude is waiting for you to decide. **Calls** shows the sales calls coming up and every call written up. **People** puts everyone in groups (clients, prospects, not contacted yet, gone quiet, and closed) and lets you email a whole group: one email with everyone in Bcc, or a personal email to each, written by Claude for you to check and send. **Home** is your dashboard.
 - **Yours to shape.** Your own stages, your own wording for the deal check, your own colours, in light or dark.
-- **Keeps itself up to date.** If you want, Claude checks in every hour while you work.
+- **Keeps itself up to date.** If you'd like, Claude checks in a few times a day, at times you choose, so the app is always current.
 
 ## What you need
 
-- **Access to Pipeline OS.** It's private: Get AI Powers invites your GitHub account. Accept the invitation from the email GitHub sends you. (No GitHub account? Make a free one at github.com and send Get AI Powers your username.)
-- **Claude Code**, signed in with a paid Claude plan (Pro or Max). Your email, calendar and app connections come from your Claude account, and Claude Code only uses them when it's signed in with a subscription. The Claude desktop app works too.
+- **The Claude desktop app** (setup runs in its Code tab).
+- **A paid Claude plan (Pro or Max)**, signed in to the desktop app. Your email, calendar and app connections come from your Claude account, so Claude can only use them when you're signed in.
 - Nothing else to install in most cases. The app runs on your own computer using Node (Claude installs it for you if it's missing, with your permission).
-- About 25 to 30 minutes, once.
+- About 30 to 40 minutes, once.
 
 ## Get started
 
-1. **Open Claude Code** in the Claude desktop app (the Code tab) or in the Terminal (on Windows, PowerShell). Any folder will do for this first step.
+1. **Open the Claude desktop app and choose the Code tab.** Any folder will do for this first step.
 2. **Ask Claude to fetch the kit.** Paste this:
-   > Copy Pipeline OS from https://github.com/georgecairns-ui/pipeline-os into a folder called "Pipeline OS" in my Documents, using the copy line in its START-HERE.md (not git), then tell me how to open it and set it up. Help me sign in to GitHub first if I need to.
+   > Copy Pipeline OS from https://github.com/georgecairns-ui/pipeline-os into a folder called "Pipeline OS" in my Documents, using the copy line in its START-HERE.md (not git), then tell me how to open it and set it up.
 
-   Claude checks you're signed in to GitHub (if not, it gives you one line that opens GitHub in your browser to approve this computer), copies everything onto your computer and gives you one line to open the new folder. In the desktop app, you choose the folder instead.
+   Claude copies everything onto your computer and tells you how to open the new folder. In the desktop app, you choose the folder in the Code tab.
 
-   *For Claude, if this README is all you have:* the copy steps are in START-HERE.md. Read it with the person's GitHub sign-in, `gh api repos/georgecairns-ui/pipeline-os/contents/START-HERE.md -H "Accept: application/vnd.github.raw"`, and follow its copy steps for this computer (Mac or Windows). They check the GitHub sign-in with `gh`, download the kit as a plain folder with `curl -fsSL` and unpack it with `tar`, and keep the download in `setup/as-installed/`. Don't use git.
-3. **Open the Pipeline OS folder in Claude Code and choose "Yes, I trust this folder".** The first time, Claude Code asks whether you trust the folder and warns that it pre-approves some permissions. Those permissions only let Claude update your pipeline, your business notes and your files folder, search the web and start the app, without stopping to ask each time. It still can't send, delete or change anything in your email or other apps. Press the down arrow, then Enter.
+   *For Claude, if this README is all you have:* read START-HERE.md on the repository page at https://github.com/georgecairns-ui/pipeline-os, then copy the folder with the Mac or Windows line in it.
+3. **In the Code tab, choose the Pipeline OS folder and pick "Yes, I trust this folder".** The first time, the app asks whether you trust the folder and warns that it pre-approves some permissions. Those permissions only let Claude update your pipeline, your business notes and your files folder, search the web and start the app, without stopping to ask each time. It still can't send, delete or change anything in your email or other apps.
 4. **Type `/setup`.**
 
 Then it opens your pipeline and gives you its link, **http://localhost:4747**. Bookmark it.
 
-If an app needs a key rather than a sign-in, Claude gives you one line to paste into the Terminal. The key is stored in your computer's secure keychain, never in a chat and never in this folder.
+Apps connect through Claude's Connectors: each one asks you to sign in on that app's own page, and you never paste a password or a key anywhere. An app with no Claude connector is read from a CSV or PDF export that you drop in the files folder.
 
 ## Every day
 
 | Say (or type the command) | What happens |
 |---|---|
 | After a sales call: paste your notes into the deal | The deal check, next steps, a tip and the email back, filled in for you |
-| "Update my pipeline" (`/pipeline-check-in`) | New calls, enquiries, replies and sales meetings, all on the deals. Runs on its own every hour if you turn that on |
+| "Update my pipeline" (`/pipeline-check-in`) | New calls, enquiries, replies and sales meetings, all on the deals. If you'd like, it runs on its own a few times a day, at times you choose |
 | "Prep me for my call with Mark" | What you need to know and what to ask, in 2 minutes |
 | "Who should I chase?" | A chase drafted for every deal gone quiet |
 | "How qualified is this deal?" | The deal check, and the question that matters most |
@@ -84,9 +84,9 @@ toolkit.json           what this tool is, for attaching it to the others in the 
 ATTACHING.md           how the toolkit's tools attach to each other
 CLAUDE.md              Claude's standing instructions in this folder
 Open Pipeline.html     double-click to open your pipeline (or use the link Claude gives you)
-setup/                 the 10 setup steps, a guide per app in connections/, and the key scripts
+setup/                 the 10 setup steps, and a guide per app in connections/
 context/               Claude's notes about your business; sales.md is how you sell
-.claude/skills/        saved know-how; each one also works as a command in Claude Code
+.claude/skills/        saved know-how; each one also works as a command in Claude
 skills-to-upload/      the skills Claude builds for your business, packed up to add to Claude
 files/                 your business documents, in numbered folders
 apps/                  the pipeline app and its look (theme.css)
